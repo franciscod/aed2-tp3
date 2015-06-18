@@ -1,0 +1,44 @@
+Mini Test
+https://github.com/bcardiff/mini_test
+
+
+===================
+Version 1 de los modulos basicos de algo 2 implementados en C++
+
+Este paquete se entrega sin ningun tipo de garantia.  Si el TP no compila o la maquina explota, no nos hacemos cargo.  Cualquier bug o leak error que pudiera tener el programa, debe informarse al webmaster de la materia.  Los acentos tambien pueden pedirselos a el.
+
+Cambios importantes:
+En el modulo vector, la insercion no cuesta O(f(n)*copy(...)), sino que cuesta O(f(n)+copy(elem)) donde elem es el elemento recien agregado.  En cuestiones practicas, no hace falta que guarden los punteros para el TP2.
+
+Hay otras cosillas nuevas, pero a Uds. no deberian importarles, estan iniciando el camino del proximo cuatrimestre.
+
+Uso:
+simplemente hagan el include de aed2.h, y obtendran los siguientes tipos:
+  Arreglo
+  Vector
+  Lista
+  Conj
+  Dicc
+  ConjAcotado
+y podran usarlos.  Sino, tambien pueden agregar los tipos a mano, con las siguientes instrucciones
+  #include "aed2/Arreglo.h"
+  #include "aed2/Lista.h"
+  #include "aed2/Vector.h"
+  #include "aed2/Dicc.h"
+  #include "aed2/Conj.h"
+  #include "aed2/ConjAcotado.h"
+Recuerden, en este ultimo caso, de incluir el using namespace aed2, o de prefijar con aed2:: todos los objetos.
+
+IMPORTANTE: como todas las clases son templates no deben compilar ningun .cpp, salvo ConjAcotado, en cuyo caso deberan compilar aed2/ConjAcotado.cpp .
+
+Testing:
+Se incluye tambien una clase descrita en test/test.h para hacer testing.  La misma no esta muy documentada, pero pueden ver los ejemplos en testArreglo.cpp, testConj.cpp y testDicc.cpp.
+En un futuro seran traducidos a https://github.com/bcardiff/mini_test .
+
+Al dia de hoy, se pueden ejecutar los tests haciendo
+
+  $ cd test
+  $ make run
+
+Atentamente,
+Grupo de implementacion AED2.

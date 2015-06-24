@@ -18,6 +18,7 @@
 #include "aed2/Dicc.h"
 #include "aed2/Conj.h"
 #include "aed2/ConjAcotado.h"
+#include "aed2/dicc_trie.h"
 
 using namespace aed2;
 

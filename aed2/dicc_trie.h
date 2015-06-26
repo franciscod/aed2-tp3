@@ -84,6 +84,36 @@ public:
         palabra = "";
     }
 
+    DiccString(const DiccString<T> &otro)
+    {
+        siguiente.clear();
+        padre = NULL;
+        es_final = false;
+        significado = NULL;
+        letra = '\0'; ///El equivalente a NULL porque la raiz no representa ninguna letra
+        palabra = "";
+        vector<string> keys = otro.claves();
+        for(int i=0;i<keys.size();i++)
+            definir(keys[i],otros.obtener(keys[i]));
+    }
+
+    DiccString operator=(const DiccString<T> &otro)
+    {
+        for(typename map<char,DiccString<T>*>::iterator it = siguiente.begin(); it != siguiente.end(); it++)
+            delete (*it).second;
+        delete significado;
+        siguiente.clear();
+        padre = NULL;
+        es_final = false;
+        significado = NULL;
+        letra = '\0'; ///El equivalente a NULL porque la raiz no representa ninguna letra
+        palabra = "";
+        vector<string> keys = otro.claves();
+        for(int i=0;i<keys.size();i++)
+            definir(keys[i],otros.obtener(keys[i]));
+        return *this;
+    }
+
     ~DiccString()
     {
         for(typename map<char,DiccString<T>*>::iterator it = siguiente.begin(); it != siguiente.end(); it++)
@@ -113,14 +143,14 @@ public:
         _borrar(clave,0);
     }
 
-    vector<T*> claves()
+    vector<string> claves()
     {
-        vector<T*> resultado;
+        vector<string> resultado;
         if(es_final)
-            resultado.push_back(significado);
+            resultado.push_back(palabra);
         for(typename map<int,DiccString<T>*>::iterator it = siguiente.begin(); it != siguiente.end(); it++)
         {
-            vector<T*> aux = *it.claves();
+            vector<string> aux = *it.claves();
             for(int i=0;i<aux.size();i++)
                 resultado.push_back(aux[i]);
         }

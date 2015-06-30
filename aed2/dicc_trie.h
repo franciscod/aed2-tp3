@@ -4,7 +4,8 @@
 #include<vector>
 #include<map>
 #include<algorithm>
-
+#include<string>
+#include<iostream>
 using namespace std;
 
 template<class T>
@@ -84,6 +85,36 @@ public:
         palabra = "";
     }
 
+    DiccString(DiccString<T> &otro)
+    {
+        siguiente.clear();
+        padre = NULL;
+        es_final = false;
+        significado = NULL;
+        letra = '\0'; ///El equivalente a NULL porque la raiz no representa ninguna letra
+        palabra = "";
+        vector<string> keys = otro.claves();
+        for(int i=0;i<keys.size();i++)
+            definir(keys[i],*otro.obtener(keys[i]));
+    }
+
+    DiccString operator=(const DiccString<T> &otro)
+    {
+        for(typename map<char,DiccString<T>*>::iterator it = siguiente.begin(); it != siguiente.end(); it++)
+            delete (*it).second;
+        delete significado;
+        siguiente.clear();
+        padre = NULL;
+        es_final = false;
+        significado = NULL;
+        letra = '\0'; ///El equivalente a NULL porque la raiz no representa ninguna letra
+        palabra = "";
+        vector<string> keys = otro.claves();
+        for(int i=0;i<keys.size();i++)
+            definir(keys[i],*otro.obtener(keys[i]));
+        return *this;
+    }
+
     ~DiccString()
     {
         for(typename map<char,DiccString<T>*>::iterator it = siguiente.begin(); it != siguiente.end(); it++)
@@ -113,19 +144,35 @@ public:
         _borrar(clave,0);
     }
 
-    vector<T*> claves()
+    vector<string> claves()
     {
-        vector<T*> resultado;
+        vector<string> resultado;
         if(es_final)
-            resultado.push_back(significado);
-        for(typename map<int,DiccString<T>*>::iterator it = siguiente.begin(); it != siguiente.end(); it++)
+            resultado.push_back(palabra);
+        for(int i=0;i<256;i++)
+        if(siguiente.find(i) != siguiente.end())
         {
-            vector<T*> aux = *it.claves();
+            vector<string> aux = siguiente[i]->claves();
             for(int i=0;i<aux.size();i++)
                 resultado.push_back(aux[i]);
         }
         return resultado;
     }
+
+    /*const vector<string> claves() const
+    {
+        vector<string> resultado;
+        if(es_final)
+            resultado.push_back(palabra);
+        for(int i=0;i<256;i++)
+        if(siguiente.find(i) != siguiente.end())
+        {
+            vector<string> aux = siguiente[i]->claves();
+            for(int i=0;i<aux.size();i++)
+                resultado.push_back(aux[i]);
+        }
+        return resultado;
+    }*/
 
     class Iterador{
     private:

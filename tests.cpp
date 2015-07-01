@@ -1,5 +1,6 @@
 #include "mini_test.h"
 #include "Pila.h"
+#include "Red.h"
 
 void check_pila_vacia(){
 	Pila<int> pila;
@@ -70,5 +71,8 @@ int main() {
 	RUN_TEST(check_pila_desapilar);
 	RUN_TEST(check_pila_tamanho);
 	RUN_TEST(check_pila_igualdad);
+	// Red
+	// RUN_TEST(check_red_conectar);
+
 	return 0;
 }

@@ -23,19 +23,19 @@ class Red{
 
 	void conectar(Red r, const Compu c1, const Compu c2, const int i1, const int i2);
 
-	Conj<Compu> Computadoras(const Red r);
+	Conj<Compu> computadoras(const Red r);
 
 	bool conectadas?(const Red r, const Compu c1, const Compu c2);
 
 	int interfazUsada(const Red r, const Compu c1, const Compu c2);
 
-	Conj <Compu> vecinos(const Red r, const Compu c);
+	Conj<Compu> vecinos(const Red r, const Compu c);
 
-	bool usaInterfaz?(const Red r, const Compu c, const int i);
+	bool usaInterfaz(const Red r, const Compu c, const int i);
 
 	Conj< Lista < Compu > > caminosMinimos(const Red r, const Compu c1, const Compu c2);
 
-	bool hayCamino?(const Red r, const Compu c1, const Compu c2); 
+	bool hayCamino(const Red r, const Compu c1, const Compu c2); 
 
 	Red copiar(const Red r);
 

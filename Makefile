@@ -1,13 +1,38 @@
-all: clean build tests
+# Compilador que será utilizado
+CC=g++
+
+# flags de compilación
+CFLAGS=-g -Wall
+
+# flags de linkeo
+LDFLAGS=
+
+# Agrear acá los directorios a incluir en la compilación
+INCDIR=. #../../../../../Modulos-CPP
+
+# Agregar acá los archivos .cpp a compilar
+# TODO: Descomentar el Driver.cpp cuando esté listo
+SOURCES=test.cpp ArbolSintactico.cpp #Driver.cpp
+
+# Objetos que serán generados (no tocar)
+OBJECTS=$(SOURCES:.cpp=.o)
+
+# Nombre del ejecutable a generar
+EXECUTABLE=test
+
+all: clean $(SOURCES) tests
+	
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
 clean:
-	rm -f tests
+	rm -rf $(EXECUTABLE) $(OBJECTS)
 
-build:
-	g++ -g -o tests -Wall -fmessage-length=0 tests.cpp
+tests: $(EXECUTABLE)
+	./$(EXECUTABLE)
 
-tests: build
-	./tests
+valgrind: $(EXECUTABLE)
+	valgrind --leak-check=full --track-origins=yes ./$(EXECUTABLE)
 
-valgrind: build
-	valgrind --leak-check=full --track-origins=yes ./tests
+.cpp.o:
+	$(CC) -I$(INCDIR) $(CFLAGS) $< -c -o $@

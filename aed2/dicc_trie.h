@@ -4,7 +4,8 @@
 #include<vector>
 #include<map>
 #include<algorithm>
-
+#include<string>
+#include<iostream>
 using namespace std;
 
 template<class T>
@@ -84,7 +85,7 @@ public:
         palabra = "";
     }
 
-    DiccString(const DiccString<T> &otro)
+    DiccString(DiccString<T> &otro)
     {
         siguiente.clear();
         padre = NULL;
@@ -94,7 +95,7 @@ public:
         palabra = "";
         vector<string> keys = otro.claves();
         for(int i=0;i<keys.size();i++)
-            definir(keys[i],otros.obtener(keys[i]));
+            definir(keys[i],*otro.obtener(keys[i]));
     }
 
     DiccString operator=(const DiccString<T> &otro)
@@ -110,7 +111,7 @@ public:
         palabra = "";
         vector<string> keys = otro.claves();
         for(int i=0;i<keys.size();i++)
-            definir(keys[i],otros.obtener(keys[i]));
+            definir(keys[i],*otro.obtener(keys[i]));
         return *this;
     }
 
@@ -148,14 +149,30 @@ public:
         vector<string> resultado;
         if(es_final)
             resultado.push_back(palabra);
-        for(typename map<int,DiccString<T>*>::iterator it = siguiente.begin(); it != siguiente.end(); it++)
+        for(int i=0;i<256;i++)
+        if(siguiente.find(i) != siguiente.end())
         {
-            vector<string> aux = *it.claves();
+            vector<string> aux = siguiente[i]->claves();
             for(int i=0;i<aux.size();i++)
                 resultado.push_back(aux[i]);
         }
         return resultado;
     }
+
+    /*const vector<string> claves() const
+    {
+        vector<string> resultado;
+        if(es_final)
+            resultado.push_back(palabra);
+        for(int i=0;i<256;i++)
+        if(siguiente.find(i) != siguiente.end())
+        {
+            vector<string> aux = siguiente[i]->claves();
+            for(int i=0;i<aux.size();i++)
+                resultado.push_back(aux[i]);
+        }
+        return resultado;
+    }*/
 
     class Iterador{
     private:

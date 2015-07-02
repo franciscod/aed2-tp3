@@ -9,6 +9,7 @@
 
 // Modulos del grupo
 #include "Pila.h"
+#include "ArbolBinario.h"
 
 using namespace aed2;
 
@@ -142,6 +143,116 @@ void check_pila_igualdad(){
 	ASSERT(p1 == p2);
 }
 
+// Arbol Binario
+
+void check_arbol_binario_nil(){
+	ArbolBinario<int> a;
+
+	ASSERT(a.EsNil());
+}
+
+void check_arbol_binario_bin(){
+	ArbolBinario<int> i, d, nil;
+	ArbolBinario<int> a (i, 1, d);
+
+	ASSERT(!a.EsNil());
+	ASSERT(a.Izq().EsNil());
+	ASSERT(a.Der().EsNil());
+	ASSERT_EQ(a.Raiz(), 1);
+
+	i = ArbolBinario<int>(nil, 0, nil);
+
+	ASSERT(!i.EsNil());
+	ASSERT_EQ(i.Raiz(),0);
+	ASSERT(a.Izq().EsNil());
+
+	a.Izq() = i;
+
+	ASSERT(!a.Izq().EsNil());
+	ASSERT_EQ(a.Izq().Raiz(), 0);
+
+	d = ArbolBinario<int>(nil, 2, nil);
+
+	a.Izq().Der() = d;
+
+	ASSERT(!a.Izq().Der().EsNil());
+	ASSERT_EQ(a.Izq().Der().Raiz(), 2);
+}
+
+void check_arbol_binario_igualdad(){
+	ArbolBinario<int> nil;
+	ArbolBinario<int> a, b;
+
+	ASSERT(a == b);
+
+	a = ArbolBinario<int>(nil, 2, nil);
+
+	ASSERT(!(a == b));
+
+	b = ArbolBinario<int>(nil, 3, nil);
+
+	ASSERT(!(a == b));
+
+	b.Raiz() = 2;
+
+	ASSERT(a == b);
+
+	b.Der() = b;
+
+	ASSERT(!(a == b));
+
+	a.Der() = b.Der();
+
+	ASSERT(a == b);
+}
+
+void check_arbol_binario_destructor(){
+	ArbolBinario<int> nil;
+	ArbolBinario<int> a (nil, 3, nil);
+	ArbolBinario<int> b (nil, 4, a);
+	ArbolBinario<int> c (b, 5, a);
+}
+
+void check_arbol_binario_asignacion(){
+	ArbolBinario<int> nil;
+	ArbolBinario<int> a (nil, 5, nil);
+	ArbolBinario<int> b (nil, 4, nil);
+
+	a = b;
+
+	ASSERT_EQ(a.Raiz(), 4);
+
+	a.Der() = a;
+	a.Der().Raiz() = 5;
+
+	ASSERT_EQ(a.Der().Raiz(), 5);
+
+	a.Izq() = a;
+	a.Izq().Der().Raiz() = 6;
+
+	ASSERT_EQ(a.Izq().Der().Raiz(), 6);
+}
+
+void check_arbol_binario_swap(){
+	ArbolBinario<int>* b = new ArbolBinario<int>(ArbolBinario<int>(), 2, ArbolBinario<int>());
+	ArbolBinario<int>* a = new ArbolBinario<int>(new ArbolBinario<int>(), 1, b);
+
+	ASSERT_EQ(a->Raiz(), 1);
+	ASSERT_EQ(a->Der().Raiz(), 2);
+
+	// como voy a pisar el a donde apunta el puntero derecho de b, me encargo de
+	// borrar el viejo puntero ya que de otra forma este queda inaccesible
+	delete b->DerRapido();
+	b->DerRapido() = a;
+	a->DerRapido() = new ArbolBinario<int>();
+
+	ASSERT_EQ(b->Raiz(), 2);
+	ASSERT_EQ(b->Der().Raiz(), 1);
+
+	// sólo borro b, ya que este se va a encargar de borrar todos los
+	// sub-árboles que tenga linkeados
+	delete b;
+}
 // ---------------------------------------------------------------------
 
 /**
@@ -192,6 +303,14 @@ int main(int argc, char **argv){
 	RUN_TEST(check_pila_desapilar);
 	RUN_TEST(check_pila_tamanho);
 	RUN_TEST(check_pila_igualdad);
+
+	// Arbol Binario
+	RUN_TEST(check_arbol_binario_nil);
+	RUN_TEST(check_arbol_binario_bin);
+	RUN_TEST(check_arbol_binario_igualdad);
+	RUN_TEST(check_arbol_binario_destructor);
+	RUN_TEST(check_arbol_binario_asignacion);
+	RUN_TEST(check_arbol_binario_swap);
 
 	return 0;
 }

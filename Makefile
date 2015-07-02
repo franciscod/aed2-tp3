@@ -20,9 +20,9 @@ OBJECTS=$(SOURCES:.cpp=.o)
 # Nombre del ejecutable a generar
 EXECUTABLE=test
 
-all: clean $(SOURCES) tests
+all: $(SOURCES) tests
 	
-$(EXECUTABLE): $(OBJECTS) 
+$(EXECUTABLE): clean $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
 clean:

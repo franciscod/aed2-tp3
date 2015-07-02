@@ -1,5 +1,4 @@
 #include "Driver.h"
-#include "ArbolSintactico.h"
 
 namespace aed2 {
 

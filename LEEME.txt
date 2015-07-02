@@ -1,6 +1,6 @@
 Driver de test para el TP3,  AED2 1c2015.,
 
-La interacción con el módulo DCNet se debe hacer exclusivamente * a través de la interfaz del driver *.
+La interacciï¿½n con el mï¿½dulo DCNet se debe hacer exclusivamente * a travï¿½s de la interfaz del driver *.
 Ver recomendaciones sobre el TP3 en el enunciado:
 http://www.dc.uba.ar/materias/aed2/2015/1c/descargas/tps/tp3/enunciado-tp3/view
 
@@ -11,7 +11,7 @@ Driver.h
 - Interfaz del driver. Completar la parte privada y dejar intacta la parte publica.
 
 Driver.cpp
-- Cáscara a completar con la implementación del Driver por cada grupo. Atención: no compila así como está.
+- Cï¿½scara a completar con la implementaciï¿½n del Driver por cada grupo. Atenciï¿½n: no compila asï¿½ como estï¿½.
 
 test.cpp
 - Esqueleto de tests con un test de ejemplo

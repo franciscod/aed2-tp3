@@ -10,25 +10,25 @@
 namespace aed2 {
 
     /**
-     * Esta clase implementa el módulo conjunto acotado de Naturales.
-     * El módulo conjunto acotado de Naturales provee un conjunto en el que se
-     * pueden insertar únicamente los elementos que se encuentran en un rango [l, r]
-     * de Naturales. La inserción, eliminación y testeo de pertenencia de un
+     * Esta clase implementa el mï¿½dulo conjunto acotado de Naturales.
+     * El mï¿½dulo conjunto acotado de Naturales provee un conjunto en el que se
+     * pueden insertar ï¿½nicamente los elementos que se encuentran en un rango [l, r]
+     * de Naturales. La inserciï¿½n, eliminaciï¿½n y testeo de pertenencia de un
      * elemento se pueden resolver en tiempo constante. El principal costo se paga
      * cuando se crea la estructura, dado que cuesta tiempo lineal en r - l.
      * En cuanto al recorrido de los elementos, se provee un iterador bidireccional
-     * que también permite eliminar los elementos iterados.
+     * que tambiï¿½n permite eliminar los elementos iterados.
      */
     class ConjAcotado {
-        
+
         public:
-            class Iterador; 
+            class Iterador;
             class const_Iterador;
 
             ConjAcotado(Nat infimo, Nat supremo);
             ConjAcotado(const ConjAcotado& conjunto);
             ~ConjAcotado() {};
-            
+
             void Agregar(Nat e);
             Nat Infimo() const;
             Nat Supremo() const;
@@ -39,7 +39,7 @@ namespace aed2 {
 
             Iterador CrearIt();
             const_Iterador CrearIt() const;
-           
+
             class Iterador {
                 public:
                     bool HaySiguiente() const;
@@ -50,10 +50,10 @@ namespace aed2 {
                     void Retroceder();
                     void EliminarSiguiente();
                     void EliminarAnterior();
-                    
+
                     Iterador() : conj(NULL) {};
                     Iterador(const ConjAcotado::Iterador& otro) : it(otro.it), conj(otro.conj) {}
-                    Iterador& operator=(ConjAcotado::Iterador& otro) 
+                    Iterador& operator=(ConjAcotado::Iterador& otro)
                     	{it = otro.it; conj = otro.conj; return *this;}
 
 					bool operator==(const ConjAcotado::Iterador& otro) const {return it == otro.it;}
@@ -71,11 +71,11 @@ namespace aed2 {
                 	const_Iterador() {}
 					const_Iterador(const ConjAcotado::Iterador& otro) : it(otro.it) {}
                     const_Iterador(const ConjAcotado::const_Iterador& otro) : it(otro.it) {}
-                    const_Iterador& operator=(ConjAcotado::const_Iterador& otro) 
+                    const_Iterador& operator=(ConjAcotado::const_Iterador& otro)
                     	{it = otro.it; return *this;}
-                    
+
                     bool operator==(const ConjAcotado::const_Iterador& otro) const {return it == otro.it;}
-                    
+
                     bool HaySiguiente() const;
                     bool HayAnterior() const;
                     Nat Siguiente() const;
@@ -95,7 +95,7 @@ namespace aed2 {
             int Indice(Nat e) const;
 
             Nat infimo;
-            
+
             Conj<Nat> elementos;
             Arreglo< Conj<Nat>::Iterador > pertenencia;
 

@@ -13,7 +13,7 @@
 namespace aed2{
     typedef unsigned int Nat;
     typedef std::string String;
-    
+
     template<class T>
     std::ostream& Mostrar(std::ostream& os, const T& t, char izq, char der, char sep = ',') {
         typename T::const_Iterador it = t.CrearIt();

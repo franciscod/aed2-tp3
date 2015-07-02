@@ -3,14 +3,23 @@
 #include "dicc_trie.h"
 #include "Lista.h"
 
+struct Compu{
+	int ip;
+	Conj <Nat> interfaces;
+};
+
 class Red{
 
   private:
-
+  	struct NodoRed{
+  		Compu* pc ;
+		dicc_trie < Conj< lista < Compu > > > caminos: ;
+		Dicc < int , *NodoRed > conexiones:;
+  	};
  	Conj<Compu> compus;
  	dicc_trie dns <NodoRed>
 
- 	void inicializarConjCaminos(Red r,  const Compu c);
+ 	void inicializarConjCaminos(const Compu* c);
 
   public:
 
@@ -19,25 +28,25 @@ class Red{
 	 */	
 	Red();
 
-	void agregarComputadora( Red r,  const Compu c);
+	void agregarComputadora( const Compu& c);
 
-	void conectar(Red r, const Compu c1, const Compu c2, const int i1, const int i2);
+	void conectar(const Compu& c1, const Compu&c2, const int i1, const  int i2);
 
-	Conj<Compu> computadoras(const Red r);
+	Conj<Compu> computadoras();
 
-	bool conectadas?(const Red r, const Compu c1, const Compu c2);
+	bool conectadas?(const Compu& c1, const Compu& c2);
 
-	int interfazUsada(const Red r, const Compu c1, const Compu c2);
+	int interfazUsada( const Compu& c1, const Compu& c2);
 
-	Conj<Compu> vecinos(const Red r, const Compu c);
+	Conj<Compu> vecinos( const Compu& c);
 
-	bool usaInterfaz(const Red r, const Compu c, const int i);
+	bool usaInterfaz( const Compu& c, const int i);
 
-	Conj< Lista < Compu > > caminosMinimos(const Red r, const Compu c1, const Compu c2);
+	Conj< Lista < Compu > > caminosMinimos( const Compu& c1, const Compu& c2);
 
-	bool hayCamino(const Red r, const Compu c1, const Compu c2); 
+	bool hayCamino( const Compu& c1, const Compu& c2); 
 
-	Red copiar(const Red r);
+	Red copiar();
 
-	bool operator==(const Red) const;
-}
+	bool operator==(const Red&) const;
+};

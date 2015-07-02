@@ -22,12 +22,16 @@ class ArbolBinario{
 		ArbolBinario(const ArbolBinario&);
 
 		ArbolBinario(const ArbolBinario&, const T&, const ArbolBinario&);
+		ArbolBinario(ArbolBinario*, const T&, ArbolBinario*);
 
 		bool EsNil() const;
 
 		ArbolBinario<T>& Izq();
 		ArbolBinario<T>& Der();
 		T& Raiz();
+
+		ArbolBinario<T>*& IzqRapido();
+		ArbolBinario<T>*& DerRapido();
 
 		const ArbolBinario<T>& Izq() const;
 		const ArbolBinario<T>& Der() const;
@@ -36,20 +40,30 @@ class ArbolBinario{
 		ArbolBinario<T>& operator = (const ArbolBinario<T>&);
 
 		bool operator == (const ArbolBinario<T>&) const;
+
 	private:
-		struct NodoAb
-		{
+		struct NodoAb{
 			NodoAb(const ArbolBinario<T>& i, const T& r, const ArbolBinario<T>& d) : raiz(T(r)){
-				hijos[0] = ArbolBinario<T>(i);
-				hijos[1] = ArbolBinario<T>(d);
+				hijos[0] = new ArbolBinario<T>(i);
+				hijos[1] = new ArbolBinario<T>(d);
 			};
+
+			NodoAb(ArbolBinario<T>*& iPtr, const T& r, ArbolBinario<T>*& dPtr) : raiz(T(r)){
+				hijos[0] = iPtr;
+				hijos[1] = dPtr;
+			};
+
+			~NodoAb(){
+				delete hijos[0];
+				delete hijos[1];
+			}
+
 			T raiz;
-			ArbolBinario hijos[2];
+			ArbolBinario* hijos[2];
 		};
 
 		NodoAb* nodo;
 };
-
 
 template <typename T>
 ArbolBinario<T>::ArbolBinario(){
@@ -57,43 +71,13 @@ ArbolBinario<T>::ArbolBinario(){
 }
 
 template <typename T>
-ArbolBinario<T>::~ArbolBinario()
-{
-	NodoAb* nodoIterador = nodo;
-	Pila<NodoAb*> pilaIt;
-	Pila<int> pilaDir;
-	bool done = false;
-
-	while(!done){
-		if(nodoIterador != NULL){
-			pilaIt.Apilar(nodoIterador);
-			pilaDir.Apilar(0);
-			nodoIterador = nodoIterador->hijos[0].nodo;
-		}
-		else{
-			if(!pilaIt.EsVacia()){
-				if(pilaIt.Tope()->hijos[1].nodo == NULL){
-					delete pilaIt.Tope();
-					pilaIt.Desapilar();
-					pilaDir.Desapilar();
-					if(!pilaIt.EsVacia()){
-						pilaIt.Tope()->hijos[pilaDir.Tope()].nodo = NULL;
-					}
-				}
-				else{
-					pilaDir.Tope() = 1;
-					nodoIterador = pilaIt.Tope()->hijos[1].nodo;
-				}
-			}
-			else{
-				done = true;
-			}
-		}
-	}
+ArbolBinario<T>::~ArbolBinario(){
+	delete nodo;
 }
 
 template <typename T>
 ArbolBinario<T>::ArbolBinario(const ArbolBinario<T>& otro){
+	nodo = NULL;
 	*this = otro;
 }
 
@@ -103,6 +87,7 @@ ArbolBinario<T>& ArbolBinario<T>::operator = (const ArbolBinario<T>& otro){
 		return *this;
 	}
 
+	delete nodo;
 	nodo = NULL;
 
 	if(!otro.EsNil()){
@@ -118,6 +103,11 @@ ArbolBinario<T>::ArbolBinario(const ArbolBinario<T>& izq, const T& raiz, const A
 }
 
 template <typename T>
+ArbolBinario<T>::ArbolBinario(ArbolBinario<T>* izqPtr, const T& raiz, ArbolBinario<T>* derPtr){
+	nodo = new NodoAb(izqPtr, raiz, derPtr);
+}
+
+template <typename T>
 bool ArbolBinario<T>::EsNil() const{
 	return nodo == NULL;
 }
@@ -127,11 +117,19 @@ ArbolBinario<T>& ArbolBinario<T>::Izq(){
 	#ifdef DEBUG
 		assert(nodo != NULL);
 	#endif
-	return nodo->hijos[0];
+	return *nodo->hijos[0];
 }
 
 template <typename T>
 const ArbolBinario<T>& ArbolBinario<T>::Izq() const{
+	#ifdef DEBUG
+		assert(nodo != NULL);
+	#endif
+	return *nodo->hijos[0];
+}
+
+template <typename T>
+ArbolBinario<T>*& ArbolBinario<T>::IzqRapido(){
 	#ifdef DEBUG
 		assert(nodo != NULL);
 	#endif
@@ -143,11 +141,19 @@ ArbolBinario<T>& ArbolBinario<T>::Der(){
 	#ifdef DEBUG
 		assert(nodo != NULL);
 	#endif
-	return nodo->hijos[1];
+	return *nodo->hijos[1];
 }
 
 template <typename T>
 const ArbolBinario<T>& ArbolBinario<T>::Der() const{
+	#ifdef DEBUG
+		assert(nodo != NULL);
+	#endif
+	return *nodo->hijos[1];
+}
+
+template <typename T>
+ArbolBinario<T>*& ArbolBinario<T>::DerRapido(){
 	#ifdef DEBUG
 		assert(nodo != NULL);
 	#endif

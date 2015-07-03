@@ -10,6 +10,7 @@
 // Modulos del grupo
 #include "Pila.h"
 #include "ArbolBinario.h"
+#include "Cola.h"
 
 using namespace aed2;
 
@@ -253,6 +254,71 @@ void check_arbol_binario_swap(){
 	// sub-árboles que tenga linkeados
 	delete b;
 }
+
+//Cola
+
+void check_cola_vacia(){
+	Cola<int> cola;
+
+	ASSERT(cola.esVacia());
+}
+
+void check_cola_encolar(){
+	Cola<int> cola;
+
+	cola.encolar(3);
+
+	ASSERT_EQ(cola.proximo(), 3);
+	
+	cola.encolar(-3);
+
+	ASSERT_EQ(cola.proximo(), 3);
+}
+
+void check_cola_desencolar(){
+	Cola<int> cola;
+
+	cola.encolar(3);
+	cola.encolar(-3);
+
+	cola.desencolar();
+
+	ASSERT_EQ(cola.proximo(), -3);
+
+	cola.encolar(42);
+	cola.encolar(13);
+
+	cola.desencolar();
+
+	ASSERT_EQ(cola.proximo(), 42);
+}
+
+void check_cola_tamanho(){
+	Cola<int> cola;
+
+	ASSERT_EQ(cola.tamanho(), 0);
+
+	cola.encolar(1);
+
+	ASSERT_EQ(cola.tamanho(), 1);
+
+	cola.desencolar();
+
+	ASSERT_EQ(cola.tamanho(), 0);
+}
+
+void check_cola_igualdad(){
+	Cola<int> c1, c2;
+
+	c2.encolar(4);
+
+	ASSERT(!(c1 == c2));
+
+	c1.encolar(4);
+
+	ASSERT(c1 == c2);
+}
+
 // ---------------------------------------------------------------------
 
 /**
@@ -311,6 +377,13 @@ int main(int argc, char **argv){
 	RUN_TEST(check_arbol_binario_destructor);
 	RUN_TEST(check_arbol_binario_asignacion);
 	RUN_TEST(check_arbol_binario_swap);
+
+	//Cola
+	RUN_TEST(check_cola_vacia);
+	RUN_TEST(check_cola_encolar);
+	RUN_TEST(check_cola_desencolar);
+	RUN_TEST(check_cola_tamanho);
+	RUN_TEST(check_cola_igualdad);
 
 	return 0;
 }

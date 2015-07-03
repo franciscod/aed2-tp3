@@ -438,7 +438,7 @@ void check_red_caminimos_huge(){
 	// waaaaaa no exploto nada?
 	cout << " > Listo!\n";
 
-	cout << r.dns.obtener(B.ip)->caminos.obtener(J.ip) << '\n';
+	//cout << r.dns.obtener(B.ip)->caminos.obtener(J.ip) << '\n';
 
 }
 

@@ -22,6 +22,9 @@ class Red{
 
 		DiccString< Conj<Camino> > caminos;
 		Dicc <Interfaz, NodoRed*> conexiones;
+
+		NodoRed(const Compu& c) : pc(c) {};
+		NodoRed(const NodoRed& o) : pc(o.pc) {};
   	};
 
  	DiccString<NodoRed> dns;
@@ -30,8 +33,6 @@ class Red{
 
   public:
 	Red();
-
-	~Red();
 
 	void agregarComputadora( const Compu& c);
 

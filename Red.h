@@ -4,11 +4,6 @@
 
 using namespace aed2;
 
-struct Compu {
-	String ip;
-	Conj<Nat> interfaces;
-};
-
 class Red{
 
   private:

@@ -304,11 +304,14 @@ void check_trie() {
 	trai.definir("dos", 2);
 	trai.definir("tres", 3);
 	trai.definir("cuatro", 4);
-	ASSERT_EQ(trai.obtener("uno"), 1);
+
+	ASSERT(trai.definido("uno"));
 	ASSERT_EQ(trai.obtener("dos"), 2);
-	ASSERT_EQ(trai.obtener("tres"), 3);
+	ASSERT(trai.definido("tres"));
 	ASSERT_EQ(trai.obtener("cuatro"), 4);
 
+	trai.borrar("uno");
+	ASSERT(!trai.definido("uno"));
 
 }
 

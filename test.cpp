@@ -3,6 +3,7 @@
 #include "aed2/Lista.h"
 #include "aed2/Conj.h"
 #include "aed2/Dicc.h"
+#include "aed2/dicc_trie.h"
 
 #include <string>
 #include <iostream>
@@ -329,7 +330,26 @@ void test_dcnet_ejemplo() {
 
 }
 */
+
+void check_trie() {
+	DiccString<int> trai;
+	trai.definir("uno", 1);
+	trai.definir("dos", 2);
+	trai.definir("tres", 3);
+	trai.definir("cuatro", 4);
+	ASSERT_EQ(trai.obtener("uno"), 1);
+	ASSERT_EQ(trai.obtener("dos"), 2);
+	ASSERT_EQ(trai.obtener("tres"), 3);
+	ASSERT_EQ(trai.obtener("cuatro"), 4);
+
+
+}
+
 int main(int argc, char **argv){
+
+	// Trie
+	RUN_TEST(check_trie);
+
 	// Pila
 	RUN_TEST(check_pila_vacia);
 	RUN_TEST(check_pila_apilar);

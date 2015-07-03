@@ -19,7 +19,7 @@ private:
     T* significado;
     int cant;
 
-    void _definir(const string &clave, T &_significado, unsigned int index)
+    void _definir(const string &clave, const T &_significado, unsigned int index)
     {
         cant++;
         if(index == clave.size())
@@ -122,7 +122,7 @@ public:
         delete significado;
     }
 
-    void definir(const string &clave, T &_significado)
+    void definir(const string &clave, const T &_significado)
     {
         _definir(clave,_significado,0);
     }

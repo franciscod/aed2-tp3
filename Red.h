@@ -30,6 +30,7 @@ private:
 
 	void CrearTodosLosCaminos();
 	Conj<Camino> Caminos(const NodoRed& c1, const Computadora& ipDestino);
+	Lista<Compu> compusDeNodos (const Lista<NodoRed>& ns);
 	Conj<Camino> Minimos(const Conj<Camino>& caminos);
 	Lista<NodoRed> listaNodosVecinos(const NodoRed& n);
 	bool nodoEnLista(const NodoRed& n, const Lista<NodoRed>& ns);

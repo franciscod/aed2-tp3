@@ -1,4 +1,5 @@
 #include "Red.h"
+#include "Pila.h"
 
 using namespace std;
 using namespace aed2;
@@ -63,20 +64,109 @@ void Red::CrearTodosLosCaminos () {
 	}
 }
 
-Conj<Camino> Red::Caminos (const Red::NodoRed& c1, const Computadora& ipDestino) {
+Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
+	Conj<Camino> res;
 
+	Pila< Lista<NodoRed> > frameRecorrido;  // originalmente era {ila< Lista<Compu> >
+	Pila< Lista<NodoRed> > frameCandidatos;
+
+	Lista<NodoRed> iCandidatos = listaNodosVecinos(c1);
+	Lista<NodoRed> iRecorrido; // originalmente era Lista<Compu>
+	iRecorrido.AgregarAdelante(c1.pc);
+
+	frameRecorrido.Apilar(iRecorrido);
+	frameCandidatos.Apilar(iCandidatos);
+
+	// Compu pCandidatos; movido abajo para simplificar.
+	Lista<NodoRed> fCandidatos;
+
+	while(!frameRecorrido.EsVacia()) {
+		iRecorrido = frameRecorrido.Tope();
+		iCandidatos = frameCandidatos.Tope();
+
+		frameRecorrido.Desapilar();
+		frameCandidatos.Desapilar();
+
+		NodoRed pCandidatos = iCandidatos.Primero(); // originalmente era Compu
+
+		if (!iCandidatos.EsVacia()) {
+			iCandidatos.Fin();
+			fCandidatos = iCandidatos;
+
+			if (iRecorrido.Ultimo().pc.ip == ipDestino) {
+				res.AgregarRapido(compusDeNodos(iRecorrido)); // originalmente no habia compusDeNodos
+			} else {
+				frameRecorrido.Apilar(iRecorrido);
+				frameCandidatos.Apilar(iCandidatos);
+
+				if (!nodoEnLista(pCandidatos, iRecorrido)) {
+					// iRecorrido = Copiar(iRecorrido)
+					// no hace falta porque se apiló por copia
+					iRecorrido.AgregarAtras(pCandidatos);  // agregado .pc
+					frameRecorrido.Apilar(iRecorrido);
+					frameCandidatos.Apilar(listaNodosVecinos(pCandidatos));
+				}
+			}
+		}
+	}
+
+	return res;
+}
+
+// originalmetnte no existia
+Lista<Compu> Red::compusDeNodos (const Lista<NodoRed>& ns) {
+	Lista<Compu> res;
+	Lista<NodoRed>::const_Iterador itNodos = ns.CrearIt();
+	while (itNodos.HaySiguiente()) {
+		res.AgregarAtras(itNodos.Siguiente().pc);
+		itNodos.Avanzar();
+	}
+	return res;
 }
 
 Conj<Camino> Red::Minimos (const Conj<Camino>& caminos) {
-
+	Conj<Camino> res;
+	Nat longMinima;
+	Conj<Camino>::const_Iterador itCaminos = caminos.CrearIt(); // agregado const_
+	if (itCaminos.HaySiguiente()) {
+		longMinima = itCaminos.Siguiente().Longitud();
+		itCaminos.Avanzar();
+		while(itCaminos.HaySiguiente()) {
+			if (itCaminos.Siguiente().Longitud() < longMinima) {
+				longMinima = itCaminos.Siguiente().Longitud();
+			}
+			itCaminos.Avanzar();
+		}
+		itCaminos = caminos.CrearIt();
+		while(itCaminos.HaySiguiente()) {
+			if (itCaminos.Siguiente().Longitud() == longMinima) {
+				res.AgregarRapido(itCaminos.Siguiente());
+			}
+			itCaminos.Avanzar();
+		}
+	}
+	return res;
 }
 
-Lista<Red::NodoRed> Red::listaNodosVecinos (const Red::NodoRed& n) {
-
+Lista<Red::NodoRed> Red::listaNodosVecinos (const NodoRed& n) {
+	Lista<Red::NodoRed> res;
+	Dicc<Interfaz, NodoRed*>::const_Iterador itVecinos = n.conexiones.CrearIt(); // agregado const_
+	while (itVecinos.HaySiguiente()) {
+		res.AgregarAdelante(*itVecinos.SiguienteSignificado());
+		itVecinos.Avanzar();
+	}
+	return res;
 }
 
-bool Red::nodoEnLista (const Red::NodoRed& n, const Lista<Red::NodoRed>& ns) {
-
+bool Red::nodoEnLista (const NodoRed& n, const Lista<NodoRed>& ns) {
+	Lista<NodoRed>::const_Iterador itNodos = ns.CrearIt(); // agregado el const_
+	while (itNodos.HaySiguiente()) {
+		if (&itNodos.Siguiente() == &n) { // agregados & para chequear que sean el mismo nodo
+			return true;
+		};
+		itNodos.Avanzar();
+	}
+	return false;
 }
 
 

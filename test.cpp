@@ -3,6 +3,7 @@
 #include "aed2/Lista.h"
 #include "aed2/Conj.h"
 #include "aed2/Dicc.h"
+#include "aed2/dicc_trie.h"
 
 #include <string>
 #include <iostream>
@@ -72,7 +73,7 @@ bool Comparar(const T& t, const S& s){
 		if ( !esta ) {
 			return false;
 		}
-			
+
 		it1.Avanzar();
 	}
 
@@ -286,17 +287,36 @@ void test_dcnet_ejemplo() {
 	dcnet.AgregarComputadora(c2, conjIc2);
 	dcnet.AgregarComputadora(c3, conjIc3);
 
-	// ejemplo - Indexado en 0 
-	Interfaz i1 = dcnet.IesimaInterfazDe(c1, 0); 
+	// ejemplo - Indexado en 0
+	Interfaz i1 = dcnet.IesimaInterfazDe(c1, 0);
 	Interfaz i2 = dcnet.IesimaInterfazDe(c2, 2);
 
 	dcnet.Conectar(c1, i1, c2, i2);
 	dcnet.CrearPaquete(c1, c2, 3);
-	dcnet.AvanzarSegundo();	
-		
+	dcnet.AvanzarSegundo();
+
 }
 */
+
+void check_trie() {
+	DiccString<int> trai;
+	trai.definir("uno", 1);
+	trai.definir("dos", 2);
+	trai.definir("tres", 3);
+	trai.definir("cuatro", 4);
+	ASSERT_EQ(trai.obtener("uno"), 1);
+	ASSERT_EQ(trai.obtener("dos"), 2);
+	ASSERT_EQ(trai.obtener("tres"), 3);
+	ASSERT_EQ(trai.obtener("cuatro"), 4);
+
+
+}
+
 int main(int argc, char **argv){
+
+	// Trie
+	RUN_TEST(check_trie);
+
 	// Pila
 	RUN_TEST(check_pila_vacia);
 	RUN_TEST(check_pila_apilar);

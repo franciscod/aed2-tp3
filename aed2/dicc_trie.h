@@ -19,7 +19,7 @@ private:
     T* significado;
     int cant;
 
-    void _definir(const string &clave, T &_significado, int index)
+    void _definir(const string &clave, const T &_significado, unsigned int index)
     {
         cant++;
         if(index == clave.size())
@@ -40,7 +40,7 @@ private:
         }
     }
 
-    bool _definido(const string &clave, int index)
+    bool _definido(const string &clave, unsigned int index)
     {
         if(index == clave.size())
             return es_final;
@@ -49,14 +49,14 @@ private:
         return siguiente[clave[index]]->_definido(clave,index+1);
     }
 
-    T* _obtener(const string &clave, int index)
+    T* _obtener(const string &clave, unsigned int index)
     {
         if(index == clave.size())
             return significado;
         return siguiente[clave[index]]->_obtener(clave,index+1);
     }
 
-    void _borrar(const string &clave, int index)
+    void _borrar(const string &clave, unsigned int index)
     {
         cant--;
         if(index == clave.size())
@@ -94,7 +94,7 @@ public:
         letra = '\0'; ///El equivalente a NULL porque la raiz no representa ninguna letra
         palabra = "";
         vector<string> keys = otro.claves();
-        for(int i=0;i<keys.size();i++)
+        for(unsigned int i=0;i<keys.size();i++)
             definir(keys[i],*otro.obtener(keys[i]));
     }
 
@@ -110,7 +110,7 @@ public:
         letra = '\0'; ///El equivalente a NULL porque la raiz no representa ninguna letra
         palabra = "";
         vector<string> keys = otro.claves();
-        for(int i=0;i<keys.size();i++)
+        for(unsigned int i=0;i<keys.size();i++)
             definir(keys[i],*otro.obtener(keys[i]));
         return *this;
     }
@@ -122,7 +122,7 @@ public:
         delete significado;
     }
 
-    void definir(const string &clave, T &_significado)
+    void definir(const string &clave, const T &_significado)
     {
         _definir(clave,_significado,0);
     }
@@ -149,11 +149,11 @@ public:
         vector<string> resultado;
         if(es_final)
             resultado.push_back(palabra);
-        for(int i=0;i<256;i++)
+        for(unsigned int i=0;i<256;i++)
         if(siguiente.find(i) != siguiente.end())
         {
             vector<string> aux = siguiente[i]->claves();
-            for(int i=0;i<aux.size();i++)
+            for(unsigned int i=0;i<aux.size();i++)
                 resultado.push_back(aux[i]);
         }
         return resultado;
@@ -164,11 +164,11 @@ public:
         vector<string> resultado;
         if(es_final)
             resultado.push_back(palabra);
-        for(int i=0;i<256;i++)
+        for(unsigned int i=0;i<256;i++)
         if(siguiente.find(i) != siguiente.end())
         {
             vector<string> aux = siguiente[i]->claves();
-            for(int i=0;i<aux.size();i++)
+            for(unsigned int i=0;i<aux.size();i++)
                 resultado.push_back(aux[i]);
         }
         return resultado;

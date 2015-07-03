@@ -83,6 +83,7 @@ public:
         significado = NULL;
         letra = '\0'; ///El equivalente a NULL porque la raiz no representa ninguna letra
         palabra = "";
+        cant = 0;
     }
 
     DiccString(DiccString<T> &otro)
@@ -93,6 +94,7 @@ public:
         significado = NULL;
         letra = '\0'; ///El equivalente a NULL porque la raiz no representa ninguna letra
         palabra = "";
+        cant = 0;
         vector<string> keys = otro.claves();
         for(unsigned int i=0;i<keys.size();i++)
             definir(keys[i],*otro.obtener(keys[i]));

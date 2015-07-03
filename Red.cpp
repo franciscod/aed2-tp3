@@ -3,50 +3,88 @@
 using namespace std;
 using namespace aed2;
 
-Red::Red(){
+Red::Red () {
 	//compus = Conj<Compu>();
 	//dns = DiccString<NodoRed>();
 }
 
-Conj<Compu> Red::computadoras(){
+Conj<Compu> Red::computadoras () {
 	return compus;
 }
 
-void Red::agregarComputadora(const Compu& c){
+void Red::agregarComputadora (const Compu& c) {
 	// PRE: c no está en la red
-
-	DiccString<NodoRed>::Iterador it(&dns);
-
-	compus.AgregarRapido(c);
-
-	while(it.avanzar()) {
-		NodoRed nr = *it.valorActual();
-		nr.caminos.definir(c.ip, Conj<Camino>());
-	}
 
 	NodoRed nr(c);
 
-	nr.caminos.definir(c.ip, Conj<Camino>());
-
 	dns.definir(c.ip, nr);
+	compus.AgregarRapido(c);
+
+	// inicializarConjCaminos esta embebida en este loop
+	DiccString<NodoRed>::Iterador it(&dns);
+	while(it.avanzar()) {
+		NodoRed nrt = *it.valorActual();
+		nrt.caminos.definir(nr.pc.ip, Conj<Camino>());
+		nr.caminos.definir(nrt.pc.ip, Conj<Camino>());
+	}
 }
 
-void Red::conectar(const Compu& c1, const Compu& c2, const int i1, const int i2){
+void Red::conectar (const Compu& c1, const Compu& c2, const int i1, const int i2) {
 	// PRE: las interfaces de esas compus existen y estan libres
 
 	NodoRed* n1 = dns.obtener(c1.ip);
 	NodoRed* n2 = dns.obtener(c2.ip);
-	n1->conexiones.Definir(i1 , n2);
-	n2->conexiones.Definir(i2 , n1);
+	n1->conexiones.Definir(i1, n2);
+	n2->conexiones.Definir(i2, n1);
 
-	//TODO: CrearTodosLosCaminos( r);
+	//CrearTodosLosCaminos();
 }
 
-bool Red::usaInterfaz( const Compu& c, const int i){
+
+
+void Red::CrearTodosLosCaminos () {
+	Conj<Compu>::Iterador itCompuA = compus.CrearIt();
+
+	while (itCompuA.HaySiguiente()) {
+		NodoRed nr = *dns.obtener(itCompuA.Siguiente().ip);
+
+		Conj<Compu>::Iterador itCompuB = compus.CrearIt();
+
+		while (itCompuB.HaySiguiente()) {
+			Computadora ipDestino = itCompuB.Siguiente().ip;
+
+			Conj<Camino> caminimos = Minimos(Caminos(nr, ipDestino));
+			nr.caminos.definir(ipDestino, caminimos);
+
+			itCompuB.Avanzar();
+		}
+
+		itCompuA.Avanzar();
+	}
+}
+
+Conj<Camino> Red::Caminos (const Red::NodoRed& c1, const Computadora& ipDestino) {
+
+}
+
+Conj<Camino> Red::Minimos (const Conj<Camino>& caminos) {
+
+}
+
+Lista<Red::NodoRed> Red::listaNodosVecinos (const Red::NodoRed& n) {
+
+}
+
+bool Red::nodoEnLista (const Red::NodoRed& n, const Lista<Red::NodoRed>& ns) {
+
+}
+
+
+bool Red::usaInterfaz( const Compu& c, const int i) {
 	return dns.obtener(c.ip)->conexiones.Definido(i);
 }
 
-int Red::interfazUsada(const Compu& c1, const Compu& c2){
+int Red::interfazUsada (const Compu& c1, const Compu& c2) {
 	// PRE: c2 esta conectada a alguna interfaz de c1
 
 	NodoRed* n1 = dns.obtener(c1.ip);
@@ -66,11 +104,11 @@ int Red::interfazUsada(const Compu& c1, const Compu& c2){
 
 /*
 
-bool Red::conectadas?( const Compu& c1, const Compu& c2){
+bool Red::conectadas?( const Compu& c1, const Compu& c2) {
 	//TODO: esto esta bien? no tiene que chequear que haya algún camino?
 	bool res = false;
 	Iterador it =  Iterador(r.dns.obtener(c1.getIP()).getConexiones());
-	while(it.HaySiguiente()){
+	while(it.HaySiguiente()) {
 		if c1.ip == (*(it.SiguienteSignificado().getPC()).getIP) {
 			res = true
 		}
@@ -79,31 +117,31 @@ bool Red::conectadas?( const Compu& c1, const Compu& c2){
 	return
 }
 
-Conj <Compu> Red::vecinos( const Compu& c){
+Conj <Compu> Red::vecinos( const Compu& c) {
 	Conj <Compu> res = new Conj<Compu>();
 	Iterador it =  Iterador(r.dns.obtener(c.getIP()).getConexiones());
-	while(it.HaySiguiente()){
+	while(it.HaySiguiente()) {
 		res.AgregarRapido(*it.SiguienteSignificado().getPC());
 		it.Avanzar();
 	}
 	return res;
 }
 
-Conj< Lista < Compu > >  Red::caminosMinimos( const Compu& c1, const Compu& c2){
+Conj< Lista < Compu > >  Red::caminosMinimos( const Compu& c1, const Compu& c2) {
 	return r.dns.obtener(c1.getIP()).getCaminos().obtener(c2.getIP());
 }
 
-bool Red::hayCamino( const Compu& c1, const Compu& c2){
+bool Red::hayCamino( const Compu& c1, const Compu& c2) {
 	return !EsVacio(r.dns.obtener(c1.getIP()).getCaminos().obtener(c2.getIP()));
 }
 
-Red Red::copiar(){
+Red Red::copiar() {
 	Red res = new Red();
 	// copia el conjunto de tuplas
 	res.compus = new Conj(r.compus);
 	// rearma los nodos (con conexiones en blanco) del diccionario dns
 	Iterador it = Iterador(r.getCompus());
-	while(it.HaySiguiente()){
+	while(it.HaySiguiente()) {
 		Compu c = it.Siguiente();
 		NodoRed nodoAux = r.dns.obtener(c.ip);
 		res.dns.definir (  c. ip , NodoRed(&c , new DiccString < Conj< Lista<Compu> > >(nodoAux.caminos) , new Dicc < int, *NodoRed() >() );
@@ -112,14 +150,14 @@ Red Red::copiar(){
 
 	// rearma las conexiones
 	 it = Iterador(r.getCompus());
-	 while(it.HaySiguiente()){
+	 while(it.HaySiguiente()) {
 
 	 	Compu c = it.Siguiente();
 	 	NodoRed nodoMio = res.dns.obtener(c.ip);
 	 	NodoRed nodoOtro r.dns.obtener(c.ip);
 	 	Iterador itInterfs = Iterador(nodoMio.pc->interfaces);
 
-	 	while(itInterfs.HaySiguiente()){
+	 	while(itInterfs.HaySiguiente()) {
 
 	 		Nat interf = itInterfs.Siguiente();
 	 		String ip = nodoOtro.conexiones.obtener(interf);

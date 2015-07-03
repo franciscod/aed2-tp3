@@ -10,26 +10,31 @@ using namespace aed2;
 typedef Lista<Compu> Camino;
 
 class Red{
+private:
+	Conj<Compu> compus;
 
-  private:
- 	Conj<Compu> compus;
-
-  	struct NodoRed {
+	struct NodoRed {
 		// esto originalmente era un puntero, para que apuntase a la compu dentro de compus (el conj de arriba)
 		// por principios de abstraccion/encapsulamiento/modularidad no sentido que sea un
 		// puntero a algo (eventualmente, desconocido) dentro del tipo Conj: tiene más sentido guardar la Compu completa acá
-  		Compu pc;
+		Compu pc;
 
 		DiccString< Conj<Camino> > caminos;
 		Dicc <Interfaz, NodoRed*> conexiones;
 
 		NodoRed(const Compu& c) : pc(c) {};
 		NodoRed(const NodoRed& o) : pc(o.pc) {};
-  	};
+	};
 
- 	DiccString<NodoRed> dns;
+	DiccString<NodoRed> dns;
 
-  public:
+	void CrearTodosLosCaminos();
+	Conj<Camino> Caminos(const NodoRed& c1, const Computadora& ipDestino);
+	Conj<Camino> Minimos(const Conj<Camino>& caminos);
+	Lista<NodoRed> listaNodosVecinos(const NodoRed& n);
+	bool nodoEnLista(const NodoRed& n, const Lista<NodoRed>& ns);
+
+public:
 	Red();
 
 	void agregarComputadora( const Compu& c);

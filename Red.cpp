@@ -18,20 +18,22 @@ void Red::agregarComputadora (const Compu& c) {
 
 	NodoRed nr(c);
 
-	dns.definir(c.ip, nr);
 	compus.AgregarRapido(c);
 
 	// inicializarConjCaminos esta embebida en este loop
 	DiccString<NodoRed>::Iterador it(&dns);
 	while(it.avanzar()) {
-		NodoRed nrt = *it.valorActual();
-		nrt.caminos.definir(nr.pc.ip, Conj<Camino>());
-		nr.caminos.definir(nrt.pc.ip, Conj<Camino>());
+		NodoRed* nrt = it.valorActual();
+		nrt->caminos.definir(nr.pc.ip, Conj<Camino>());
+		nr.caminos.definir(nrt->pc.ip, Conj<Camino>());
 	}
+
+	dns.definir(c.ip, nr);
 }
 
 void Red::conectar (const Compu& c1, const Compu& c2, const int i1, const int i2) {
 	// PRE: las interfaces de esas compus existen y estan libres
+	cout << "conectar\n";
 
 	NodoRed* n1 = dns.obtener(c1.ip);
 	NodoRed* n2 = dns.obtener(c2.ip);
@@ -47,15 +49,15 @@ void Red::CrearTodosLosCaminos () {
 	Conj<Compu>::Iterador itCompuA = compus.CrearIt();
 
 	while (itCompuA.HaySiguiente()) {
-		NodoRed nr = *dns.obtener(itCompuA.Siguiente().ip);
+		NodoRed* nr = dns.obtener(itCompuA.Siguiente().ip);
 
 		Conj<Compu>::Iterador itCompuB = compus.CrearIt();
 
 		while (itCompuB.HaySiguiente()) {
 			Computadora ipDestino = itCompuB.Siguiente().ip;
 
-			Conj<Camino> caminimos = Minimos(Caminos(nr, ipDestino));
-			nr.caminos.definir(ipDestino, caminimos);
+			Conj<Camino> caminimos = Caminos(*nr, ipDestino);
+			nr->caminos.definir(ipDestino, caminimos);
 
 			itCompuB.Avanzar();
 		}
@@ -98,12 +100,12 @@ Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
 				res.AgregarRapido(compusDeNodos(iRecorrido)); // originalmente no habia compusDeNodos
 			} else {
 				frameRecorrido.Apilar(iRecorrido);
-				frameCandidatos.Apilar(iCandidatos);
+				frameCandidatos.Apilar(fCandidatos);
 
 				if (!nodoEnLista(pCandidatos, iRecorrido)) {
 					// iRecorrido = Copiar(iRecorrido)
 					// no hace falta porque se apiló por copia
-					iRecorrido.AgregarAtras(pCandidatos);  // agregado .pc
+					iRecorrido.AgregarAtras(pCandidatos);
 					frameRecorrido.Apilar(iRecorrido);
 					frameCandidatos.Apilar(listaNodosVecinos(pCandidatos));
 				}

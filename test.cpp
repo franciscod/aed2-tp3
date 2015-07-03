@@ -313,6 +313,157 @@ void check_red_conecta_interfaz(){
 	ASSERT_EQ(r.interfazUsada(c2, c1), 3);
 }
 
+void check_red_caminimos_huge(){
+
+	/*
+		¡¡¡ CALATE ESTA RED !!!
+
+	       /-----A----\
+	      |   |   |   |
+	      |   |   |   |
+	J-- JAB  AB1 AB2 AB3
+	      \   |  |  /
+	            B----------Z-\
+	         BC1 BC2          X
+	            C----------Y-/
+	*/
+	Red r;
+
+	cout << "\n > Agregando compus...\n";
+
+	Compu J; J.ip = "J";
+	J.interfaces.Agregar(1);
+	r.agregarComputadora(J);
+
+	Compu A; A.ip = "A";
+	A.interfaces.Agregar(1);
+	A.interfaces.Agregar(2);
+	A.interfaces.Agregar(3);
+	A.interfaces.Agregar(4);
+	r.agregarComputadora(A);
+
+	Compu B; B.ip = "B";
+	B.interfaces.Agregar(1);
+	B.interfaces.Agregar(2);
+	B.interfaces.Agregar(3);
+	B.interfaces.Agregar(4);
+	B.interfaces.Agregar(5);
+	B.interfaces.Agregar(6);
+	B.interfaces.Agregar(7);
+	r.agregarComputadora(B);
+
+	Compu C; C.ip = "C";
+	C.interfaces.Agregar(1);
+	C.interfaces.Agregar(2);
+	C.interfaces.Agregar(3);
+	r.agregarComputadora(C);
+
+	Compu JAB; JAB.ip = "JAB";
+	JAB.interfaces.Agregar(1);
+	JAB.interfaces.Agregar(2);
+	JAB.interfaces.Agregar(3);
+	r.agregarComputadora(JAB);
+
+	Compu AB1; AB1.ip = "AB1";
+	AB1.interfaces.Agregar(1);
+	AB1.interfaces.Agregar(2);
+	r.agregarComputadora(AB1);
+
+	Compu AB2; AB2.ip = "AB2";
+	AB2.interfaces.Agregar(1);
+	AB2.interfaces.Agregar(2);
+	r.agregarComputadora(AB2);
+
+	Compu AB3; AB3.ip = "AB3";
+	AB3.interfaces.Agregar(1);
+	AB3.interfaces.Agregar(2);
+	r.agregarComputadora(AB3);
+
+	Compu BC1; BC1.ip = "BC1";
+	BC1.interfaces.Agregar(1);
+	BC1.interfaces.Agregar(2);
+	r.agregarComputadora(BC1);
+
+	Compu BC2; BC2.ip = "BC2";
+	BC2.interfaces.Agregar(1);
+	BC2.interfaces.Agregar(2);
+	r.agregarComputadora(BC2);
+
+	Compu Y; Y.ip = "Y";
+	Y.interfaces.Agregar(1);
+	Y.interfaces.Agregar(2);
+	r.agregarComputadora(Y);
+
+	Compu X; X.ip = "X";
+	X.interfaces.Agregar(1);
+	X.interfaces.Agregar(2);
+	r.agregarComputadora(X);
+
+	Compu Z; Z.ip = "Z";
+	Z.interfaces.Agregar(1);
+	Z.interfaces.Agregar(2);
+	r.agregarComputadora(Z);
+
+	// ufffff, a conectar... cómo era el dibujito?
+    /*
+		¡¡¡ CALATE ESTA RED !!!
+
+	       /-----A----\
+	      |   |   |   |
+	      |   |   |   |
+	J-- JAB  AB1 AB2 AB3
+	      \   |  |  /
+	            B----------Z-\
+	         BC1 BC2          X
+	            C----------Y-/
+	*/
+	cout << " > Conectando y generando caminos...\n";
+
+		r.conectar(A, AB3, 4, 1);
+		r.conectar(A, AB2, 3, 1);
+		r.conectar(A, AB1, 2, 1);
+		r.conectar(A, JAB, 1, 1);
+	r.conectar(J, JAB, 1, 3);
+	    r.conectar(B, JAB, 1, 2);
+		r.conectar(B, AB1, 2, 2);
+		r.conectar(B, AB2, 3, 2);
+		r.conectar(B, AB3, 4, 2);
+		                r.conectar(B, Z, 5, 1);
+	r.conectar(B, BC1, 6, 1);          r.conectar(Z, X, 2, 1);
+	r.conectar(B, BC2, 7, 1);          r.conectar(X, Y, 2, 1);
+		                r.conectar(C, X, 1, 2);
+	r.conectar(C, BC1, 2, 2);
+	r.conectar(C, BC2, 3, 2);
+
+	// waaaaaa no exploto nada?
+	cout << " > Listo!\n";
+
+	cout << r.dns.obtener(B.ip)->caminos.obtener(J.ip) << '\n';
+
+}
+
+void check_red_caminimos_mini(){
+	Red r;
+	Compu Y; Y.ip = "Y";
+	Y.interfaces.Agregar(1);
+	Y.interfaces.Agregar(2);
+	r.agregarComputadora(Y);
+
+	Compu X; X.ip = "X";
+	X.interfaces.Agregar(1);
+	X.interfaces.Agregar(2);
+	r.agregarComputadora(X);
+
+	Compu Z; Z.ip = "Z";
+	Z.interfaces.Agregar(1);
+	Z.interfaces.Agregar(2);
+	r.agregarComputadora(Z);
+
+	r.conectar(Y, Z, 1, 2);
+	r.conectar(Z, X, 1, 2);
+	cout << "ultima conexion\n";
+	r.conectar(X, Y, 1, 2);
+}
 // ---------------------------------------------------------------------
 
 /**
@@ -398,5 +549,6 @@ int main(int argc, char **argv){
 	RUN_TEST(check_red_nueva);
 	RUN_TEST(check_red_agregar_compu);
 	RUN_TEST(check_red_conecta_interfaz);
+	RUN_TEST(check_red_caminimos_mini);
 	return 0;
 }

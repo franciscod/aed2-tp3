@@ -21,6 +21,12 @@ struct Compu {
 	}
 };
 
+inline std::ostream& operator<<(std::ostream& os, const Compu& compu) {
+	os << "[Compu " << compu.ip << "]";
+	return os;
+}
+
+
 /***
  * Las restricciones son Strings con expresiones conformadas por operadores,
  * paréntesis y nombres de caracteristicas los cuales sólo son LETRAS del alfabeto

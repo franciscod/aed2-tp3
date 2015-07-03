@@ -1,12 +1,20 @@
 #include "Red.h"
 
+
+using namespace std;
+using namespace aed2;
+
 Red::Red(){
-	compus = Conj();
-	dns = DiccString();
+	//compus = Conj<Compu>();
+	//dns = DiccString<NodoRed>();
 }
 
+Conj<Compu> Red::computadoras(){
+	return compus;
+}
+/*
 void Red::agregarComputadora( const Compu& c){
-	
+
 	Iterador it =  Iterador(r.dns);
 	while{
 		it.valorActual().definir(it.valorActual().getCaminos(), c.getIP(), new DiccString < Conj< Lista<Compu> > >() );
@@ -32,10 +40,6 @@ void Red::conectar(const Compu& c1, const Compu& c2, const int i1, const int i2)
 	CrearTodosLosCaminos( r);
 }
 
-Conj<Compu> Red::computadoras(){
-	return r.compus;
-}
-
 bool Red::conectadas?( const Compu& c1, const Compu& c2){
 	bool res = false;
 	Iterador it =  Iterador(r.dns.obtener(c1.getIP()).getConexiones());
@@ -45,7 +49,7 @@ bool Red::conectadas?( const Compu& c1, const Compu& c2){
 		}
 		it.Avanzar();
 	}
-	return 
+	return
 }
 
 int Red::interfazUsada(const Compu& c1, const Compu& c2){
@@ -117,3 +121,4 @@ Red Red::copiar(){
 bool Red::operator==(const Red&) const{
 	return false
 }
+*/

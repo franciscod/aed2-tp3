@@ -10,6 +10,7 @@
 // Modulos del grupo
 #include "Pila.h"
 #include "ArbolBinario.h"
+#include "Red.h"
 
 using namespace aed2;
 
@@ -72,7 +73,7 @@ bool Comparar(const T& t, const S& s){
 		if ( !esta ) {
 			return false;
 		}
-			
+
 		it1.Avanzar();
 	}
 
@@ -253,6 +254,15 @@ void check_arbol_binario_swap(){
 	// sub-árboles que tenga linkeados
 	delete b;
 }
+
+
+// Red
+
+void check_red_nueva(){
+	Red r;
+	ASSERT(r.computadoras().EsVacio())
+}
+
 // ---------------------------------------------------------------------
 
 /**
@@ -286,14 +296,14 @@ void test_dcnet_ejemplo() {
 	dcnet.AgregarComputadora(c2, conjIc2);
 	dcnet.AgregarComputadora(c3, conjIc3);
 
-	// ejemplo - Indexado en 0 
-	Interfaz i1 = dcnet.IesimaInterfazDe(c1, 0); 
+	// ejemplo - Indexado en 0
+	Interfaz i1 = dcnet.IesimaInterfazDe(c1, 0);
 	Interfaz i2 = dcnet.IesimaInterfazDe(c2, 2);
 
 	dcnet.Conectar(c1, i1, c2, i2);
 	dcnet.CrearPaquete(c1, c2, 3);
-	dcnet.AvanzarSegundo();	
-		
+	dcnet.AvanzarSegundo();
+
 }
 */
 int main(int argc, char **argv){
@@ -312,5 +322,7 @@ int main(int argc, char **argv){
 	RUN_TEST(check_arbol_binario_asignacion);
 	RUN_TEST(check_arbol_binario_swap);
 
+	// Red
+	RUN_TEST(check_red_nueva);
 	return 0;
 }

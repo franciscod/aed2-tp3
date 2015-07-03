@@ -12,7 +12,7 @@ INCDIR=. #../../../../../Modulos-CPP
 
 # Agregar acá los archivos .cpp a compilar
 # TODO: Descomentar el Driver.cpp cuando esté listo
-SOURCES=test.cpp #Driver.cpp
+SOURCES=test.cpp Red.cpp#Driver.cpp
 
 # Objetos que serán generados (no tocar)
 OBJECTS=$(SOURCES:.cpp=.o)

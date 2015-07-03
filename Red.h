@@ -1,31 +1,29 @@
-#include "Conj.h"
-#include "Dicc.h"
-#include "dicc_trie.h"
-#include "Lista.h"
+#include "aed2/dicc_trie.h"
+#include "aed2/Conj.h"
+#include "Tipos.h"
 
-struct Compu{
-	int ip;
-	Conj <Nat> interfaces;
+using namespace aed2;
+
+struct Compu {
+	String ip;
+	Conj<Nat> interfaces;
 };
 
 class Red{
 
   private:
-  	struct NodoRed{
-  		Compu* pc ;
-		dicc_trie < Conj< lista < Compu > > > caminos: ;
-		Dicc < int , *NodoRed > conexiones:;
+  	struct NodoRed {
+  		Compu* pc;
+		DiccString< Conj< Lista<Compu> > > caminos;
+		Dicc < int , NodoRed* > conexiones;
   	};
+
  	Conj<Compu> compus;
- 	dicc_trie dns <NodoRed>
+ 	DiccString<NodoRed> dns;
 
  	void inicializarConjCaminos(const Compu* c);
 
   public:
-
-	/*
-	 * Crea una Red carrera
-	 */	
 	Red();
 
 	void agregarComputadora( const Compu& c);
@@ -34,7 +32,7 @@ class Red{
 
 	Conj<Compu> computadoras();
 
-	bool conectadas?(const Compu& c1, const Compu& c2);
+	bool conectadas(const Compu& c1, const Compu& c2);
 
 	int interfazUsada( const Compu& c1, const Compu& c2);
 
@@ -44,7 +42,7 @@ class Red{
 
 	Conj< Lista < Compu > > caminosMinimos( const Compu& c1, const Compu& c2);
 
-	bool hayCamino( const Compu& c1, const Compu& c2); 
+	bool hayCamino( const Compu& c1, const Compu& c2);
 
 	Red copiar();
 

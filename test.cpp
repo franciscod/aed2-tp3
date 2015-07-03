@@ -287,6 +287,32 @@ void check_red_agregar_compu(){
 
 }
 
+void check_red_conecta_interfaz(){
+	Red r;
+	Compu c1;
+	c1.ip = "riquelme";
+	c1.interfaces.Agregar(1);
+	c1.interfaces.Agregar(2);
+
+	Compu c2;
+	c2.ip = "pekerman";
+	c2.interfaces.Agregar(3);
+	c2.interfaces.Agregar(4);
+
+	r.agregarComputadora(c1);
+	r.agregarComputadora(c2);
+
+	r.conectar(c1, c2, 1, 3);
+
+	ASSERT(r.usaInterfaz(c1, 1));
+	ASSERT(!r.usaInterfaz(c1, 2));
+	ASSERT(r.usaInterfaz(c2, 3));
+	ASSERT(!r.usaInterfaz(c2, 4));
+
+	ASSERT_EQ(r.interfazUsada(c1, c2), 1);
+	ASSERT_EQ(r.interfazUsada(c2, c1), 3);
+}
+
 // ---------------------------------------------------------------------
 
 /**
@@ -371,5 +397,6 @@ int main(int argc, char **argv){
 	// Red
 	RUN_TEST(check_red_nueva);
 	RUN_TEST(check_red_agregar_compu);
+	RUN_TEST(check_red_conecta_interfaz);
 	return 0;
 }

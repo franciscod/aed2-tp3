@@ -29,8 +29,6 @@ class Red{
 
  	DiccString<NodoRed> dns;
 
- 	void inicializarConjCaminos(const Compu* c);
-
   public:
 	Red();
 

@@ -38,7 +38,7 @@ void Red::conectar (const Compu& c1, const Compu& c2, const int i1, const int i2
 	n1->conexiones.Definir(i1, n2);
 	n2->conexiones.Definir(i2, n1);
 
-	//CrearTodosLosCaminos();
+	CrearTodosLosCaminos();
 }
 
 
@@ -87,9 +87,10 @@ Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
 		frameRecorrido.Desapilar();
 		frameCandidatos.Desapilar();
 
-		NodoRed pCandidatos = iCandidatos.Primero(); // originalmente era Compu
-
 		if (!iCandidatos.EsVacia()) {
+			// esta linea estaba afuera del if
+			NodoRed pCandidatos = iCandidatos.Primero(); // originalmente era Compu
+
 			iCandidatos.Fin();
 			fCandidatos = iCandidatos;
 

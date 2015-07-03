@@ -152,7 +152,7 @@ cout << "destruyendo red"<< '\n';
 
 		for(Conj<Compu>::Iterador itCompus2 = compus.CrearIt(); itCompus2.HaySiguiente(); itCompus2.Avanzar()) {
 			Compu c2 = itCompus2.Siguiente();
-			Conj<Camino>* cam = *nr->caminos.obtener(c2.ip);
+			Conj<Camino>* cam = nr->caminos.obtener(c2.ip);
 			cout << nr->caminos.definido(c2.ip) << '\n';
 
 			nr->caminos.borrar(c2.ip);

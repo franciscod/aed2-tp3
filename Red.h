@@ -31,6 +31,8 @@ class Red{
   public:
 	Red();
 
+	~Red();
+
 	void agregarComputadora( const Compu& c);
 
 	void conectar(const Compu& c1, const Compu&c2, const int i1, const  int i2);

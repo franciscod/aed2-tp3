@@ -1,5 +1,6 @@
 #include "Red.h"
 
+#include <iostream>
 
 using namespace std;
 using namespace aed2;
@@ -30,6 +31,12 @@ void Red::agregarComputadora(const Compu& c){
 	NodoRed* nr = new NodoRed;
 
 	nr->pc = compuAgregada.Siguiente();
+	//nr->caminos = DiccString< Conj<Camino> >();
+	//nr->conexiones();
+
+	//FIXME: hacer directamente Conj<Camino> tiene algunos problemas con el trie
+	Conj<Camino>* caminosHaciaNuevaCompu = new Conj<Camino>;
+	nr->caminos.definir(c.ip, *caminosHaciaNuevaCompu);
 
 	dns.definir(c.ip, *nr);
 	//inicializarConjCaminos(r, c);
@@ -133,3 +140,25 @@ bool Red::operator==(const Red&) const{
 	return false
 }
 */
+
+Red::~Red()
+{
+cout << "destruyendo red"<< '\n';
+
+	for(Conj<Compu>::Iterador itCompus1 = compus.CrearIt(); itCompus1.HaySiguiente(); itCompus1.Avanzar()) {
+		Compu c1 = itCompus1.Siguiente();
+		NodoRed* nr = dns.obtener(c1.ip);
+		cout << dns.definido(c1.ip) << '\n';
+
+		for(Conj<Compu>::Iterador itCompus2 = compus.CrearIt(); itCompus2.HaySiguiente(); itCompus2.Avanzar()) {
+			Compu c2 = itCompus2.Siguiente();
+			Conj<Camino>* cam = *nr->caminos.obtener(c2.ip);
+			cout << nr->caminos.definido(c2.ip) << '\n';
+
+			nr->caminos.borrar(c2.ip);
+			//delete cam;
+		}
+		//delete nr;
+		dns.borrar(c1.ip);
+	}
+}

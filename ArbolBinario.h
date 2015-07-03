@@ -1,7 +1,3 @@
-#ifndef DEBUG
-#define DEBUG
-#endif
-
 #ifndef ARBOL_BINARIO_H_
 #define ARBOL_BINARIO_H_
 

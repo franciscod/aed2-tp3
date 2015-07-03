@@ -3,6 +3,7 @@
 #include "aed2/Lista.h"
 #include "aed2/Conj.h"
 #include "aed2/Dicc.h"
+#include "aed2/TiposBasicos.h"
 
 #include <string>
 #include <iostream>
@@ -10,6 +11,7 @@
 // Modulos del grupo
 #include "Pila.h"
 #include "ArbolBinario.h"
+#include "DiccLog.h"
 
 using namespace aed2;
 
@@ -253,6 +255,95 @@ void check_arbol_binario_swap(){
 	// sub-árboles que tenga linkeados
 	delete b;
 }
+
+// Dicc Log
+void check_dicc_log_vacio(){
+	DiccLog<Nat> d;
+
+	ASSERT(d.EsVacio());
+}
+
+void check_dicc_log_definir_uno(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 42);
+
+	ASSERT(d.Definido(1));
+}
+
+void check_dicc_log_obtener_uno(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 42);
+
+	ASSERT_EQ(d.Obtener(1), 42);
+}
+
+void check_dicc_log_minimo_uno(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 42);
+
+	ASSERT_EQ(d.Minimo(), 42);
+}
+
+void check_dicc_log_definir_sin_rotacion(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 8);	// padre
+	d.Definir(0, 4);	// hijo izquierdo
+	d.Definir(2, 15);	// hijo derecho
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+}
+
+void check_dicc_log_obtener_sin_rotacion(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 8);	// padre
+	d.Definir(0, 4);	// hijo izquierdo
+	d.Definir(2, 15);	// hijo derecho
+
+	ASSERT_EQ(d.Obtener(0), 4);
+	ASSERT_EQ(d.Obtener(1), 8);
+	ASSERT_EQ(d.Obtener(2), 15);
+}
+
+void check_dicc_log_minimo_sin_rotacion(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 8);	// padre
+
+	ASSERT_EQ(d.Minimo(), 8);
+
+	d.Definir(0, 4);	// hijo izquierdo (mínimo)
+
+	ASSERT_EQ(d.Minimo(), 4);
+
+	d.Definir(2, 15);	// hijo derecho
+
+	ASSERT_EQ(d.Minimo(), 4);
+}
+
+void check_dicc_log_definir_rotacion_simple(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 1);	// padre
+	d.Definir(0, 0);	// hijo izquierdo
+	d.Definir(3, 3);	// hijo derecho (padre2)
+	d.Definir(2, 2);	// hijo izquierdo de padre2
+	d.Definir(4, 4);	// hijo derecho de padre2 (padre3)
+	d.Definir(5, 5);	// hijo derecho de padre2 REBALANCEO
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+}
 // ---------------------------------------------------------------------
 
 /**
@@ -312,5 +403,14 @@ int main(int argc, char **argv){
 	RUN_TEST(check_arbol_binario_asignacion);
 	RUN_TEST(check_arbol_binario_swap);
 
+	// Dicc Log
+	RUN_TEST(check_dicc_log_vacio);
+	RUN_TEST(check_dicc_log_definir_uno);
+	RUN_TEST(check_dicc_log_obtener_uno);
+	RUN_TEST(check_dicc_log_minimo_uno);
+	RUN_TEST(check_dicc_log_definir_sin_rotacion);
+	RUN_TEST(check_dicc_log_obtener_sin_rotacion);
+	RUN_TEST(check_dicc_log_minimo_sin_rotacion);
+	//RUN_TEST(check_dicc_log_definir_rotacion_simple);
 	return 0;
 }

@@ -260,7 +260,30 @@ void check_arbol_binario_swap(){
 
 void check_red_nueva(){
 	Red r;
+	ASSERT(r.computadoras().EsVacio());
+}
+
+void check_red_agregar_compu(){
+	Red r;
 	ASSERT(r.computadoras().EsVacio())
+	Compu c1;
+	c1.ip = "gugel.com";
+	c1.interfaces.Agregar(1);
+	c1.interfaces.Agregar(2);
+	c1.interfaces.Agregar(3);
+
+	Compu c2;
+	c2.ip = "hamason.com";
+	c2.interfaces.Agregar(4);
+	c2.interfaces.Agregar(5);
+	c2.interfaces.Agregar(6);
+
+	r.agregarComputadora(c1);
+	r.agregarComputadora(c2);
+
+	ASSERT(r.computadoras().Pertenece(c1));
+	ASSERT(r.computadoras().Pertenece(c2));
+
 }
 
 // ---------------------------------------------------------------------
@@ -324,5 +347,6 @@ int main(int argc, char **argv){
 
 	// Red
 	RUN_TEST(check_red_nueva);
+	RUN_TEST(check_red_agregar_compu);
 	return 0;
 }

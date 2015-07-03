@@ -1,19 +1,29 @@
+#ifndef RED_H_
+#define RED_H_
+
 #include "aed2/dicc_trie.h"
 #include "aed2/Conj.h"
 #include "Tipos.h"
 
 using namespace aed2;
 
+typedef Lista<Compu> Camino;
+
 class Red{
 
   private:
+ 	Conj<Compu> compus;
+
   	struct NodoRed {
-  		Compu* pc;
-		DiccString< Conj< Lista<Compu> > > caminos;
-		Dicc < int , NodoRed* > conexiones;
+		// esto originalmente era un puntero, para que apuntase a la compu dentro de compus (el conj de arriba)
+		// por principios de abstraccion/encapsulamiento/modularidad no sentido que sea un
+		// puntero a algo (eventualmente, desconocido) dentro del tipo Conj: tiene más sentido guardar la Compu completa acá
+  		Compu pc;
+
+		DiccString< Conj<Camino> > caminos;
+		Dicc <Interfaz, NodoRed*> conexiones;
   	};
 
- 	Conj<Compu> compus;
  	DiccString<NodoRed> dns;
 
  	void inicializarConjCaminos(const Compu* c);
@@ -43,3 +53,5 @@ class Red{
 
 	bool operator==(const Red&) const;
 };
+
+#endif

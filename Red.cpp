@@ -12,20 +12,31 @@ Red::Red(){
 Conj<Compu> Red::computadoras(){
 	return compus;
 }
-/*
-void Red::agregarComputadora( const Compu& c){
 
-	Iterador it =  Iterador(r.dns);
-	while{
-		it.valorActual().definir(it.valorActual().getCaminos(), c.getIP(), new DiccString < Conj< Lista<Compu> > >() );
-	}do(it.Avanzar());
+void Red::agregarComputadora(const Compu& c){
+	// PRE: c no está en la red
 
-	r.compus.AgregarRapido(c&);
-	r.dns.definir (  c. ip , NodoRed(&c , new DiccString < Conj< Lista<Compu> > >() ,Dicc < int, *NodoRed() > );
-	inicializarConjCaminos(r , c);
+	DiccString<NodoRed>::Iterador it(&dns);
+
+	Conj<Compu>::Iterador compuAgregada = compus.AgregarRapido(c);
+
+	while(it.avanzar()) {
+		NodoRed* nr = it.valorActual();
+	 	Conj<Camino>* caminosHaciaNuevaCompu = new Conj<Camino>;
+		nr->caminos.definir(c.ip, *caminosHaciaNuevaCompu);
+	}
+
+
+	NodoRed* nr = new NodoRed;
+
+	nr->pc = compuAgregada.Siguiente();
+
+	dns.definir(c.ip, *nr);
+	//inicializarConjCaminos(r, c);
 
 }
 
+/*
 void Red::inicializarConjCaminos( const Compu& c){
 	Iterador it = Iterador(r.getCompus());
 	while(it.HaySiguiente()){

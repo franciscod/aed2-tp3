@@ -10,7 +10,7 @@
 // Modulos del grupo
 #include "Pila.h"
 #include "ArbolBinario.h"
-#include "Cola.h"
+#include "ColaPrioridad.h"
 
 using namespace aed2;
 
@@ -319,6 +319,28 @@ void check_cola_igualdad(){
 	ASSERT(c1 == c2);
 }
 
+// Cola de prioridad
+void check_cola_prioridad_vacia(){
+	ColaPrioridad<int> cola;
+	ASSERT(cola.esVacia());
+}
+
+void check_cola_prioridad_encolar(){
+	ColaPrioridad<int> cola;
+
+	cola.encolar(4, 4);
+
+	ASSERT_EQ(cola.proximo(), 4);
+
+	cola.encolar(4, 8);
+
+	ASSERT_EQ(cola.proximo(), 4);
+
+	cola.encolar(5, 1);
+
+	ASSERT_EQ(cola.proximo(), 1);
+}
+
 // ---------------------------------------------------------------------
 
 /**
@@ -384,6 +406,10 @@ int main(int argc, char **argv){
 	RUN_TEST(check_cola_desencolar);
 	RUN_TEST(check_cola_tamanho);
 	RUN_TEST(check_cola_igualdad);
+
+	//Cola de prioridad
+	RUN_TEST(check_cola_prioridad_vacia);
+	RUN_TEST(check_cola_prioridad_encolar);
 
 	return 0;
 }

@@ -287,7 +287,8 @@ void check_red_agregar_compu(){
 
 }
 
-void check_red_conecta_interfaz(){
+
+void check_red_conectar(){
 	Red r;
 	Compu c1;
 	c1.ip = "riquelme";
@@ -304,6 +305,8 @@ void check_red_conecta_interfaz(){
 
 	r.conectar(c1, c2, 1, 3);
 
+	ASSERT(r.conectadas(c1, c2));
+
 	ASSERT(r.usaInterfaz(c1, 1));
 	ASSERT(!r.usaInterfaz(c1, 2));
 	ASSERT(r.usaInterfaz(c2, 3));
@@ -311,6 +314,14 @@ void check_red_conecta_interfaz(){
 
 	ASSERT_EQ(r.interfazUsada(c1, c2), 1);
 	ASSERT_EQ(r.interfazUsada(c2, c1), 3);
+
+	
+
+	Conj <Compu> v1 = r.vecinos(c1) ;
+	ASSERT(v1.Pertenece(c2));
+	Conj <Compu> v2 = r.vecinos(c2) ;
+	ASSERT(v2.Pertenece(c1));
+	//ASSERT_EQ(r.vecinos(c1),r.vecinos(c2));
 }
 
 void check_red_caminimos_huge(){
@@ -548,7 +559,7 @@ int main(int argc, char **argv){
 	// Red
 	RUN_TEST(check_red_nueva);
 	RUN_TEST(check_red_agregar_compu);
-	RUN_TEST(check_red_conecta_interfaz);
+	RUN_TEST(check_red_conectar);
 	RUN_TEST(check_red_caminimos_mini);
 	return 0;
 }

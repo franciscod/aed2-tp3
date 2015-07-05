@@ -195,31 +195,37 @@ int Red::interfazUsada (const Compu& c1, const Compu& c2) {
 	return -1; // esto no deberia alcanzarse por la PRE
 }
 
-/*
 
-bool Red::conectadas?( const Compu& c1, const Compu& c2) {
+bool Red::conectadas( const Compu& c1, const Compu& c2) {
 	//TODO: esto esta bien? no tiene que chequear que haya algún camino?
+	// NO porque si estan conectadas -> existe un camino , osea estan al lado mano son vecinas osea entende amigou?
 	bool res = false;
-	Iterador it =  Iterador(r.dns.obtener(c1.getIP()).getConexiones());
-	while(it.HaySiguiente()) {
-		if c1.ip == (*(it.SiguienteSignificado().getPC()).getIP) {
-			res = true
-		}
-		it.Avanzar();
-	}
-	return
-}
+	Dicc <Interfaz, NodoRed*>::Iterador it = dns.obtener(c1.ip)->conexiones.CrearIt();
 
-Conj <Compu> Red::vecinos( const Compu& c) {
-	Conj <Compu> res = new Conj<Compu>();
-	Iterador it =  Iterador(r.dns.obtener(c.getIP()).getConexiones());
 	while(it.HaySiguiente()) {
-		res.AgregarRapido(*it.SiguienteSignificado().getPC());
+		NodoRed* nr = it.SiguienteSignificado();
+		if (c2.ip == (nr->pc.ip)) {
+			res = true;
+		}
 		it.Avanzar();
 	}
 	return res;
 }
 
+
+
+Conj <Compu> Red::vecinos( const Compu& c) {
+	Conj <Compu> res ;
+	Dicc <Interfaz, NodoRed*>::Iterador it = dns.obtener(c.ip)->conexiones.CrearIt();
+	while(it.HaySiguiente()) {
+		NodoRed* nr = it.SiguienteSignificado();
+		res.AgregarRapido(nr->pc);
+		it.Avanzar();
+	}
+	return res;
+}
+
+/*
 Conj< Lista < Compu > >  Red::caminosMinimos( const Compu& c1, const Compu& c2) {
 	return r.dns.obtener(c1.getIP()).getCaminos().obtener(c2.getIP());
 }

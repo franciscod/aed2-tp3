@@ -50,8 +50,8 @@ T& ColaPrioridad<T>::proximo(){
     #ifdef DEBUG
         assert(!esVacia());
     #endif
+    typename Dicc<Nat,nodosEncolados>::Iterador it = diccCola.CrearIt();
 
-    Dicc<Nat, nodosEncolados>::Iterador it = diccCola.CrearIt();
     Nat maxPrioridad = 0;
     while(it.HaySiguiente()){
         cout << "clave: " << it.SiguienteClave() << endl;
@@ -60,17 +60,17 @@ T& ColaPrioridad<T>::proximo(){
         it.Avanzar();
     }
 
-    return(diccCola.Significado(maxPrioridad).proximo())
+    return(diccCola.Significado(maxPrioridad).encolados.proximo());
 }
 
 template <typename T>
-T ColaPrioridad<T>::encolar(const Nat p, const T elem){
+void ColaPrioridad<T>::encolar(const Nat p, const T elem){
     if(diccCola.Definido(p)){
         diccCola.Significado(p).encolados.encolar(elem);
     }
     else{
         nodosEncolados nuevoNodo;
-        nuevoNodo.encolados = Cola();
+        nuevoNodo.encolados = Cola<T>();
         nuevoNodo.prioridad = p;
         nuevoNodo.encolados.encolar(elem);
         diccCola.Definir(p, nuevoNodo);

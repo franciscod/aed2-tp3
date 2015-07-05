@@ -1,7 +1,3 @@
-#ifndef DEBUG
-#define DEBUG
-#endif
-
 #ifndef DICC_LOG_H
 #define DICC_LOG_H
 
@@ -30,13 +26,7 @@ class DiccLog{
 /*
 		DiccLog(const DiccLog&);
 
-
-
 		void Borrar(const int&);
-
-
-		const T& Minimo() const;
-		const T& Obtener(const int&) const;
 
 		DiccLog<T>& operator=(const DiccLog<T>& otro);
 */
@@ -48,19 +38,25 @@ class DiccLog{
 			int balance;
 		};
 
-		ArbolBinario<NodoAvl>* abAvlPtr;
-		ArbolBinario<NodoAvl>* abMinPtr;
+		ArbolBinario<NodoAvl>* ptrAbAvl;
+		ArbolBinario<NodoAvl>* ptrAbMin;
 
 		ArbolBinario<NodoAvl>* crearArbol(const Nat&, const T&);
 
 		ArbolBinario<NodoAvl>*& subArbol(ArbolBinario<NodoAvl>*&, bool);
 		ArbolBinario<NodoAvl>*& subArbol(ArbolBinario<NodoAvl>*&, bool) const;
+
+		ArbolBinario<NodoAvl>*& balancearArbol(ArbolBinario<NodoAvl>*&, bool);
+		void ajustarBalance(ArbolBinario<NodoAvl>*&, bool, int);
+
+		ArbolBinario<NodoAvl>* rotacionSimple(ArbolBinario<NodoAvl>*&, bool);
+		ArbolBinario<NodoAvl>* rotacionDoble(ArbolBinario<NodoAvl>*&, bool);
 };
 
 template <typename T>
 DiccLog<T>::DiccLog(){
-	abAvlPtr = new ArbolBinario<NodoAvl>();
-	abMinPtr = NULL;
+	ptrAbAvl = new ArbolBinario<NodoAvl>();
+	ptrAbMin = NULL;
 }
 
 //template <typename T>
@@ -70,22 +66,22 @@ DiccLog<T>::DiccLog(){
 
 template <typename T>
 DiccLog<T>::~DiccLog(){
-	delete abAvlPtr;
+	delete ptrAbAvl;
 }
 
 template <typename T>
 bool DiccLog<T>::EsVacio() const{
-	return abAvlPtr->EsNil();
+	return ptrAbAvl->EsNil();
 }
 
 template <typename T>
 bool DiccLog<T>::Definido(const Nat& clave) const{
 	bool definido = false;
-	ArbolBinario<NodoAvl>* abIt = abAvlPtr;
+	ArbolBinario<NodoAvl>* ptrAbIt = ptrAbAvl;
 
-	while(!(abIt->EsNil() || definido)){
-		definido = (abIt->Raiz().clave == clave);
-		abIt = subArbol(abIt, (abIt->Raiz().clave < clave));
+	while(!(ptrAbIt->EsNil() || definido)){
+		definido = (ptrAbIt->Raiz().clave == clave);
+		ptrAbIt = subArbol(ptrAbIt, (ptrAbIt->Raiz().clave < clave));
 	}
 
 	return definido;
@@ -93,62 +89,68 @@ bool DiccLog<T>::Definido(const Nat& clave) const{
 
 template <typename T>
 void DiccLog<T>::Definir(const Nat& clave, const T& data){
-	if(abAvlPtr->EsNil()){
-		delete abAvlPtr;
-		abAvlPtr = crearArbol(clave, data);
-		abMinPtr = abAvlPtr;
+	if(ptrAbAvl->EsNil()){
+		delete ptrAbAvl;
+		ptrAbAvl = crearArbol(clave, data);
+		ptrAbMin = ptrAbAvl;
 	}
 	else{
-		ArbolBinario<NodoAvl>* abIt = abAvlPtr;
-		Pila<ArbolBinario<NodoAvl>*> pilaUpAb;
+		ArbolBinario<NodoAvl>* ptrAbIt = ptrAbAvl;
+		Pila<ArbolBinario<NodoAvl>*> pilaUpPtrAb;
 		Pila<bool> pilaUpDir;
 
-		pilaUpDir.Apilar(abIt->Raiz().clave < clave);
-		pilaUpAb.Apilar(abIt);
+		pilaUpDir.Apilar(ptrAbIt->Raiz().clave < clave);
+		pilaUpPtrAb.Apilar(ptrAbIt);
 
 		// Busco dónde insertar el nuevo elemento
-		while(!subArbol(abIt, pilaUpDir.Tope())->EsNil()){
-			abIt = subArbol(abIt, pilaUpDir.Tope());
+		while(!subArbol(ptrAbIt, pilaUpDir.Tope())->EsNil()){
+			ptrAbIt = subArbol(ptrAbIt, pilaUpDir.Tope());
 
-			pilaUpDir.Apilar(abIt->Raiz().clave < clave);
-			pilaUpAb.Apilar(abIt);
+			pilaUpDir.Apilar(ptrAbIt->Raiz().clave < clave);
+			pilaUpPtrAb.Apilar(ptrAbIt);
 		}
 		// Creo el ab para el nuevo elemento
-		delete subArbol(abIt, pilaUpDir.Tope());
-		subArbol(abIt, pilaUpDir.Tope()) = crearArbol(clave, data);
+		delete subArbol(ptrAbIt, pilaUpDir.Tope());
+		subArbol(ptrAbIt, pilaUpDir.Tope()) = crearArbol(clave, data);
 
 		// Si la clave del nuevo elemento es menor al actual, lo actualizo
-		if(clave < abMinPtr->Raiz().clave){
-			abMinPtr = subArbol(abIt, pilaUpDir.Tope());
+		if(clave < ptrAbMin->Raiz().clave){
+			ptrAbMin = subArbol(ptrAbIt, pilaUpDir.Tope());
 		}
 
 		bool done = false;
-		while(!(pilaUpAb.EsVacia() || done)){
+		while(!(done || pilaUpPtrAb.EsVacia())){
 			// Actualizo el balance
-			pilaUpAb.Tope()->Raiz().balance += pilaUpDir.Tope() ? 1 : -1;
+			pilaUpPtrAb.Tope()->Raiz().balance += pilaUpDir.Tope() ? 1 : -1;
 
-			if(pilaUpAb.Tope()->Raiz().balance == 0){
+			if(pilaUpPtrAb.Tope()->Raiz().balance == 0){
+				// Si estoy completamente balanceado terminé
 				done = true;
 			}
 			else{
-				if(pilaUpAb.Tope()->Raiz().balance % 2 == 1){
-					// TODO: rotaciones
-					//pilaUpAb.Tope() = balancearArbol(pilaUpAb.Tope(), pilaUpDir.Tope());
+				if(pilaUpPtrAb.Tope()->Raiz().balance % 2 == 0){
+					// Si estoy desbalanceado hago la rotación necesaria
+					pilaUpPtrAb.Tope() = balancearArbol(pilaUpPtrAb.Tope(), pilaUpDir.Tope());
 
-					if(pilaUpAb.Tamanho() > 1){
-						ArbolBinario<NodoAvl>* abTope = pilaUpAb.Tope();
-						pilaUpAb.Desapilar();
+					if(pilaUpPtrAb.Tamanho() > 1){
+						// Si no soy la raiz, actualizo en mi padre quién es mi
+						// nueva raíz luego de haber realizado las rotaciones
+						ArbolBinario<NodoAvl>* abTope = pilaUpPtrAb.Tope();
+						pilaUpPtrAb.Desapilar();
 						pilaUpDir.Desapilar();
-						subArbol(pilaUpAb.Tope(), pilaUpDir.Tope()) = abTope;
+						subArbol(pilaUpPtrAb.Tope(), pilaUpDir.Tope()) = abTope;
 					}
 					else{
-						abAvlPtr = pilaUpAb.Tope();
+						// Si la soy, me asigno al padre del diccionario
+						ptrAbAvl = pilaUpPtrAb.Tope();
 					}
 
+					// Como ahora estoy balanceado, termino
 					done = true;
 				}
 				else{
-					pilaUpAb.Desapilar();
+					// Si estoy parcialmente balanceado sigo subiendo el árbol
+					pilaUpPtrAb.Desapilar();
 					pilaUpDir.Desapilar();
 				}
 			}
@@ -161,13 +163,13 @@ T& DiccLog<T>::Obtener(const Nat& clave){
 	#ifdef DEBUG
 		assert(Definido(clave));
 	#endif
-	ArbolBinario<NodoAvl>* abIt = abAvlPtr;
+	ArbolBinario<NodoAvl>* ptrAbIt = ptrAbAvl;
 
-	while(abIt->Raiz().clave != clave){
-		abIt = subArbol(abIt, (abIt->Raiz().clave < clave));
+	while(ptrAbIt->Raiz().clave != clave){
+		ptrAbIt = subArbol(ptrAbIt, (ptrAbIt->Raiz().clave < clave));
 	}
 
-	return abIt->Raiz().data;
+	return ptrAbIt->Raiz().data;
 }
 
 template <typename T>
@@ -175,13 +177,13 @@ const T& DiccLog<T>::Obtener(const Nat& clave) const{
 	#ifdef DEBUG
 		assert(Definido(clave));
 	#endif
-	ArbolBinario<NodoAvl>* abIt = abAvlPtr;
+	ArbolBinario<NodoAvl>* ptrAbIt = ptrAbAvl;
 
-	while(abIt->Raiz().clave != clave){
-		abIt = subArbol(abIt, (abIt->Raiz().clave < clave));
+	while(ptrAbIt->Raiz().clave != clave){
+		ptrAbIt = subArbol(ptrAbIt, (ptrAbIt->Raiz().clave < clave));
 	}
 
-	return abIt->Raiz().data;
+	return ptrAbIt->Raiz().data;
 }
 
 template <typename T>
@@ -189,7 +191,7 @@ T& DiccLog<T>::Minimo(){
 	#ifdef DEBUG
 		assert(!EsVacio());
 	#endif
-	return abMinPtr->Raiz().data;
+	return ptrAbMin->Raiz().data;
 }
 
 template <typename T>
@@ -197,7 +199,7 @@ const T& DiccLog<T>::Minimo() const{
 	#ifdef DEBUG
 		assert(!EsVacio());
 	#endif
-	return abMinPtr->Raiz().data;
+	return ptrAbMin->Raiz().data;
 }
 
 template <typename T>
@@ -206,23 +208,92 @@ ArbolBinario<typename DiccLog<T>::NodoAvl>* DiccLog<T>::crearArbol(const Nat& c,
 }
 
 template <typename T>
-ArbolBinario<typename DiccLog<T>::NodoAvl>*& DiccLog<T>::subArbol(ArbolBinario<typename DiccLog<T>::NodoAvl>*& abPtr, bool dir){
+ArbolBinario<typename DiccLog<T>::NodoAvl>*& DiccLog<T>::subArbol(ArbolBinario<typename DiccLog<T>::NodoAvl>*& ptrAb, bool dir){
 	if(dir){
-		return abPtr->DerRapido();
+		return ptrAb->DerRapido();
 	}
 	else{
-		return abPtr->IzqRapido();
+		return ptrAb->IzqRapido();
 	}
 }
 
 template <typename T>
-ArbolBinario<typename DiccLog<T>::NodoAvl>*& DiccLog<T>::subArbol(ArbolBinario<typename DiccLog<T>::NodoAvl>*& abPtr, bool dir) const{
+ArbolBinario<typename DiccLog<T>::NodoAvl>*& DiccLog<T>::subArbol(ArbolBinario<typename DiccLog<T>::NodoAvl>*& ptrAb, bool dir) const{
 	if(dir){
-		return abPtr->DerRapido();
+		return ptrAb->DerRapido();
 	}
 	else{
-		return abPtr->IzqRapido();
+		return ptrAb->IzqRapido();
 	}
+}
+
+template <typename T>
+ArbolBinario<typename DiccLog<T>::NodoAvl>*& DiccLog<T>::balancearArbol(ArbolBinario<typename DiccLog<T>::NodoAvl>*& ptrAb, bool dir){
+	ArbolBinario<NodoAvl>* ptrAbHijo = subArbol(ptrAb, dir);
+
+	int bal = dir ? 1 : -1;
+
+	if(ptrAbHijo->Raiz().balance == bal){
+		ptrAb->Raiz().balance = 0;
+		ptrAbHijo->Raiz().balance = 0;
+		ptrAb = rotacionSimple(ptrAb, !dir);
+	}
+	else{
+		ajustarBalance(ptrAb, dir, bal);
+		ptrAb = rotacionDoble(ptrAb, !dir);
+	}
+
+	return ptrAb;
+}
+
+template <typename T>
+void DiccLog<T>::ajustarBalance(ArbolBinario<typename DiccLog<T>::NodoAvl>*& ptrAb, bool dir, int bal){
+	ArbolBinario<NodoAvl>*& ptrAbHijo = subArbol(ptrAb, dir);
+	ArbolBinario<NodoAvl>*& ptrAbNieto = subArbol(ptrAbHijo, !dir);
+
+	if(ptrAbNieto->Raiz().balance == 0){
+		ptrAb->Raiz().balance = 0;
+		ptrAbHijo->Raiz().balance = 0;
+	}
+	else{
+		if(ptrAbNieto->Raiz().balance == bal){
+			ptrAb->Raiz().balance = -bal;
+			ptrAbHijo->Raiz().balance = 0;
+		}
+		else{
+			ptrAb->Raiz().balance = 0;
+			ptrAbHijo->Raiz().balance = bal;
+		}
+	}
+
+	ptrAbNieto->Raiz().balance = 0;
+}
+
+template <typename T>
+ArbolBinario<typename DiccLog<T>::NodoAvl>* DiccLog<T>::rotacionSimple(ArbolBinario<typename DiccLog<T>::NodoAvl>*& ptrAb, bool dir){
+	// Hijo que pasará a ser la raiz
+	ArbolBinario<NodoAvl>* ptrAbHijo = subArbol(ptrAb, !dir);
+
+	// Le asigno al padre el hijo de la nueva raiz
+	subArbol(ptrAb, !dir) = subArbol(ptrAbHijo, dir);
+	subArbol(ptrAbHijo, dir) = ptrAb;
+
+	// Le asigno a la nueva raiz como hijo al padre
+	return ptrAbHijo;
+}
+
+template <typename T>
+ArbolBinario<typename DiccLog<T>::NodoAvl>* DiccLog<T>::rotacionDoble(ArbolBinario<typename DiccLog<T>::NodoAvl>*& ptrAb, bool dir){
+	ArbolBinario<NodoAvl>* ptrAbNieto = subArbol(subArbol(ptrAb, !dir), dir);
+
+	subArbol(subArbol(ptrAb, !dir), dir) = subArbol(ptrAbNieto, !dir);
+	subArbol(ptrAbNieto, !dir) = subArbol(ptrAb, !dir);
+	subArbol(ptrAb, !dir) = ptrAbNieto;
+	ptrAbNieto = subArbol(ptrAb, !dir);
+	subArbol(ptrAb, !dir) = subArbol(ptrAbNieto, dir);
+	subArbol(ptrAbNieto, dir) = ptrAb;
+
+	return ptrAbNieto;
 }
 
 #endif

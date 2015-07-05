@@ -18,7 +18,6 @@ class ArbolBinario{
 		ArbolBinario(const ArbolBinario&);
 
 		ArbolBinario(const ArbolBinario&, const T&, const ArbolBinario&);
-		ArbolBinario(ArbolBinario*, const T&, ArbolBinario*);
 
 		bool EsNil() const;
 
@@ -42,11 +41,6 @@ class ArbolBinario{
 			NodoAb(const ArbolBinario<T>& i, const T& r, const ArbolBinario<T>& d) : raiz(T(r)){
 				hijos[0] = new ArbolBinario<T>(i);
 				hijos[1] = new ArbolBinario<T>(d);
-			};
-
-			NodoAb(ArbolBinario<T>*& iPtr, const T& r, ArbolBinario<T>*& dPtr) : raiz(T(r)){
-				hijos[0] = iPtr;
-				hijos[1] = dPtr;
 			};
 
 			~NodoAb(){
@@ -96,11 +90,6 @@ ArbolBinario<T>& ArbolBinario<T>::operator = (const ArbolBinario<T>& otro){
 template <typename T>
 ArbolBinario<T>::ArbolBinario(const ArbolBinario<T>& izq, const T& raiz, const ArbolBinario<T>& der){
 	nodo = new NodoAb(izq, raiz, der);
-}
-
-template <typename T>
-ArbolBinario<T>::ArbolBinario(ArbolBinario<T>* izqPtr, const T& raiz, ArbolBinario<T>* derPtr){
-	nodo = new NodoAb(izqPtr, raiz, derPtr);
 }
 
 template <typename T>

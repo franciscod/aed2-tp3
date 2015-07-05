@@ -13,6 +13,7 @@
 #include "ArbolBinario.h"
 #include "DiccLog.h"
 
+using namespace std;
 using namespace aed2;
 
 /**
@@ -237,7 +238,9 @@ void check_arbol_binario_asignacion(){
 
 void check_arbol_binario_swap(){
 	ArbolBinario<int>* b = new ArbolBinario<int>(ArbolBinario<int>(), 2, ArbolBinario<int>());
-	ArbolBinario<int>* a = new ArbolBinario<int>(new ArbolBinario<int>(), 1, b);
+	ArbolBinario<int>* a = new ArbolBinario<int>(ArbolBinario<int>(), 1, ArbolBinario<int>());
+	delete a->DerRapido();
+	a->DerRapido() = b;
 
 	ASSERT_EQ(a->Raiz(), 1);
 	ASSERT_EQ(a->Der().Raiz(), 2);
@@ -253,6 +256,29 @@ void check_arbol_binario_swap(){
 
 	// sólo borro b, ya que este se va a encargar de borrar todos los
 	// sub-árboles que tenga linkeados
+	delete b;
+}
+
+void check_arbol_binario_rotacion_simple(){
+	ArbolBinario<int>* a = new ArbolBinario<int>(ArbolBinario<int>(), 1, ArbolBinario<int>());
+	ArbolBinario<int>* b = new ArbolBinario<int>(ArbolBinario<int>(), 2, ArbolBinario<int>());
+	ArbolBinario<int>* c = new ArbolBinario<int>(ArbolBinario<int>(), 3, ArbolBinario<int>());
+
+	delete a->DerRapido();
+	a->DerRapido() = b;
+
+	delete a->Der().DerRapido();
+	a->Der().DerRapido() = c;
+
+	ASSERT_EQ(a->Raiz(), 1);
+	ASSERT_EQ(a->Der().Raiz(), 2);
+	ASSERT_EQ(a->Der().Der().Raiz(), 3);
+
+	delete b->IzqRapido();
+	b->IzqRapido() = a;
+
+	a->DerRapido() = new ArbolBinario<int>();
+
 	delete b;
 }
 
@@ -327,7 +353,25 @@ void check_dicc_log_minimo_sin_rotacion(){
 	ASSERT_EQ(d.Minimo(), 4);
 }
 
-void check_dicc_log_definir_rotacion_simple(){
+void check_dicc_log_definir_rotacion_simple_izq(){
+	DiccLog<Nat> d;
+
+	d.Definir(4, 4);	// padre
+	d.Definir(5, 5);	// hijo derecho
+	d.Definir(2, 2);	// hijo izquierdo (padre2)
+	d.Definir(3, 3);	// hijo derecho de padre2
+	d.Definir(1, 1);	// hijo izquierdo de padre2 (padre3)
+	d.Definir(0, 0);	// hijo izquierdo de padre2 REBALANCEO
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+}
+
+void check_dicc_log_definir_rotacion_simple_der(){
 	DiccLog<Nat> d;
 
 	d.Definir(1, 1);	// padre
@@ -344,6 +388,435 @@ void check_dicc_log_definir_rotacion_simple(){
 	ASSERT(d.Definido(4));
 	ASSERT(d.Definido(5));
 }
+
+void check_dicc_log_obtener_rotacion_simple_izq(){
+	DiccLog<Nat> d;
+
+	d.Definir(4, 4);	// padre
+	d.Definir(5, 5);	// hijo derecho
+	d.Definir(2, 2);	// hijo izquierdo (padre2)
+	d.Definir(3, 3);	// hijo derecho de padre2
+	d.Definir(1, 1);	// hijo izquierdo de padre2 (padre3)
+	d.Definir(0, 0);	// hijo izquierdo de padre2 REBALANCEO
+
+	ASSERT_EQ(d.Obtener(0), 0);
+	ASSERT_EQ(d.Obtener(1), 1);
+	ASSERT_EQ(d.Obtener(2), 2);
+	ASSERT_EQ(d.Obtener(3), 3);
+	ASSERT_EQ(d.Obtener(4), 4);
+	ASSERT_EQ(d.Obtener(5), 5);
+}
+
+void check_dicc_log_obtener_rotacion_simple_der(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 1);	// padre
+	d.Definir(0, 0);	// hijo izquierdo
+	d.Definir(3, 3);	// hijo derecho (padre2)
+	d.Definir(2, 2);	// hijo izquierdo de padre2
+	d.Definir(4, 4);	// hijo derecho de padre2 (padre3)
+	d.Definir(5, 5);	// hijo derecho de padre2 REBALANCEO
+
+	ASSERT_EQ(d.Obtener(0), 0);
+	ASSERT_EQ(d.Obtener(1), 1);
+	ASSERT_EQ(d.Obtener(2), 2);
+	ASSERT_EQ(d.Obtener(3), 3);
+	ASSERT_EQ(d.Obtener(4), 4);
+	ASSERT_EQ(d.Obtener(5), 5);
+}
+
+void check_dicc_log_minimo_rotacion_simple_izq(){
+	DiccLog<Nat> d;
+
+	d.Definir(4, 4);	// padre
+
+	ASSERT_EQ(d.Minimo(), 4);
+
+	d.Definir(5, 5);	// hijo derecho
+
+	ASSERT_EQ(d.Minimo(), 4);
+
+	d.Definir(2, 2);	// hijo izquierdo (padre2)
+
+	ASSERT_EQ(d.Minimo(), 2);
+
+	d.Definir(3, 3);	// hijo derecho de padre2
+
+	ASSERT_EQ(d.Minimo(), 2);
+
+	d.Definir(1, 1);	// hijo izquierdo de padre2 (padre3)
+
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Definir(0, 0);	// hijo izquierdo de padre2 REBALANCEO
+
+	ASSERT_EQ(d.Minimo(), 0);
+}
+
+void check_dicc_log_minimo_rotacion_simple_der(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 1);	// padre
+
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Definir(0, 0);	// hijo izquierdo
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(3, 3);	// hijo derecho (padre2)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(2, 2);	// hijo izquierdo de padre2
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(4, 4);	// hijo derecho de padre2 (padre3)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(5, 5);	// hijo derecho de padre2 REBALANCEO
+
+	ASSERT_EQ(d.Minimo(), 0);
+}
+
+void check_dicc_log_definir_rotacion_doble_uno_der(){
+	DiccLog<int> d;
+
+	d.Definir(0, 0);	// padre0
+	d.Definir(2, 2);	// hijo derecho padre0 (padre1)
+	d.Definir(1, 1);	// hijo izquierdo padre1 REBALANCEO
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+}
+
+void check_dicc_log_definir_rotacion_doble_uno_izq(){
+	DiccLog<int> d;
+
+	d.Definir(2, 2);	// padre0
+	d.Definir(0, 0);	// hijo izquierdo padre0 (padre1)
+	d.Definir(1, 1);	// hijo derecho padre1 REBALANCEO
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+}
+
+void check_dicc_log_obtener_rotacion_doble_uno_der(){
+	DiccLog<int> d;
+
+	d.Definir(0, 0);	// padre0
+	d.Definir(2, 2);	// hijo derecho padre0 (padre1)
+	d.Definir(1, 1);	// hijo izquierdo padre1 REBALANCEO
+
+	ASSERT_EQ(d.Obtener(0), 0);
+	ASSERT_EQ(d.Obtener(1), 1);
+	ASSERT_EQ(d.Obtener(2), 2);
+}
+
+void check_dicc_log_obtener_rotacion_doble_uno_izq(){
+	DiccLog<int> d;
+
+	d.Definir(2, 2);	// padre0
+	d.Definir(0, 0);	// hijo izquierdo padre0 (padre1)
+	d.Definir(1, 1);	// hijo derecho padre1 REBALANCEO
+
+	ASSERT_EQ(d.Obtener(0), 0);
+	ASSERT_EQ(d.Obtener(1), 1);
+	ASSERT_EQ(d.Obtener(2), 2);
+}
+
+void check_dicc_log_minimo_rotacion_doble_uno_der(){
+	DiccLog<int> d;
+
+	d.Definir(0, 0);	// padre0
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(2, 2);	// hijo derecho padre0 (padre1)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(1, 1);	// hijo izquierdo padre1 REBALANCEO
+
+	ASSERT_EQ(d.Minimo(), 0);
+}
+
+void check_dicc_log_minimo_rotacion_doble_uno_izq(){
+	DiccLog<int> d;
+
+	d.Definir(2, 2);	// padre0
+
+	ASSERT_EQ(d.Minimo(), 2);
+
+	d.Definir(0, 0);	// hijo derecho padre0 (padre1)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(1, 1);	// hijo izquierdo padre1 REBALANCEO
+
+	ASSERT_EQ(d.Minimo(), 0);
+}
+
+void check_dicc_log_definir_rotacion_doble_dos_der(){
+	DiccLog<int> d;
+
+	d.Definir(1, 1);	// padre0
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	d.Definir(4, 4);	// hijo derecho padre0 (padre1)
+	d.Definir(5, 5);	// hijo derecho padre1
+	d.Definir(2, 2);	// hijo izquierdo padre1 (padre2)
+	d.Definir(3, 3);	// hijo derecho padre2 REBALANCEO
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+}
+
+void check_dicc_log_definir_rotacion_doble_dos_izq(){
+	DiccLog<int> d;
+
+	d.Definir(4, 4);	// padre0
+	d.Definir(5, 5);	// hijo derecho padre0
+	d.Definir(1, 1);	// hijo izquierdo padre0 (padre1)
+	d.Definir(0, 0);	// hijo izquierdo padre1
+	d.Definir(3, 3);	// hijo derecho padre1 (padre2)
+	d.Definir(2, 2);	// hijo izquierdo padre2 REBALANCEO
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+}
+
+void check_dicc_log_obtener_rotacion_doble_dos_der(){
+	DiccLog<int> d;
+
+	d.Definir(1, 1);	// padre0
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	d.Definir(4, 4);	// hijo derecho padre0 (padre1)
+	d.Definir(5, 5);	// hijo derecho padre1
+	d.Definir(2, 2);	// hijo izquierdo padre1 (padre2)
+	d.Definir(3, 3);	// hijo derecho padre2 REBALANCEO
+
+	ASSERT_EQ(d.Obtener(0), 0);
+	ASSERT_EQ(d.Obtener(1), 1);
+	ASSERT_EQ(d.Obtener(2), 2);
+	ASSERT_EQ(d.Obtener(3), 3);
+	ASSERT_EQ(d.Obtener(4), 4);
+	ASSERT_EQ(d.Obtener(5), 5);
+}
+
+void check_dicc_log_obtener_rotacion_doble_dos_izq(){
+	DiccLog<int> d;
+
+	d.Definir(4, 4);	// padre0
+	d.Definir(5, 5);	// hijo derecho padre0
+	d.Definir(1, 1);	// hijo izquierdo padre0 (padre1)
+	d.Definir(0, 0);	// hijo izquierdo padre1
+	d.Definir(3, 3);	// hijo derecho padre1 (padre2)
+	d.Definir(2, 2);	// hijo izquierdo padre2 REBALANCEO
+
+	ASSERT_EQ(d.Obtener(0), 0);
+	ASSERT_EQ(d.Obtener(1), 1);
+	ASSERT_EQ(d.Obtener(2), 2);
+	ASSERT_EQ(d.Obtener(3), 3);
+	ASSERT_EQ(d.Obtener(4), 4);
+	ASSERT_EQ(d.Obtener(5), 5);
+}
+
+void check_dicc_log_minimo_rotacion_doble_dos_der(){
+	DiccLog<int> d;
+
+	d.Definir(1, 1);	// padre0
+
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Definir(0, 0);	// hijo izquierdo padre0
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(4, 4);	// hijo derecho padre0 (padre1)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(5, 5);	// hijo derecho padre1
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(2, 2);	// hijo izquierdo padre1 (padre2)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(3, 3);	// hijo derecho padre2 REBALANCEO
+
+	ASSERT_EQ(d.Minimo(), 0);
+}
+
+void check_dicc_log_minimo_rotacion_doble_dos_izq(){
+	DiccLog<int> d;
+
+	d.Definir(4, 4);	// padre0
+
+	ASSERT_EQ(d.Minimo(), 4);
+
+	d.Definir(5, 5);	// hijo derecho padre0
+
+	ASSERT_EQ(d.Minimo(), 4);
+
+	d.Definir(1, 1);	// hijo izquierdo padre0 (padre1)
+
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Definir(0, 0);	// hijo izquierdo padre1
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(3, 3);	// hijo derecho padre1 (padre2)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(2, 2);	// hijo izquierdo padre2 REBALANCEO
+
+	ASSERT_EQ(d.Minimo(), 0);
+}
+
+void check_dicc_log_definir_rotacion_doble_tres_der(){
+	DiccLog<int> d;
+
+	d.Definir(1, 1);	// padre0
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	d.Definir(4, 4);	// hijo derecho padre0 (padre1)
+	d.Definir(5, 5);	// hijo derecho padre1
+	d.Definir(3, 3);	// hijo izquierdo padre1 (padre2)
+	d.Definir(2, 2);	// hijo izquierdo padre2
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+}
+
+void check_dicc_log_definir_rotacion_doble_tres_izq(){
+	DiccLog<int> d;
+
+	d.Definir(4, 4);	// padre0
+	d.Definir(5, 5);	// hijo derecho padre0
+	d.Definir(1, 1);	// hijo izquierdo padre0 (padre1)
+	d.Definir(0, 0);	// hijo izquierdo padre1
+	d.Definir(2, 2);	// hijo derecho padre1 (padre2)
+	d.Definir(3, 3);	// hijo derecho padre2 REBALANCEO
+
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+}
+
+void check_dicc_log_obtener_rotacion_doble_tres_der(){
+	DiccLog<int> d;
+
+	d.Definir(1, 1);	// padre0
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	d.Definir(4, 4);	// hijo derecho padre0 (padre1)
+	d.Definir(5, 5);	// hijo derecho padre1
+	d.Definir(3, 3);	// hijo izquierdo padre1 (padre2)
+	d.Definir(2, 2);	// hijo izquierdo padre2
+
+	ASSERT_EQ(d.Obtener(0), 0);
+	ASSERT_EQ(d.Obtener(1), 1);
+	ASSERT_EQ(d.Obtener(2), 2);
+	ASSERT_EQ(d.Obtener(3), 3);
+	ASSERT_EQ(d.Obtener(4), 4);
+	ASSERT_EQ(d.Obtener(5), 5);
+}
+
+void check_dicc_log_obtener_rotacion_doble_tres_izq(){
+	DiccLog<int> d;
+
+	d.Definir(4, 4);	// padre0
+	d.Definir(5, 5);	// hijo derecho padre0
+	d.Definir(1, 1);	// hijo izquierdo padre0 (padre1)
+	d.Definir(0, 0);	// hijo izquierdo padre1
+	d.Definir(2, 2);	// hijo derecho padre1 (padre2)
+	d.Definir(3, 3);	// hijo derecho padre2 REBALANCEO
+
+	ASSERT_EQ(d.Obtener(0), 0);
+	ASSERT_EQ(d.Obtener(1), 1);
+	ASSERT_EQ(d.Obtener(2), 2);
+	ASSERT_EQ(d.Obtener(3), 3);
+	ASSERT_EQ(d.Obtener(4), 4);
+	ASSERT_EQ(d.Obtener(5), 5);
+}
+
+void check_dicc_log_minimo_rotacion_doble_tres_der(){
+	DiccLog<int> d;
+
+	d.Definir(1, 1);	// padre0
+
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Definir(0, 0);	// hijo izquierdo padre0
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(4, 4);	// hijo derecho padre0 (padre1)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(5, 5);	// hijo derecho padre1
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(3, 3);	// hijo izquierdo padre1 (padre2)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(2, 2);	// hijo izquierdo padre2
+
+	ASSERT_EQ(d.Minimo(), 0);
+}
+
+void check_dicc_log_minimo_rotacion_doble_tres_izq(){
+	DiccLog<int> d;
+
+	d.Definir(4, 4);	// padre0
+
+	ASSERT_EQ(d.Minimo(), 4);
+
+	d.Definir(5, 5);	// hijo derecho padre0
+
+	ASSERT_EQ(d.Minimo(), 4);
+
+	d.Definir(1, 1);	// hijo izquierdo padre0 (padre1)
+
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Definir(0, 0);	// hijo izquierdo padre1
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(2, 2);	// hijo derecho padre1 (padre2)
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(3, 3);	// hijo derecho padre2 REBALANCEO
+
+	ASSERT_EQ(d.Minimo(), 0);
+}
+
 // ---------------------------------------------------------------------
 
 /**
@@ -402,15 +875,44 @@ int main(int argc, char **argv){
 	RUN_TEST(check_arbol_binario_destructor);
 	RUN_TEST(check_arbol_binario_asignacion);
 	RUN_TEST(check_arbol_binario_swap);
+	RUN_TEST(check_arbol_binario_rotacion_simple);
 
 	// Dicc Log
 	RUN_TEST(check_dicc_log_vacio);
 	RUN_TEST(check_dicc_log_definir_uno);
 	RUN_TEST(check_dicc_log_obtener_uno);
 	RUN_TEST(check_dicc_log_minimo_uno);
+
 	RUN_TEST(check_dicc_log_definir_sin_rotacion);
 	RUN_TEST(check_dicc_log_obtener_sin_rotacion);
 	RUN_TEST(check_dicc_log_minimo_sin_rotacion);
-	//RUN_TEST(check_dicc_log_definir_rotacion_simple);
+
+	RUN_TEST(check_dicc_log_definir_rotacion_simple_izq);
+	RUN_TEST(check_dicc_log_definir_rotacion_simple_der);
+	RUN_TEST(check_dicc_log_obtener_rotacion_simple_izq);
+	RUN_TEST(check_dicc_log_obtener_rotacion_simple_der);
+	RUN_TEST(check_dicc_log_minimo_rotacion_simple_izq);
+	RUN_TEST(check_dicc_log_minimo_rotacion_simple_der);
+
+	RUN_TEST(check_dicc_log_definir_rotacion_doble_uno_der);
+	RUN_TEST(check_dicc_log_definir_rotacion_doble_uno_izq);
+	RUN_TEST(check_dicc_log_obtener_rotacion_doble_uno_der);
+	RUN_TEST(check_dicc_log_obtener_rotacion_doble_uno_izq);
+	RUN_TEST(check_dicc_log_minimo_rotacion_doble_uno_der);
+	RUN_TEST(check_dicc_log_minimo_rotacion_doble_uno_izq);
+
+	RUN_TEST(check_dicc_log_definir_rotacion_doble_dos_der);
+	RUN_TEST(check_dicc_log_definir_rotacion_doble_dos_izq);
+	RUN_TEST(check_dicc_log_obtener_rotacion_doble_dos_der);
+	RUN_TEST(check_dicc_log_obtener_rotacion_doble_dos_izq);
+	RUN_TEST(check_dicc_log_minimo_rotacion_doble_dos_der);
+	RUN_TEST(check_dicc_log_minimo_rotacion_doble_dos_izq);
+
+	RUN_TEST(check_dicc_log_definir_rotacion_doble_tres_der);
+	RUN_TEST(check_dicc_log_definir_rotacion_doble_tres_izq);
+	RUN_TEST(check_dicc_log_obtener_rotacion_doble_tres_der);
+	RUN_TEST(check_dicc_log_obtener_rotacion_doble_tres_izq);
+	RUN_TEST(check_dicc_log_minimo_rotacion_doble_tres_der);
+	RUN_TEST(check_dicc_log_minimo_rotacion_doble_tres_izq);
 	return 0;
 }

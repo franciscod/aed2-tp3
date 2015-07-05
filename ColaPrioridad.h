@@ -50,17 +50,17 @@ T& ColaPrioridad<T>::proximo(){
     #ifdef DEBUG
         assert(!esVacia());
     #endif
+    
     typename Dicc<Nat,nodosEncolados>::Iterador it = diccCola.CrearIt();
-
-    Nat maxPrioridad = 0;
+    Nat maxPrioridad = it.SiguienteClave();
     while(it.HaySiguiente()){
-        cout << "clave: " << it.SiguienteClave() << endl;
-        if(it.SiguienteClave() > maxPrioridad)
+        if(it.SiguienteClave() < maxPrioridad)
             maxPrioridad = it.SiguienteClave();
         it.Avanzar();
     }
+    nodosEncolados& minimo = diccCola.Significado(maxPrioridad);
 
-    return(diccCola.Significado(maxPrioridad).encolados.proximo());
+    return(minimo.encolados.proximo());
 }
 
 template <typename T>
@@ -77,6 +77,26 @@ void ColaPrioridad<T>::encolar(const Nat p, const T elem){
     }
 }
 
+template <typename T>
+T ColaPrioridad<T>::desencolar(){
 
+    typename Dicc<Nat,nodosEncolados>::Iterador it = diccCola.CrearIt();
+    Nat maxPrioridad = it.SiguienteClave();
+    while(it.HaySiguiente()){
+        if(it.SiguienteClave() < maxPrioridad)
+            maxPrioridad = it.SiguienteClave();
+        it.Avanzar();
+    }
+    nodosEncolados& minimo = diccCola.Significado(maxPrioridad);
+
+    T res = minimo.encolados.proximo();
+
+    minimo.encolados.desencolar();
+    if(minimo.encolados.esVacia()){
+        diccCola.Borrar(minimo.prioridad);
+    }
+
+    return(res);
+}
 
 #endif // COLA_PRIORIDAD_H_INCLUDED

@@ -338,7 +338,24 @@ void check_cola_prioridad_encolar(){
 
 	cola.encolar(5, 1);
 
-	ASSERT_EQ(cola.proximo(), 1);
+	ASSERT_EQ(cola.proximo(), 4);
+
+	cola.encolar(1, 7);
+
+	ASSERT_EQ(cola.proximo(), 7);
+}
+
+void check_cola_prioridad_desencolar(){
+	ColaPrioridad<int> cola;
+
+	cola.encolar(2, 2);
+	cola.encolar(3, 3);
+	cola.encolar(1, 1);
+
+	ASSERT_EQ(cola.desencolar(), 1);
+	ASSERT_EQ(cola.desencolar(), 2);
+	ASSERT_EQ(cola.desencolar(), 3);
+	ASSERT(cola.esVacia());
 }
 
 // ---------------------------------------------------------------------
@@ -410,6 +427,7 @@ int main(int argc, char **argv){
 	//Cola de prioridad
 	RUN_TEST(check_cola_prioridad_vacia);
 	RUN_TEST(check_cola_prioridad_encolar);
+	RUN_TEST(check_cola_prioridad_desencolar);
 
 	return 0;
 }

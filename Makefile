@@ -21,7 +21,7 @@ OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=test
 
 all: $(SOURCES) tests
-	
+
 $(EXECUTABLE): clean $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 

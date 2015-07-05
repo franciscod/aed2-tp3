@@ -1,7 +1,7 @@
 /*
  * Diccionario implementado sobre dos listas enlazadas (Lista.h),
  * una de claves_ y una de significados_.
- * 
+ *
  * Created on 30 de octubre de 2010
  */
 

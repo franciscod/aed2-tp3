@@ -33,7 +33,6 @@ void Red::agregarComputadora (const Compu& c) {
 
 void Red::conectar (const Compu& c1, const Compu& c2, const int i1, const int i2) {
 	// PRE: las interfaces de esas compus existen y estan libres
-	cout << "conectar\n";
 
 	NodoRed* n1 = dns.obtener(c1.ip);
 	NodoRed* n2 = dns.obtener(c2.ip);
@@ -69,7 +68,7 @@ void Red::CrearTodosLosCaminos () {
 Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
 	Conj<Camino> res;
 
-	Pila< Lista<NodoRed> > frameRecorrido;  // originalmente era {ila< Lista<Compu> >
+	Pila< Lista<NodoRed> > frameRecorrido;  // originalmente era Pila< Lista<Compu> >
 	Pila< Lista<NodoRed> > frameCandidatos;
 
 	Lista<NodoRed> iCandidatos = listaNodosVecinos(c1);
@@ -195,6 +194,16 @@ int Red::interfazUsada (const Compu& c1, const Compu& c2) {
 	return -1; // esto no deberia alcanzarse por la PRE
 }
 
+Conj<Compu> Red::vecinos (const Compu& c) {
+	// PRE: c esta en la red
+	Conj<Compu> res;
+	Dicc<Interfaz, NodoRed*>::const_Iterador it = dns.obtener(c.ip)->conexiones.CrearIt();
+	while(it.HaySiguiente()) {
+		res.AgregarRapido(it.SiguienteSignificado()->pc);
+		it.Avanzar();
+	}
+	return res;
+}
 /*
 
 bool Red::conectadas?( const Compu& c1, const Compu& c2) {
@@ -210,15 +219,6 @@ bool Red::conectadas?( const Compu& c1, const Compu& c2) {
 	return
 }
 
-Conj <Compu> Red::vecinos( const Compu& c) {
-	Conj <Compu> res = new Conj<Compu>();
-	Iterador it =  Iterador(r.dns.obtener(c.getIP()).getConexiones());
-	while(it.HaySiguiente()) {
-		res.AgregarRapido(*it.SiguienteSignificado().getPC());
-		it.Avanzar();
-	}
-	return res;
-}
 
 Conj< Lista < Compu > >  Red::caminosMinimos( const Compu& c1, const Compu& c2) {
 	return r.dns.obtener(c1.getIP()).getCaminos().obtener(c2.getIP());

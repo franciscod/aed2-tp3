@@ -2,6 +2,7 @@
 #define DRIVER_H_
 
 #include "Tipos.h"
+#include "aed2/Conj.h"
 
 namespace aed2 {
 

@@ -311,6 +311,8 @@ void check_red_conecta_interfaz(){
 
 	ASSERT_EQ(r.interfazUsada(c1, c2), 1);
 	ASSERT_EQ(r.interfazUsada(c2, c1), 3);
+
+	ASSERT(r == r.copiar());
 }
 
 void check_red_conecta_vecinos(){
@@ -492,9 +494,10 @@ void check_red_caminimos_huge(){
 	// waaaaaa no exploto nada?
 	//cout << " > Listo!\n";
 
-	//cout << r.dns.obtener(B.ip)->caminos.obtener(J.ip) << '\n';
+	//cout << r.dns.Significado(B.ip)->caminos.Significado(J.ip) << '\n';
 
 }
+
 
 void check_red_caminimos_mini(){
 	Red r;

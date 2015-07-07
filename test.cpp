@@ -315,13 +315,68 @@ void check_red_conectar(){
 	ASSERT_EQ(r.interfazUsada(c1, c2), 1);
 	ASSERT_EQ(r.interfazUsada(c2, c1), 3);
 
-	
 
 	Conj <Compu> v1 = r.vecinos(c1) ;
 	ASSERT(v1.Pertenece(c2));
 	Conj <Compu> v2 = r.vecinos(c2) ;
 	ASSERT(v2.Pertenece(c1));
 	//ASSERT_EQ(r.vecinos(c1),r.vecinos(c2));
+	ASSERT(r == r.copiar());
+}
+
+void check_red_conecta_vecinos(){
+	Red r;
+	Compu c1;
+	c1.ip = "1";
+	c1.interfaces.Agregar(1);
+	c1.interfaces.Agregar(2);
+
+	Compu c2;
+	c2.ip = "2";
+	c2.interfaces.Agregar(1);
+	c2.interfaces.Agregar(2);
+
+	Compu c3;
+	c3.ip = "3";
+	c3.interfaces.Agregar(1);
+	c3.interfaces.Agregar(2);
+
+	r.agregarComputadora(c1);
+	r.agregarComputadora(c2);
+	r.agregarComputadora(c3);
+
+	ASSERT(r.vecinos(c1).EsVacio());
+	ASSERT(r.vecinos(c2).EsVacio());
+	ASSERT(r.vecinos(c3).EsVacio());
+
+	r.conectar(c1, c2, 1, 1);
+	ASSERT_EQ(r.vecinos(c1).Cardinal(), 1);
+	ASSERT_EQ(r.vecinos(c2).Cardinal(), 1);
+	ASSERT_EQ(r.vecinos(c3).Cardinal(), 0);
+	ASSERT(r.vecinos(c1).Pertenece(c2));
+	ASSERT(r.vecinos(c2).Pertenece(c1));
+
+	r.conectar(c1, c3, 2, 1);
+	ASSERT_EQ(r.vecinos(c1).Cardinal(), 2);
+	ASSERT_EQ(r.vecinos(c2).Cardinal(), 1);
+	ASSERT_EQ(r.vecinos(c3).Cardinal(), 1);
+	ASSERT(r.vecinos(c1).Pertenece(c2));
+	ASSERT(r.vecinos(c1).Pertenece(c3));
+	ASSERT(r.vecinos(c2).Pertenece(c1));
+	ASSERT(r.vecinos(c3).Pertenece(c1));
+
+	r.conectar(c2, c3, 2, 2);
+
+	ASSERT_EQ(r.vecinos(c1).Cardinal(), 2);
+	ASSERT_EQ(r.vecinos(c2).Cardinal(), 2);
+	ASSERT_EQ(r.vecinos(c3).Cardinal(), 2);
+	ASSERT(r.vecinos(c1).Pertenece(c2));
+	ASSERT(r.vecinos(c1).Pertenece(c3));
+	ASSERT(r.vecinos(c2).Pertenece(c1));
+	ASSERT(r.vecinos(c2).Pertenece(c3));
+	ASSERT(r.vecinos(c3).Pertenece(c1));
+	ASSERT(r.vecinos(c3).Pertenece(c2));
+
 }
 
 void check_red_caminimos_huge(){
@@ -447,11 +502,12 @@ void check_red_caminimos_huge(){
 	r.conectar(C, BC2, 3, 2);
 
 	// waaaaaa no exploto nada?
-	cout << " > Listo!\n";
+	//cout << " > Listo!\n";
 
-	//cout << r.dns.obtener(B.ip)->caminos.obtener(J.ip) << '\n';
+	//cout << r.dns.Significado(B.ip)->caminos.Significado(J.ip) << '\n';
 
 }
+
 
 void check_red_caminimos_mini(){
 	Red r;
@@ -472,7 +528,6 @@ void check_red_caminimos_mini(){
 
 	r.conectar(Y, Z, 1, 2);
 	r.conectar(Z, X, 1, 2);
-	cout << "ultima conexion\n";
 	r.conectar(X, Y, 1, 2);
 }
 // ---------------------------------------------------------------------
@@ -560,6 +615,7 @@ int main(int argc, char **argv){
 	RUN_TEST(check_red_nueva);
 	RUN_TEST(check_red_agregar_compu);
 	RUN_TEST(check_red_conectar);
+	RUN_TEST(check_red_conecta_vecinos);
 	RUN_TEST(check_red_caminimos_mini);
 	return 0;
 }

@@ -16,6 +16,10 @@ struct Compu {
 	String ip;
 	Conj<Nat> interfaces;
 
+	bool operator==(const Compu& rhs) const {
+	    return (ip == rhs.ip) || (interfaces == rhs.interfaces);
+	}
+
 	bool operator!=(const Compu& rhs) const {
 	    return (ip != rhs.ip) || !(interfaces == rhs.interfaces);
 	}

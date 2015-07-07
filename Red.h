@@ -17,16 +17,26 @@ private:
 		// esto originalmente era un puntero, para que apuntase a la compu dentro de compus (el conj de arriba)
 		// por principios de abstraccion/encapsulamiento/modularidad no sentido que sea un
 		// puntero a algo (eventualmente, desconocido) dentro del tipo Conj: tiene más sentido guardar la Compu completa acá
+		NodoRed(){
+			// Compu pc;
+			// DiccString< Conj<Camino> > caminos;
+			// Dicc <Interfaz, NodoRed*> conexiones;
+		};
+
+		bool operator==(const NodoRed& otro) const{
+			return (pc == otro.pc);
+		};
+
 		Compu pc;
 
-		DiccString< Conj<Camino> > caminos;
+		Dicc <String , Conj<Camino> > caminos;
 		Dicc <Interfaz, NodoRed*> conexiones;
 
 		NodoRed(const Compu& c) : pc(c) {};
 		NodoRed(const NodoRed& o) : pc(o.pc) {};
 	};
 
-	DiccString<NodoRed> dns;
+	Dicc <String, NodoRed> dns;
 
 	void CrearTodosLosCaminos();
 	Conj<Camino> Caminos(const NodoRed& c1, const Computadora& ipDestino);

@@ -11,30 +11,38 @@
 
 class DCNet{
     
-    struct compu{
+    struct Compu{
         String ip;
         Conj<int> interfaces;
+
+        bool operator == (const Compu) const;
     };
 
-    struct paquete{
+    struct Paquete{
         int id;
         int prioridad;
-        compu origen;
-        compu destino;
+        Compu origen;
+        Compu destino;
+
+        bool operator == (const Paquete) const;
     };
 
-    struct paqueteDCNet{
-        Conj<paquete>::Iterador it;
-        Lista<compu> recorrido;
+    struct PaqueteDCNet{
+        Conj<Paquete>::Iterador it;
+        Lista<Compu> recorrido;
+
+        bool operator == (const PaqueteDCNet) const;
     };
     
-    struct compuDCNet{
-        compu *pc;
-        Conj<paquete> conjPaquetes;
-        DiccLog<Conj<paqueteDCNet>::Iterador> diccPaquetesDCNet;
-        ColaPrioridad<Conj<paqueteDCNet>::Iterador> colaPaquetesDCNet;
-        Conj<paqueteDCNet>::Iterador paqueteAEnviar;
+    struct CompuDCNet{
+        Compu *pc;
+        Conj<Paquete> conjPaquetes;
+        DiccLog<Conj<PaqueteDCNet>::Iterador> diccPaquetesDCNet;
+        ColaPrioridad<Conj<PaqueteDCNet>::Iterador> colaPaquetesDCNet;
+        Conj<PaqueteDCNet>::Iterador paqueteAEnviar;
         int enviados;
+
+        bool operator == (const CompuDCNet) const;
     };
 
     public:
@@ -42,24 +50,24 @@ class DCNet{
         DCNet(Red);
         ~DCNet();
 
-        void crearPaquete(const paquete);
-        void avanzarSegundo();
-        Red red() const;
-        Lista<compu> caminoRecorrido(const paquete) const;
-        int cantidadDeEnviados(const compu) const;
-        Conj<paquete> enEspera(const compu) const;
-        bool paqueteEnTransito(paquete) const;
-        compu laQueMasEnvio() const;
+        void CrearPaquete(const Paquete);
+        void AvanzarSegundo();
+        Red Red() const;
+        Lista<Compu> CaminoRecorrido(const Paquete) const;
+        int CantidadDeEnviados(const Compu) const;
+        Conj<Paquete> EnEspera(const Compu) const;
+        bool PaqueteEnTransito(Paquete) const;
+        Compu LaQueMasEnvio() const;
 
         bool operator == (const DCNet) const;
 
     private:
 
         Red topologia;
-        Vector<compuDCNet> vectorCompusDCNet;
-        DiccString<*compuDCNet> diccCompusDCNet;
-        Conj<paqueteDCNet> conjPaquetesDCNet;
-        compuDCNet *laQueMasEnvio;
+        Vector<CompuDCNet> vectorCompusDCNet;
+        DiccString<*CompuDCNet> diccCompusDCNet;
+        Conj<PaqueteDCNet> conjPaquetesDCNet;
+        CompuDCNet *laQueMasEnvio;
 
 };
 

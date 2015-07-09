@@ -1,13 +1,10 @@
-#ifndef DEBUG
-#define DEBUG
-#endif
-
 #ifndef ARBOL_BINARIO_H_
 #define ARBOL_BINARIO_H_
 
 #include <ostream>
 #include <iostream>
 #include "Pila.h"
+#include "aed2/Lista.h"
 
 using namespace aed2;
 using namespace std;
@@ -22,7 +19,6 @@ class ArbolBinario{
 		ArbolBinario(const ArbolBinario&);
 
 		ArbolBinario(const ArbolBinario&, const T&, const ArbolBinario&);
-		ArbolBinario(ArbolBinario*, const T&, ArbolBinario*);
 
 		bool EsNil() const;
 
@@ -37,6 +33,8 @@ class ArbolBinario{
 		const ArbolBinario<T>& Der() const;
 		const T& Raiz() const;
 
+		Lista<T> Inorder() const;
+
 		ArbolBinario<T>& operator = (const ArbolBinario<T>&);
 
 		bool operator == (const ArbolBinario<T>&) const;
@@ -46,11 +44,6 @@ class ArbolBinario{
 			NodoAb(const ArbolBinario<T>& i, const T& r, const ArbolBinario<T>& d) : raiz(T(r)){
 				hijos[0] = new ArbolBinario<T>(i);
 				hijos[1] = new ArbolBinario<T>(d);
-			};
-
-			NodoAb(ArbolBinario<T>*& iPtr, const T& r, ArbolBinario<T>*& dPtr) : raiz(T(r)){
-				hijos[0] = iPtr;
-				hijos[1] = dPtr;
 			};
 
 			~NodoAb(){
@@ -100,11 +93,6 @@ ArbolBinario<T>& ArbolBinario<T>::operator = (const ArbolBinario<T>& otro){
 template <typename T>
 ArbolBinario<T>::ArbolBinario(const ArbolBinario<T>& izq, const T& raiz, const ArbolBinario<T>& der){
 	nodo = new NodoAb(izq, raiz, der);
-}
-
-template <typename T>
-ArbolBinario<T>::ArbolBinario(ArbolBinario<T>* izqPtr, const T& raiz, ArbolBinario<T>* derPtr){
-	nodo = new NodoAb(izqPtr, raiz, derPtr);
 }
 
 template <typename T>
@@ -174,6 +162,34 @@ const T& ArbolBinario<T>::Raiz() const{
 		assert(nodo != NULL);
 	#endif
 	return nodo->raiz;
+}
+
+template <typename T>
+Lista<T> ArbolBinario<T>::Inorder() const{
+	Lista<T> listaAbInorder;
+
+	const ArbolBinario<T>* ptrAbIt = this;
+	Pila<const ArbolBinario<T>*> pilaPtrAb;
+	bool done = false;
+
+	while(!done){
+		if(!ptrAbIt->EsNil()){
+			pilaPtrAb.Apilar(ptrAbIt);
+			ptrAbIt = &ptrAbIt->Izq();
+		}
+		else{
+			if(!pilaPtrAb.EsVacia()){
+				listaAbInorder.AgregarAtras(pilaPtrAb.Tope()->Raiz());
+				ptrAbIt = &pilaPtrAb.Tope()->Der();
+				pilaPtrAb.Desapilar();
+			}
+			else{
+				done = true;
+			}
+		}
+	}
+
+	return listaAbInorder;
 }
 
 template <typename T>

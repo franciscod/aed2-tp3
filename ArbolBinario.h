@@ -4,6 +4,7 @@
 #include <ostream>
 #include <iostream>
 #include "Pila.h"
+#include "aed2/Lista.h"
 
 using namespace aed2;
 using namespace std;
@@ -31,6 +32,8 @@ class ArbolBinario{
 		const ArbolBinario<T>& Izq() const;
 		const ArbolBinario<T>& Der() const;
 		const T& Raiz() const;
+
+		Lista<T> Inorder() const;
 
 		ArbolBinario<T>& operator = (const ArbolBinario<T>&);
 
@@ -159,6 +162,34 @@ const T& ArbolBinario<T>::Raiz() const{
 		assert(nodo != NULL);
 	#endif
 	return nodo->raiz;
+}
+
+template <typename T>
+Lista<T> ArbolBinario<T>::Inorder() const{
+	Lista<T> listaAbInorder;
+
+	const ArbolBinario<T>* ptrAbIt = this;
+	Pila<const ArbolBinario<T>*> pilaPtrAb;
+	bool done = false;
+
+	while(!done){
+		if(!ptrAbIt->EsNil()){
+			pilaPtrAb.Apilar(ptrAbIt);
+			ptrAbIt = &ptrAbIt->Izq();
+		}
+		else{
+			if(!pilaPtrAb.EsVacia()){
+				listaAbInorder.AgregarAtras(pilaPtrAb.Tope()->Raiz());
+				ptrAbIt = &pilaPtrAb.Tope()->Der();
+				pilaPtrAb.Desapilar();
+			}
+			else{
+				done = true;
+			}
+		}
+	}
+
+	return listaAbInorder;
 }
 
 template <typename T>

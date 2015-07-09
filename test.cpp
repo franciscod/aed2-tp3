@@ -282,6 +282,18 @@ void check_arbol_binario_rotacion_simple(){
 	delete b;
 }
 
+void check_arbol_binario_inorder(){
+	ArbolBinario<int> nil;
+	ArbolBinario<int> a(nil, 3, nil);
+
+	a.Izq() = ArbolBinario<int>(ArbolBinario<int>(nil, 0, nil), 1, ArbolBinario<int>(nil, 2, nil));
+	a.Der() = ArbolBinario<int>(ArbolBinario<int>(nil, 4, nil), 5, ArbolBinario<int>(nil, 6, nil));
+
+	ostringstream ossInorder;
+	Mostrar(ossInorder, a.Inorder(), '[', ']');
+	ASSERT_EQ(ossInorder.str(), "[0,1,2,3,4,5,6]");
+}
+
 // Dicc Log
 void check_dicc_log_vacio(){
 	DiccLog<Nat> d;
@@ -311,6 +323,15 @@ void check_dicc_log_minimo_uno(){
 	d.Definir(1, 42);
 
 	ASSERT_EQ(d.Minimo(), 42);
+}
+
+void check_dicc_log_borrar_uno(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 42);
+	d.Borrar(1);
+
+	ASSERT(d.EsVacio());
 }
 
 void check_dicc_log_definir_sin_rotacion(){
@@ -351,6 +372,113 @@ void check_dicc_log_minimo_sin_rotacion(){
 	d.Definir(2, 15);	// hijo derecho
 
 	ASSERT_EQ(d.Minimo(), 4);
+}
+
+void check_dicc_log_borrar_sin_rotacion(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 1);	// padre
+	d.Definir(0, 0);	// hijo izquierdo
+
+	d.Borrar(0);
+
+	ASSERT(!d.Definido(0));
+	ASSERT(d.Definido(1));
+
+	d.Borrar(1);
+	ASSERT(!d.Definido(1));
+	ASSERT(d.EsVacio());
+
+	d.Definir(1, 1);	// padre
+	d.Definir(2, 2);	// hijo derecho
+
+	d.Borrar(2);
+
+	ASSERT(!d.Definido(2));
+	ASSERT(d.Definido(1));
+
+	d.Borrar(1);
+
+	ASSERT(!d.Definido(2));
+	ASSERT(d.EsVacio());
+}
+
+void check_dicc_log_borrar_directo_raiz_sin_rotacion(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 1);	// padre
+	d.Definir(0, 0);	// hijo izquierdo
+	d.Definir(2, 2);	// hijo derecho
+
+	d.Borrar(1);
+
+	ASSERT(!d.Definido(1));
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(2));
+}
+
+void check_dicc_log_borrar_directo_sin_rotacion(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 1);	// padre
+	d.Definir(0, 0);	// hijo izquierdo
+	d.Definir(3, 3);	// hijo derecho (padre1)
+	d.Definir(4, 4);	// hijo derecho padre1
+	d.Definir(2, 2);	// hijo izquierdo padre1
+
+	d.Borrar(3);
+
+	ASSERT(!d.Definido(3));
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(4));
+}
+
+void check_dicc_log_borrar_indirecto_raiz_sin_rotacion(){
+	DiccLog<Nat> d;
+
+	d.Definir(2, 2);	// padre0
+	d.Definir(1, 1);	// hijo izquierdo (padre1)
+	d.Definir(5, 5);	// hijo derecho (padre2)
+	d.Definir(0, 0);	// hijo izquierdo padre1
+	d.Definir(6, 6);	// hijo derecho padre2
+	d.Definir(3, 3);	// hijo izquierdo padre2 (padre3)
+	d.Definir(4, 4);	// hijo derecho padre3
+
+	d.Borrar(2);
+
+	ASSERT(!d.Definido(2));
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+	ASSERT(d.Definido(6));
+}
+
+void check_dicc_log_borrar_indirecto_sin_rotacion(){
+	DiccLog<Nat> d;
+
+	d.Definir(2, 2);	// padre
+	d.Definir(1, 1);	// hijo izquierdo (padre1)
+	d.Definir(4, 4);	// hijo derecho (padre2)
+	d.Definir(0, 0);	// hijo izquierdo padre1
+	d.Definir(3, 3);	// hijo izquierdo padre2
+	d.Definir(6, 6);	// hijo derecho padre2 (padre3)
+	d.Definir(7, 7);	// hijo derecho padre3
+	d.Definir(5, 5);	// hijo izquierdo padre3
+
+	d.Borrar(4);
+
+	ASSERT(!d.Definido(4));
+	ASSERT(d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(5));
+	ASSERT(d.Definido(6));
+	ASSERT(d.Definido(7));
 }
 
 void check_dicc_log_definir_rotacion_simple_izq(){
@@ -817,7 +945,270 @@ void check_dicc_log_minimo_rotacion_doble_tres_izq(){
 	ASSERT_EQ(d.Minimo(), 0);
 }
 
-// ---------------------------------------------------------------------
+void check_dicc_log_borrar_rotacion_simple_uno(){
+	DiccLog<Nat> d;
+
+	d.Definir(2, 2);	// padre
+	d.Definir(1, 1);	// hijo izquierdo (padre0)
+	d.Definir(4, 4);	// hijo derecho (padre1)
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	d.Definir(3, 3);	// hijo izquierdo padre1
+	d.Definir(5, 5);	// hijo derecho padre1 (padre2)
+	d.Definir(6, 6);	// hijo derecho padre2
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Borrar(0);
+
+	ASSERT(!d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+	ASSERT(d.Definido(6));
+
+	ASSERT_EQ(d.Minimo(), 1);
+}
+
+void check_dicc_log_borrar_rotacion_simple_dos(){
+	DiccLog<Nat> d;
+
+	d.Definir(1, 1);	// padre
+	d.Definir(0, 0);	// hijo izquierdo
+	d.Definir(3, 3);	// hijo derecho (padre0)
+	d.Definir(2, 2);	// hijo izquierdo padre0
+	d.Definir(4, 4);	// hijo derecho padre0
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Borrar(0);
+
+	ASSERT(!d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+
+	ASSERT_EQ(d.Minimo(), 1);
+}
+
+void check_dicc_log_borrar_rotacion_doble_uno(){
+	DiccLog<Nat> d;
+
+	d.Definir(2, 2);	// padre
+	d.Definir(1, 1);	// hijo izquierdo (padre0)
+	d.Definir(6, 6);	// hijo derecho (padre1)
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	d.Definir(7, 7);	// hijo derecho padre1
+	d.Definir(4, 4);	// hijo izquierdo padre1 (padre2)
+	d.Definir(3, 3);	// hijo izquierdo padre2
+	d.Definir(5, 5);	// hijo derecho padre2
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Borrar(0);
+
+	ASSERT(!d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+	ASSERT(d.Definido(6));
+	ASSERT(d.Definido(7));
+
+	ASSERT_EQ(d.Minimo(), 1);
+}
+
+void check_dicc_log_borrar_rotacion_doble_dos(){
+	DiccLog<Nat> d;
+
+	d.Definir(2, 2);	// padre
+	d.Definir(1, 1);	// hijo izquierdo (padre0)
+	d.Definir(5, 5);	// hijo derecho (padre1)
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	d.Definir(3, 3);	// hijo izquierdo padre1 (padre2)
+	d.Definir(6, 6);	// hijo derecho padre1
+	d.Definir(4, 4);	// hijo derecho padre2
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Borrar(0);
+
+	ASSERT(!d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+	ASSERT(d.Definido(6));
+
+	ASSERT_EQ(d.Minimo(), 1);
+}
+
+void check_dicc_log_borrar_rotacion_doble_tres(){
+	DiccLog<Nat> d;
+
+	d.Definir(2, 2);	// padre
+	d.Definir(1, 1);	// hijo izquierdo (padre0)
+	d.Definir(5, 5);	// hijo derecho (padre1)
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	d.Definir(4, 4);	// hijo izquierdo padre1 (padre2)
+	d.Definir(6, 6);	// hijo derecho padre1
+	d.Definir(3, 3);	// hijo izquierdo padre2
+
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Borrar(0);
+
+	ASSERT(!d.Definido(0));
+	ASSERT(d.Definido(1));
+	ASSERT(d.Definido(2));
+	ASSERT(d.Definido(3));
+	ASSERT(d.Definido(4));
+	ASSERT(d.Definido(5));
+	ASSERT(d.Definido(6));
+
+	ASSERT_EQ(d.Minimo(), 1);
+}
+
+void check_dicc_log_borrar_minimo(){
+	DiccLog<Nat> d;
+
+	// Creo el árbol
+
+	d.Definir(3, 3);	// padre
+	ASSERT_EQ(d.Minimo(), 3);
+
+	d.Definir(1, 1);	// hijo izquierdo (padre0)
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Definir(5, 5);	// hijo derecho (padre1)
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Definir(0, 0);	// hijo izquierdo padre0
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(2, 2);	// hijo derecho padre0
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(4, 4);	// hijo izquierdo padre1
+	ASSERT_EQ(d.Minimo(), 0);
+
+	d.Definir(6, 6);	// hijo derecho padre1
+	ASSERT_EQ(d.Minimo(), 0);
+
+	// Borro todo el árbol
+
+	d.Borrar(d.Minimo());	// min = 0
+	ASSERT_EQ(d.Minimo(), 1);
+
+	d.Borrar(d.Minimo()); // min = 1
+	ASSERT_EQ(d.Minimo(), 2);
+
+	d.Borrar(d.Minimo()); // min = 2
+	ASSERT_EQ(d.Minimo(), 3);
+
+	d.Borrar(d.Minimo()); // min = 3
+	ASSERT_EQ(d.Minimo(), 4);
+
+	d.Borrar(d.Minimo()); // min = 4
+	ASSERT_EQ(d.Minimo(), 5);
+
+	d.Borrar(d.Minimo()); // min = 5
+	ASSERT_EQ(d.Minimo(), 6);
+
+	d.Borrar(d.Minimo()); // min = 6
+	ASSERT(d.EsVacio());
+}
+
+void check_dicc_log_asignacion(){
+	DiccLog<Nat> d0, d1;
+
+	d1.Definir(0, 0);
+	d1.Definir(1, 1);
+	d1.Definir(2, 2);
+	d1.Definir(3, 3);
+
+	d0 = d1;
+
+	ASSERT(d0.Definido(0));
+	ASSERT(d0.Definido(1));
+	ASSERT(d0.Definido(2));
+	ASSERT(d0.Definido(3));
+
+	ASSERT_EQ(d0.Minimo(), 0);
+
+	d0.Obtener(0) = 42;
+
+	ASSERT_EQ(d0.Obtener(0), 42);
+	ASSERT_EQ(d1.Obtener(0), 0);
+}
+
+void check_dicc_log_copia(){
+	DiccLog<Nat> d1;
+
+	d1.Definir(0, 0);
+	d1.Definir(1, 1);
+	d1.Definir(2, 2);
+	d1.Definir(3, 3);
+
+	DiccLog<Nat> d0(d1);
+
+	ASSERT(d0.Definido(0));
+	ASSERT(d0.Definido(1));
+	ASSERT(d0.Definido(2));
+	ASSERT(d0.Definido(3));
+
+	ASSERT_EQ(d0.Minimo(), 0);
+
+	d0.Obtener(0) = 42;
+
+	ASSERT_EQ(d0.Obtener(0), 42);
+	ASSERT_EQ(d1.Obtener(0), 0);
+}
+
+void check_dicc_log_igualdad(){
+	DiccLog<Nat> d0, d1;
+
+	d0.Definir(0, 0);
+	d0.Definir(1, 1);
+	d0.Definir(2, 2);
+	d0.Definir(3, 3);
+	d0.Definir(4, 4);
+
+	d1.Definir(4, 4);
+	d1.Definir(3, 3);
+	d1.Definir(1, 1);
+	d1.Definir(0, 0);
+	d1.Definir(2, 2);
+
+	ASSERT(d0 == d1);
+}
+
+void check_dicc_log_redefinir(){
+	DiccLog<Nat> d;
+
+	d.Definir(0, 0);
+	d.Definir(1, 1);
+	d.Definir(2, 2);
+
+	ASSERT_EQ(d.Obtener(0), 0);
+
+	d.Definir(0, 10);
+	ASSERT_EQ(d.Obtener(0), 10);
+
+	ASSERT_EQ(d.Obtener(1), 1);
+
+	d.Definir(1, 11);
+	ASSERT_EQ(d.Obtener(1), 11);
+
+	ASSERT_EQ(d.Obtener(2), 2);
+
+	d.Definir(2, 12);
+	ASSERT_EQ(d.Obtener(2), 12);
+}
 
 /**
 * Ejemplo de caso de test, con llamadas a las rutinas de aserción
@@ -876,16 +1267,24 @@ int main(int argc, char **argv){
 	RUN_TEST(check_arbol_binario_asignacion);
 	RUN_TEST(check_arbol_binario_swap);
 	RUN_TEST(check_arbol_binario_rotacion_simple);
+	RUN_TEST(check_arbol_binario_inorder);
 
 	// Dicc Log
 	RUN_TEST(check_dicc_log_vacio);
 	RUN_TEST(check_dicc_log_definir_uno);
 	RUN_TEST(check_dicc_log_obtener_uno);
 	RUN_TEST(check_dicc_log_minimo_uno);
+	RUN_TEST(check_dicc_log_borrar_uno);
 
 	RUN_TEST(check_dicc_log_definir_sin_rotacion);
 	RUN_TEST(check_dicc_log_obtener_sin_rotacion);
 	RUN_TEST(check_dicc_log_minimo_sin_rotacion);
+
+	RUN_TEST(check_dicc_log_borrar_sin_rotacion);
+	RUN_TEST(check_dicc_log_borrar_directo_raiz_sin_rotacion);
+	RUN_TEST(check_dicc_log_borrar_directo_sin_rotacion);
+	RUN_TEST(check_dicc_log_borrar_indirecto_raiz_sin_rotacion);
+	RUN_TEST(check_dicc_log_borrar_indirecto_sin_rotacion);
 
 	RUN_TEST(check_dicc_log_definir_rotacion_simple_izq);
 	RUN_TEST(check_dicc_log_definir_rotacion_simple_der);
@@ -914,5 +1313,17 @@ int main(int argc, char **argv){
 	RUN_TEST(check_dicc_log_obtener_rotacion_doble_tres_izq);
 	RUN_TEST(check_dicc_log_minimo_rotacion_doble_tres_der);
 	RUN_TEST(check_dicc_log_minimo_rotacion_doble_tres_izq);
+
+	RUN_TEST(check_dicc_log_borrar_rotacion_simple_uno);
+	RUN_TEST(check_dicc_log_borrar_rotacion_simple_dos);
+	RUN_TEST(check_dicc_log_borrar_rotacion_doble_uno);
+	RUN_TEST(check_dicc_log_borrar_rotacion_doble_dos);
+	RUN_TEST(check_dicc_log_borrar_rotacion_doble_tres);
+	RUN_TEST(check_dicc_log_borrar_minimo);
+
+	RUN_TEST(check_dicc_log_asignacion);
+	RUN_TEST(check_dicc_log_copia);
+	RUN_TEST(check_dicc_log_igualdad);
+	RUN_TEST(check_dicc_log_redefinir);
 	return 0;
 }

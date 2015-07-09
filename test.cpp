@@ -377,6 +377,12 @@ void check_red_conecta_vecinos(){
 	ASSERT(r.vecinos(c3).Pertenece(c1));
 	ASSERT(r.vecinos(c3).Pertenece(c2));
 
+	ASSERT(r.hayCamino(c1,c2));
+	ASSERT(r.hayCamino(c1,c3));
+	ASSERT(r.hayCamino(c2,c3));
+
+	ASSERT(r == r.copiar());
+
 }
 
 void check_red_caminimos_huge(){
@@ -501,6 +507,29 @@ void check_red_caminimos_huge(){
 	r.conectar(C, BC1, 2, 2);
 	r.conectar(C, BC2, 3, 2);
 
+	ASSERT(r.hayCamino(A,JAB));
+	ASSERT(r.hayCamino(A,AB1));
+	ASSERT(r.hayCamino(A,AB2));
+	ASSERT(r.hayCamino(A,AB3));
+	ASSERT(r.hayCamino(A,J));
+
+	ASSERT(r.hayCamino(A,B));
+	ASSERT(r.hayCamino(A,Z));
+
+	ASSERT(r.hayCamino(A,BC1));
+	ASSERT(r.hayCamino(A,BC2));
+	ASSERT(r.hayCamino(A,X));
+
+	ASSERT(r.hayCamino(A,C));
+	ASSERT(r.hayCamino(A,Y));
+
+	Conj< Camino > caminos = r.caminosMinimos(A, C);
+	cout << endl;
+	cout << caminos << endl;
+
+
+	ASSERT(r == r.copiar());
+
 	// waaaaaa no exploto nada?
 	//cout << " > Listo!\n";
 
@@ -529,6 +558,14 @@ void check_red_caminimos_mini(){
 	r.conectar(Y, Z, 1, 2);
 	r.conectar(Z, X, 1, 2);
 	r.conectar(X, Y, 1, 2);
+	Conj< Camino > caminos = r.caminosMinimos(X, Y);
+	cout << endl;
+	cout << caminos << endl;
+	// ASSERT( r.caminosMinimos(X,Y) == r.caminosMinimos(Y,X) );
+	// ASSERT( r.caminosMinimos(X,Z) == r.caminosMinimos(Z,X) );
+	// ASSERT( r.caminosMinimos(Y,Z) == r.caminosMinimos(Z,Y) );
+
+	ASSERT(r == r.copiar());
 }
 // ---------------------------------------------------------------------
 
@@ -617,5 +654,7 @@ int main(int argc, char **argv){
 	RUN_TEST(check_red_conectar);
 	RUN_TEST(check_red_conecta_vecinos);
 	RUN_TEST(check_red_caminimos_mini);
+	RUN_TEST(check_red_caminimos_huge);
+	
 	return 0;
 }

@@ -62,7 +62,7 @@ public:
 
 	bool usaInterfaz( const Compu& c, const int i);
 
-	Conj< Lista < Compu > > caminosMinimos( const Compu& c1, const Compu& c2);
+	Conj< Camino > caminosMinimos( const Compu& c1, const Compu& c2);
 
 	bool hayCamino( const Compu& c1, const Compu& c2);
 

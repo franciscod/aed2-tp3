@@ -205,6 +205,18 @@ Conj<Compu> Red::vecinos (const Compu& c) {
 	}
 	return res;
 }
+
+bool Red::hayCamino( const Compu& c1, const Compu& c2){
+	NodoRed* nr = &dns.Significado(c1.ip);
+	return !nr->caminos.Significado(c2.ip).EsVacio();
+
+}
+
+Conj< Camino > Red::caminosMinimos( const Compu& c1, const Compu& c2){
+	NodoRed* nr = &dns.Significado(c1.ip);
+	return nr->caminos.Significado(c2.ip);
+};
+
 bool Red::conectadas( const Compu& c1, const Compu& c2) {
 	//TODO: esto esta bien? no tiene que chequear que haya algún camino?
 	// NO porque si estan conectadas -> existe un camino , osea estan al lado mano son vecinas osea entende amigou?
@@ -212,7 +224,7 @@ bool Red::conectadas( const Compu& c1, const Compu& c2) {
 	Dicc <Interfaz, NodoRed*>::Iterador it = dns.Significado(c1.ip).conexiones.CrearIt();
 
 	while(it.HaySiguiente()) {
-		NodoRed* nr = it.SiguienteSignificado();
+		NodoRed* nr =  it.SiguienteSignificado();
 		if (c2.ip == (nr->pc.ip)) {
 			res = true;
 		}

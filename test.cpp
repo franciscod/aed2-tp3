@@ -1270,10 +1270,41 @@ void check_trie() {
 
 }
 
+void check_trie_prefix(){
+	DiccString<Nat> d;
+
+	d.definir("a", 0);
+	d.definir("ab", 1);
+	d.definir("abc", 2);
+	d.definir("abcd", 3);
+	d.definir("abcde", 4);
+
+	ASSERT_EQ(d.obtener("a"), 0);
+	ASSERT_EQ(d.obtener("ab"), 1);
+	ASSERT_EQ(d.obtener("abc"), 2);
+	ASSERT_EQ(d.obtener("abcd"), 3);
+	ASSERT_EQ(d.obtener("abcde"), 4);
+}
+
+void check_trie_const(){
+	DiccString<Nat> d;
+	d.definir("a", 0);
+	d.definir("ab", 1);
+	d.definir("abc", 2);
+
+	const DiccString<Nat> constDicc(d);
+
+	ASSERT_EQ(constDicc.obtener("a"), 0);
+	ASSERT_EQ(constDicc.obtener("ab"), 1);
+	ASSERT_EQ(constDicc.obtener("abc"), 2);
+}
+
 int main(int argc, char **argv){
 
 	// Trie
 	RUN_TEST(check_trie);
+	RUN_TEST(check_trie_prefix);
+	RUN_TEST(check_trie_const);
 
 	// Pila
 	RUN_TEST(check_pila_vacia);

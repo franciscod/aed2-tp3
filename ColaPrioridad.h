@@ -4,9 +4,6 @@
 #include "Cola.h"
 #include "DiccLog.h"
 
-using namespace aed2;
-using namespace std;
-
 template <typename T>
 class ColaPrioridad{
 

@@ -12,6 +12,7 @@
 // Modulos del grupo
 #include "Pila.h"
 #include "ArbolBinario.h"
+#include "ColaPrioridad.h"
 #include "DiccLog.h"
 
 using namespace std;
@@ -258,6 +259,130 @@ void check_arbol_binario_swap(){
 	// sólo borro b, ya que este se va a encargar de borrar todos los
 	// sub-árboles que tenga linkeados
 	delete b;
+}
+
+//Cola
+
+void check_cola_vacia(){
+	Cola<int> cola;
+
+	ASSERT(cola.EsVacia());
+}
+
+void check_cola_encolar(){
+	Cola<int> cola;
+
+	cola.Encolar(3);
+
+	ASSERT_EQ(cola.Proximo(), 3);
+	
+	cola.Encolar(-3);
+
+	ASSERT_EQ(cola.Proximo(), 3);
+}
+
+void check_cola_desencolar(){
+	Cola<int> cola;
+
+	cola.Encolar(3);
+	cola.Encolar(-3);
+
+	cola.Desencolar();
+
+	ASSERT_EQ(cola.Proximo(), -3);
+
+	cola.Encolar(42);
+	cola.Encolar(13);
+
+	cola.Desencolar();
+
+	ASSERT_EQ(cola.Proximo(), 42);
+}
+
+void check_cola_tamanho(){
+	Cola<int> cola;
+
+	ASSERT_EQ(cola.Tamanho(), 0);
+
+	cola.Encolar(1);
+
+	ASSERT_EQ(cola.Tamanho(), 1);
+
+	cola.Desencolar();
+
+	ASSERT_EQ(cola.Tamanho(), 0);
+}
+
+void check_cola_igualdad(){
+	Cola<int> c1, c2;
+
+	c2.Encolar(4);
+
+	ASSERT(!(c1 == c2));
+
+	c1.Encolar(4);
+
+	ASSERT(c1 == c2);
+
+	c1.Encolar(3);
+
+	ASSERT(!(c1 == c2));
+}
+
+// Cola de prioridad
+void check_cola_prioridad_vacia(){
+	ColaPrioridad<int> cola;
+	ASSERT(cola.EsVacia());
+}
+
+void check_cola_prioridad_encolar(){
+	ColaPrioridad<int> cola;
+
+	cola.Encolar(4, 4);
+
+	ASSERT_EQ(cola.Proximo(), 4);
+
+	cola.Encolar(4, 8);
+
+	ASSERT_EQ(cola.Proximo(), 4);
+
+	cola.Encolar(5, 1);
+
+	ASSERT_EQ(cola.Proximo(), 4);
+
+	cola.Encolar(1, 7);
+
+	ASSERT_EQ(cola.Proximo(), 7);
+}
+
+void check_cola_prioridad_desencolar(){
+	ColaPrioridad<int> cola;
+
+	cola.Encolar(2, 2);
+	cola.Encolar(3, 3);
+	cola.Encolar(1, 1);
+
+	ASSERT_EQ(cola.Desencolar(), 1);
+	ASSERT_EQ(cola.Desencolar(), 2);
+	ASSERT_EQ(cola.Desencolar(), 3);
+	ASSERT(cola.EsVacia());
+}
+
+void check_cola_de_prioridad_igualdad(){
+	ColaPrioridad<int> c1, c2;
+
+	c1.Encolar(1, 1);
+
+	ASSERT(!(c1 == c2));
+
+	c2.Encolar(2, 2);
+
+	ASSERT(!(c1 == c2));
+
+	c1.Encolar(2, 2);
+	c2.Encolar(1, 1);
+
+	ASSERT(c1 == c2);	
 }
 
 void check_arbol_binario_rotacion_simple(){
@@ -1211,6 +1336,10 @@ void check_dicc_log_redefinir(){
 	ASSERT_EQ(d.Obtener(2), 12);
 }
 
+
+
+// ---------------------------------------------------------------------
+
 /**
 * Ejemplo de caso de test, con llamadas a las rutinas de aserción
 * definidas en mini_test.h
@@ -1289,6 +1418,20 @@ int main(int argc, char **argv){
 	RUN_TEST(check_arbol_binario_destructor);
 	RUN_TEST(check_arbol_binario_asignacion);
 	RUN_TEST(check_arbol_binario_swap);
+
+	//Cola
+	RUN_TEST(check_cola_vacia);
+	RUN_TEST(check_cola_encolar);
+	RUN_TEST(check_cola_desencolar);
+	RUN_TEST(check_cola_tamanho);
+	RUN_TEST(check_cola_igualdad);
+
+	//Cola de prioridad
+	RUN_TEST(check_cola_prioridad_vacia);
+	RUN_TEST(check_cola_prioridad_encolar);
+	RUN_TEST(check_cola_prioridad_desencolar);
+	RUN_TEST(check_cola_de_prioridad_igualdad);
+
 	RUN_TEST(check_arbol_binario_rotacion_simple);
 	RUN_TEST(check_arbol_binario_inorder);
 
@@ -1348,5 +1491,6 @@ int main(int argc, char **argv){
 	RUN_TEST(check_dicc_log_copia);
 	RUN_TEST(check_dicc_log_igualdad);
 	RUN_TEST(check_dicc_log_redefinir);
+	
 	return 0;
 }

@@ -52,15 +52,17 @@ void Red::CrearTodosLosCaminos () {
 		NodoRed* nr = &dns.Significado(itCompuA.Siguiente().ip);
 
 		Conj<Compu>::Iterador itCompuB = compus.CrearIt();
-
+		cout << "creo los caminos de "; 
+		cout << nr->pc.ip << endl;
 		while (itCompuB.HaySiguiente()) {
 			Computadora ipDestino = itCompuB.Siguiente().ip;
-
+			if(nr->pc.ip != ipDestino){
 			Conj<Camino> caminimos = Caminos(*nr, ipDestino);
 			nr->caminos.Definir(ipDestino, caminimos);
-
+			}
 			itCompuB.Avanzar();
 		}
+		cout << nr->caminos  << endl;
 
 		itCompuA.Avanzar();
 	}
@@ -78,7 +80,9 @@ Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
 
 	frameRecorrido.Apilar(iRecorrido);
 	frameCandidatos.Apilar(iCandidatos);
-
+	cout << ipDestino<< endl;
+	// cout << "candidatos: " << compusDeNodos(iCandidatos) << endl;
+	// cout << "recorrido: " << compusDeNodos(iRecorrido) << endl;
 	// Compu pCandidatos; movido abajo para simplificar.
 	Lista<NodoRed> fCandidatos;
 
@@ -88,7 +92,8 @@ Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
 
 		frameRecorrido.Desapilar();
 		frameCandidatos.Desapilar();
-
+		// cout << "candidatos: " << compusDeNodos(iCandidatos) << endl;
+		// cout << "recorrido: " << compusDeNodos(iRecorrido) << endl;
 		if (!iCandidatos.EsVacia()) {
 			// esta linea estaba afuera del if
 			NodoRed pCandidatos = iCandidatos.Primero(); // originalmente era Compu

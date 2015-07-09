@@ -27,6 +27,10 @@ private:
 			return (pc == otro.pc);
 		};
 
+		std::ostream& operator<<(std::ostream& os){
+		  return os << pc.ip;
+		}
+
 		Compu pc;
 
 		Dicc <String , Conj<Camino> > caminos;

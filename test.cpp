@@ -654,7 +654,7 @@ int main(int argc, char **argv){
 	RUN_TEST(check_red_conectar);
 	RUN_TEST(check_red_conecta_vecinos);
 	RUN_TEST(check_red_caminimos_mini);
-	RUN_TEST(check_red_caminimos_huge);
+	//RUN_TEST(check_red_caminimos_huge);
 	
 	return 0;
 }

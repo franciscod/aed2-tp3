@@ -521,11 +521,13 @@ void check_red_caminimos_huge(){
 	ASSERT(r.hayCamino(A,X));
 
 	ASSERT(r.hayCamino(A,C));
+
+	//cout << caminosMinimos(A,C) << endl;
 	ASSERT(r.hayCamino(A,Y));
 
+
 	Conj< Camino > caminos = r.caminosMinimos(A, C);
-	cout << endl;
-	cout << caminos << endl;
+
 
 
 
@@ -558,8 +560,8 @@ void check_red_caminimos_mini(){
 	r.conectar(Z, X, 1, 2);
 	r.conectar(X, Y, 1, 2);
 	Conj< Camino > caminos = r.caminosMinimos(X, Y);
-	cout << endl;
-	cout << caminos << endl;
+	// cout << endl;
+	// cout << caminos << endl;
 	// ASSERT( r.caminosMinimos(X,Y) == r.caminosMinimos(Y,X) );
 	// ASSERT( r.caminosMinimos(X,Z) == r.caminosMinimos(Z,X) );
 	// ASSERT( r.caminosMinimos(Y,Z) == r.caminosMinimos(Z,Y) );
@@ -651,7 +653,7 @@ int main(int argc, char **argv){
 	RUN_TEST(check_red_conectar);
 	RUN_TEST(check_red_conecta_vecinos);
 	RUN_TEST(check_red_caminimos_mini);
-	//RUN_TEST(check_red_caminimos_huge);
+	RUN_TEST(check_red_caminimos_huge);
 	
 	return 0;
 }

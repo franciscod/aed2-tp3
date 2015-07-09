@@ -26,10 +26,10 @@ struct NodoRed {
 };
 
 
+
 inline std::ostream& operator << (std::ostream& os, const NodoRed& nr) {
 	return os << "[[Nodo con IP " << nr.pc.ip << "]]";
 };
-
 
 
 

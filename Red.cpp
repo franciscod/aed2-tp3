@@ -142,7 +142,7 @@ Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
 			iCandidatos.Fin();
 			fCandidatos = iCandidatos;
 
-			if (iRecorrido.Ultimo().pc.ip == ipDestino) {
+			if (pCandidatos.pc.ip == ipDestino) {
 				res.AgregarRapido(compusDeNodos(iRecorrido));
 			} else {
 				frameRecorrido.Apilar(iRecorrido);

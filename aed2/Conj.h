@@ -1,10 +1,10 @@
 /*
  * Author: Fede
  * Maintainer: tfischer
- * 
+ *
  * Conjunto (lineal) imlementado sobre Diccionario (Dicc.h),
  * que está implementado sobre listas enlazadas (Lista.h).
- * 
+ *
  * Created on 30 de octubre de 2010
  */
 
@@ -79,7 +79,7 @@ class Conj
         void EliminarSiguiente();
 
       private:
-      
+
         typename Dicc<T,bool>::Iterador it_dicc_;
 
         Iterador(Conj<T>& c);

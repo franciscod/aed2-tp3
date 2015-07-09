@@ -1,11 +1,9 @@
 #ifndef COLA_H_
 #define COLA_H_
 
-#include <ostream>
 #include "aed2/Lista.h"
 
 using namespace aed2;
-using namespace std;
 
 template <typename T>
 class Cola{

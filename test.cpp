@@ -266,102 +266,113 @@ void check_arbol_binario_swap(){
 void check_cola_vacia(){
 	Cola<int> cola;
 
-	ASSERT(cola.esVacia());
+	ASSERT(cola.EsVacia());
 }
 
 void check_cola_encolar(){
 	Cola<int> cola;
 
-	cola.encolar(3);
+	cola.Encolar(3);
 
-	ASSERT_EQ(cola.proximo(), 3);
+	ASSERT_EQ(cola.Proximo(), 3);
 	
-	cola.encolar(-3);
+	cola.Encolar(-3);
 
-	ASSERT_EQ(cola.proximo(), 3);
+	ASSERT_EQ(cola.Proximo(), 3);
 }
 
 void check_cola_desencolar(){
 	Cola<int> cola;
 
-	cola.encolar(3);
-	cola.encolar(-3);
+	cola.Encolar(3);
+	cola.Encolar(-3);
 
-	cola.desencolar();
+	cola.Desencolar();
 
-	ASSERT_EQ(cola.proximo(), -3);
+	ASSERT_EQ(cola.Proximo(), -3);
 
-	cola.encolar(42);
-	cola.encolar(13);
+	cola.Encolar(42);
+	cola.Encolar(13);
 
-	cola.desencolar();
+	cola.Desencolar();
 
-	ASSERT_EQ(cola.proximo(), 42);
+	ASSERT_EQ(cola.Proximo(), 42);
 }
 
 void check_cola_tamanho(){
 	Cola<int> cola;
 
-	ASSERT_EQ(cola.tamanho(), 0);
+	ASSERT_EQ(cola.Tamanho(), 0);
 
-	cola.encolar(1);
+	cola.Encolar(1);
 
-	ASSERT_EQ(cola.tamanho(), 1);
+	ASSERT_EQ(cola.Tamanho(), 1);
 
-	cola.desencolar();
+	cola.Desencolar();
 
-	ASSERT_EQ(cola.tamanho(), 0);
+	ASSERT_EQ(cola.Tamanho(), 0);
 }
 
 void check_cola_igualdad(){
 	Cola<int> c1, c2;
 
-	c2.encolar(4);
+	c2.Encolar(4);
 
 	ASSERT(!(c1 == c2));
 
-	c1.encolar(4);
+	c1.Encolar(4);
 
 	ASSERT(c1 == c2);
+
+	c1.Encolar(3);
 }
 
 // Cola de prioridad
 void check_cola_prioridad_vacia(){
 	ColaPrioridad<int> cola;
-	ASSERT(cola.esVacia());
+	ASSERT(cola.EsVacia());
 }
 
 void check_cola_prioridad_encolar(){
 	ColaPrioridad<int> cola;
 
-	cola.encolar(4, 4);
+	cola.Encolar(4, 4);
 
-	ASSERT_EQ(cola.proximo(), 4);
+	ASSERT_EQ(cola.Proximo(), 4);
 
-	cola.encolar(4, 8);
+	cola.Encolar(4, 8);
 
-	ASSERT_EQ(cola.proximo(), 4);
+	ASSERT_EQ(cola.Proximo(), 4);
 
-	cola.encolar(5, 1);
+	cola.Encolar(5, 1);
 
-	ASSERT_EQ(cola.proximo(), 4);
+	ASSERT_EQ(cola.Proximo(), 4);
 
-	cola.encolar(1, 7);
+	cola.Encolar(1, 7);
 
-	ASSERT_EQ(cola.proximo(), 7);
+	ASSERT_EQ(cola.Proximo(), 7);
 }
 
 void check_cola_prioridad_desencolar(){
 	ColaPrioridad<int> cola;
 
-	cola.encolar(2, 2);
-	cola.encolar(3, 3);
-	cola.encolar(1, 1);
+	cola.Encolar(2, 2);
+	cola.Encolar(3, 3);
+	cola.Encolar(1, 1);
 
-	ASSERT_EQ(cola.desencolar(), 1);
-	ASSERT_EQ(cola.desencolar(), 2);
-	ASSERT_EQ(cola.desencolar(), 3);
-	ASSERT(cola.esVacia());
+	ASSERT_EQ(cola.Desencolar(), 1);
+	ASSERT_EQ(cola.Desencolar(), 2);
+	ASSERT_EQ(cola.Desencolar(), 3);
+	ASSERT(cola.EsVacia());
+}
+
+void check_cola_de_prioridad_igualdad(){
+	ColaPrioridad<int> c1, c2;
+
+	c1.Encolar(1, 1);
+	c2.Encolar(2, 2);
+
+	ASSERT(!(c1 == c2));
 }
 
 void check_arbol_binario_rotacion_simple(){
@@ -1315,6 +1326,10 @@ void check_dicc_log_redefinir(){
 	ASSERT_EQ(d.Obtener(2), 12);
 }
 
+
+
+// ---------------------------------------------------------------------
+
 /**
 * Ejemplo de caso de test, con llamadas a las rutinas de aserción
 * definidas en mini_test.h
@@ -1405,6 +1420,7 @@ int main(int argc, char **argv){
 	RUN_TEST(check_cola_prioridad_vacia);
 	RUN_TEST(check_cola_prioridad_encolar);
 	RUN_TEST(check_cola_prioridad_desencolar);
+	RUN_TEST(check_cola_de_prioridad_igualdad);
 
 	RUN_TEST(check_arbol_binario_rotacion_simple);
 	RUN_TEST(check_arbol_binario_inorder);

@@ -2,7 +2,7 @@
 #define COLA_PRIORIDAD_H_
 
 #include "Cola.h"
-#include "aed2/Dicc.h"
+#include "DiccLog.h"
 #include <iostream>
 
 using namespace aed2;
@@ -17,23 +17,28 @@ class ColaPrioridad{
         ColaPrioridad();
         // ~ColaPrioridad();
 
-        bool esVacia() const;
+        bool EsVacia() const;
         
-        T& proximo();
+        T& Proximo();
         
-        T desencolar();
-        void encolar(const Nat, const T);
+        T Desencolar();
+        void Encolar(const Nat, const T);
 
         bool operator == (const ColaPrioridad<T>&) const;
 
     private:
         
-        struct nodosEncolados{
+        struct NodosEncolados{
             Cola<T> encolados;
             Nat prioridad;
+
+            bool operator == (const NodosEncolados& otro) const{
+                return((encolados == otro.encolados) && (prioridad == otro.prioridad));
+            }
+            
         };
 
-        Dicc<Nat,nodosEncolados> diccCola; 
+        DiccLog<NodosEncolados> diccCola; 
 
 };
 
@@ -41,62 +46,51 @@ template <typename T>
 ColaPrioridad<T>::ColaPrioridad(){}
 
 template <typename T>
-bool ColaPrioridad<T>::esVacia() const{
-    return(diccCola.CantClaves() == 0);
+bool ColaPrioridad<T>::EsVacia() const{
+    return(diccCola.EsVacio());
 }
 
 template <typename T>
-T& ColaPrioridad<T>::proximo(){
+T& ColaPrioridad<T>::Proximo(){
     #ifdef DEBUG
-        assert(!esVacia());
+        assert(!EsVacia());
     #endif
-    
-    typename Dicc<Nat,nodosEncolados>::Iterador it = diccCola.CrearIt();
-    Nat maxPrioridad = it.SiguienteClave();
-    while(it.HaySiguiente()){
-        if(it.SiguienteClave() < maxPrioridad)
-            maxPrioridad = it.SiguienteClave();
-        it.Avanzar();
-    }
-    nodosEncolados& minimo = diccCola.Significado(maxPrioridad);
 
-    return(minimo.encolados.proximo());
+    return(diccCola.Minimo().encolados.Proximo());
 }
 
 template <typename T>
-void ColaPrioridad<T>::encolar(const Nat p, const T elem){
+void ColaPrioridad<T>::Encolar(const Nat p, const T elem){
     if(diccCola.Definido(p)){
-        diccCola.Significado(p).encolados.encolar(elem);
+        diccCola.Obtener(p).encolados.Encolar(elem);
     }
     else{
-        nodosEncolados nuevoNodo;
+        NodosEncolados nuevoNodo;
         nuevoNodo.encolados = Cola<T>();
         nuevoNodo.prioridad = p;
-        nuevoNodo.encolados.encolar(elem);
+        nuevoNodo.encolados.Encolar(elem);
         diccCola.Definir(p, nuevoNodo);
     }
 }
 
 template <typename T>
-T ColaPrioridad<T>::desencolar(){
+T ColaPrioridad<T>::Desencolar(){
 
-    typename Dicc<Nat,nodosEncolados>::Iterador it = diccCola.CrearIt();
-    Nat maxPrioridad = it.SiguienteClave();
-    while(it.HaySiguiente()){
-        if(it.SiguienteClave() < maxPrioridad)
-            maxPrioridad = it.SiguienteClave();
-        it.Avanzar();
-    }
-    nodosEncolados& minimo = diccCola.Significado(maxPrioridad);
+    NodosEncolados& minimo = diccCola.Minimo();
 
-    T res = minimo.encolados.proximo();
+    T res = minimo.encolados.Proximo();
 
-    minimo.encolados.desencolar();
-    if(minimo.encolados.esVacia()){
+    minimo.encolados.Desencolar();
+    if(minimo.encolados.EsVacia()){
         diccCola.Borrar(minimo.prioridad);
     }
 
     return(res);
+}
+
+template <typename T>
+bool ColaPrioridad<T>::operator == (const ColaPrioridad& otra) const{
+    return(diccCola == otra.diccCola);
 }
 
 #endif // COLA_PRIORIDAD_H_INCLUDED

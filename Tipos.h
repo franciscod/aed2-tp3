@@ -23,6 +23,14 @@ struct Compu {
 	bool operator!=(const Compu& rhs) const {
 	    return (ip != rhs.ip) || !(interfaces == rhs.interfaces);
 	}
+
+	Compu () {};
+	Compu (const Computadora& ip) : ip(ip){};
+	Compu (const Computadora& ip, Nat numInterfaces) : ip(ip) {
+		for (Nat n = 1; n <= numInterfaces; n++) {
+			interfaces.Agregar(n);
+		}
+	};
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Compu& compu) {

@@ -42,7 +42,7 @@ private:
 	Conj<Camino> Caminos(const NodoRed& c1, const Computadora& ipDestino);
 	Lista<Compu> compusDeNodos (const Lista<NodoRed>& ns);
 	Conj<Camino> Minimos(const Conj<Camino>& caminos);
-	Lista<NodoRed> listaNodosVecinos(const NodoRed& n);
+	Lista<NodoRed> agregarListaNodosVecinos(const NodoRed& n, const Lista<NodoRed>& original);
 	bool nodoEnLista(const NodoRed& n, const Lista<NodoRed>& ns);
 
 public:
@@ -72,4 +72,7 @@ public:
 
 	bool operator==(const Red&) const;
 };
+
+Conj<Camino> agCaCC(Compu c, Conj<Camino> cc);
+
 #endif

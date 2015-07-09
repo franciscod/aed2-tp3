@@ -353,6 +353,7 @@ void check_red_conecta_vecinos(){
 	ASSERT_EQ(r.vecinos(c1).Cardinal(), 1);
 	ASSERT_EQ(r.vecinos(c2).Cardinal(), 1);
 	ASSERT_EQ(r.vecinos(c3).Cardinal(), 0);
+
 	ASSERT(r.vecinos(c1).Pertenece(c2));
 	ASSERT(r.vecinos(c2).Pertenece(c1));
 
@@ -360,6 +361,7 @@ void check_red_conecta_vecinos(){
 	ASSERT_EQ(r.vecinos(c1).Cardinal(), 2);
 	ASSERT_EQ(r.vecinos(c2).Cardinal(), 1);
 	ASSERT_EQ(r.vecinos(c3).Cardinal(), 1);
+
 	ASSERT(r.vecinos(c1).Pertenece(c2));
 	ASSERT(r.vecinos(c1).Pertenece(c3));
 	ASSERT(r.vecinos(c2).Pertenece(c1));
@@ -370,6 +372,7 @@ void check_red_conecta_vecinos(){
 	ASSERT_EQ(r.vecinos(c1).Cardinal(), 2);
 	ASSERT_EQ(r.vecinos(c2).Cardinal(), 2);
 	ASSERT_EQ(r.vecinos(c3).Cardinal(), 2);
+
 	ASSERT(r.vecinos(c1).Pertenece(c2));
 	ASSERT(r.vecinos(c1).Pertenece(c3));
 	ASSERT(r.vecinos(c2).Pertenece(c1));
@@ -377,13 +380,82 @@ void check_red_conecta_vecinos(){
 	ASSERT(r.vecinos(c3).Pertenece(c1));
 	ASSERT(r.vecinos(c3).Pertenece(c2));
 
-	ASSERT(r.hayCamino(c1,c2));
-	ASSERT(r.hayCamino(c1,c3));
-	ASSERT(r.hayCamino(c2,c3));
+	ASSERT(r.hayCamino(c1, c1));
+	ASSERT(r.hayCamino(c1, c2));
+	ASSERT(r.hayCamino(c1, c3));
+	ASSERT(r.hayCamino(c2, c1));
+	ASSERT(r.hayCamino(c2, c2));
+	ASSERT(r.hayCamino(c2, c3));
+	ASSERT(r.hayCamino(c3, c1));
+	ASSERT(r.hayCamino(c3, c2));
+	ASSERT(r.hayCamino(c3, c3));
 
 
 
 }
+
+
+void check_red_caminimos_linea(){
+	Red r;
+	Compu A("A", 2); r.agregarComputadora(A);
+	Compu B("B", 2); r.agregarComputadora(B); r.conectar(A, B, 2, 1);
+	Compu C("C", 2); r.agregarComputadora(C); r.conectar(B, C, 2, 1);
+	Compu D("D", 2); r.agregarComputadora(D); r.conectar(C, D, 2, 1);
+	Compu E("E", 2); r.agregarComputadora(E); r.conectar(D, E, 2, 1);
+
+	ASSERT(r.hayCamino(A, B));
+	ASSERT(r.hayCamino(A, C));
+	ASSERT(r.hayCamino(A, D));
+	ASSERT(r.hayCamino(A, E));
+	ASSERT(r.hayCamino(B, C));
+	ASSERT(r.hayCamino(B, D));
+	ASSERT(r.hayCamino(B, E));
+	ASSERT(r.hayCamino(C, D));
+	ASSERT(r.hayCamino(C, E));
+	ASSERT(r.hayCamino(D, E));
+
+	ASSERT(r.hayCamino(E, D));
+	ASSERT(r.hayCamino(E, C));
+	ASSERT(r.hayCamino(E, B));
+	ASSERT(r.hayCamino(E, A));
+	ASSERT(r.hayCamino(D, C));
+	ASSERT(r.hayCamino(D, B));
+	ASSERT(r.hayCamino(D, A));
+	ASSERT(r.hayCamino(C, B));
+	ASSERT(r.hayCamino(C, A));
+	ASSERT(r.hayCamino(B, A));
+
+	Conj<Camino> cc;
+	cc.Agregar(Camino());
+	cc = agCaCC(A, cc); ASSERT(r.caminosMinimos(A, A) == cc);
+	cc = agCaCC(B, cc); ASSERT(r.caminosMinimos(A, B) == cc);
+	cc = agCaCC(C, cc); ASSERT(r.caminosMinimos(A, C) == cc);
+	cc = agCaCC(D, cc); ASSERT(r.caminosMinimos(A, D) == cc);
+	cc = agCaCC(E, cc); ASSERT(r.caminosMinimos(A, E) == cc);
+}
+
+void check_red_caminimos_mini(){
+	Red r;
+	Compu X("X", 2);
+	Compu Y("Y", 2);
+	Compu Z("Z", 2);
+
+	r.agregarComputadora(X);
+	r.agregarComputadora(Y);
+	r.agregarComputadora(Z);
+
+	r.conectar(X, Y, 1, 2);
+	r.conectar(Y, Z, 1, 2);
+	r.conectar(Z, X, 1, 2);
+
+	Conj<Camino> cxy; cxy.Agregar(Camino());
+	cxy = agCaCC(X, cxy); ASSERT(r.caminosMinimos(X, X) == cxy);
+	cxy = agCaCC(Y, cxy); ASSERT(r.caminosMinimos(X, Y) == cxy);
+
+	Conj<Camino> cxz; cxz.Agregar(Camino());
+	cxz = agCaCC(Z, agCaCC(X, cxz)); ASSERT(r.caminosMinimos(X, Z) == cxz);
+}
+
 
 void check_red_caminimos_huge(){
 
@@ -507,22 +579,22 @@ void check_red_caminimos_huge(){
 	r.conectar(C, BC1, 2, 2);
 	r.conectar(C, BC2, 3, 2);
 
-	ASSERT(r.hayCamino(A,JAB));
-	ASSERT(r.hayCamino(A,AB1));
-	ASSERT(r.hayCamino(A,AB2));
-	ASSERT(r.hayCamino(A,AB3));
-	ASSERT(r.hayCamino(A,J));
+	ASSERT(r.hayCamino(A, JAB));
+	ASSERT(r.hayCamino(A, AB1));
+	ASSERT(r.hayCamino(A, AB2));
+	ASSERT(r.hayCamino(A, AB3));
+	ASSERT(r.hayCamino(A, J));
 
-	ASSERT(r.hayCamino(A,B));
-	ASSERT(r.hayCamino(A,Z));
+	ASSERT(r.hayCamino(A, B));
+	ASSERT(r.hayCamino(A, Z));
 
-	ASSERT(r.hayCamino(A,BC1));
-	ASSERT(r.hayCamino(A,BC2));
-	ASSERT(r.hayCamino(A,X));
+	ASSERT(r.hayCamino(A, BC1));
+	ASSERT(r.hayCamino(A, BC2));
+	ASSERT(r.hayCamino(A, X));
 
 	ASSERT(r.hayCamino(A,C));
 
-	
+
 	ASSERT(r.hayCamino(A,Y));
 	cout << r.caminosMinimos(A,Y) << endl;
 
@@ -538,38 +610,6 @@ void check_red_caminimos_huge(){
 
 }
 
-
-void check_red_caminimos_mini(){
-	Red r;
-	Compu Y; Y.ip = "Y";
-	Y.interfaces.Agregar(1);
-	Y.interfaces.Agregar(2);
-	r.agregarComputadora(Y);
-
-	Compu X; X.ip = "X";
-	X.interfaces.Agregar(1);
-	X.interfaces.Agregar(2);
-	r.agregarComputadora(X);
-
-	Compu Z; Z.ip = "Z";
-	Z.interfaces.Agregar(1);
-	Z.interfaces.Agregar(2);
-	r.agregarComputadora(Z);
-
-	r.conectar(Y, Z, 1, 2);
-	r.conectar(Z, X, 1, 2);
-	r.conectar(X, Y, 1, 2);
-
-	ASSERT(r.hayCamino(X,Z));
-	ASSERT(r.hayCamino(Y,Z));
-	ASSERT(r.hayCamino(X,Y));
-	Conj< Camino > caminos = r.caminosMinimos(X, Y);
-	// cout << endl;
-	// cout << caminos << endl;
-// 	ASSERT( r.caminosMinimos(X,Y) == r.caminosMinimos(Y,X) );
-// 	ASSERT( r.caminosMinimos(X,Z) == r.caminosMinimos(Z,X) );
-// 	ASSERT( r.caminosMinimos(Y,Z) == r.caminosMinimos(Z,Y) );
-}
 void check_red_copiar(){
 	Red r;
 	Compu Y; Y.ip = "Y";
@@ -682,9 +722,10 @@ int main(int argc, char **argv){
 	RUN_TEST(check_red_agregar_compu);
 	RUN_TEST(check_red_conectar);
 	RUN_TEST(check_red_conecta_vecinos);
+	RUN_TEST(check_red_caminimos_linea)
 	RUN_TEST(check_red_caminimos_mini);
 	RUN_TEST(check_red_copiar);
 	// RUN_TEST(check_red_caminimos_huge);
-	
+
 	return 0;
 }

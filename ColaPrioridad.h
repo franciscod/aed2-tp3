@@ -3,7 +3,6 @@
 
 #include "Cola.h"
 #include "DiccLog.h"
-#include <iostream>
 
 using namespace aed2;
 using namespace std;
@@ -15,7 +14,6 @@ class ColaPrioridad{
     public:
 
         ColaPrioridad();
-        // ~ColaPrioridad();
 
         bool EsVacia() const;
         

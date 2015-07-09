@@ -325,6 +325,8 @@ void check_cola_igualdad(){
 	ASSERT(c1 == c2);
 
 	c1.Encolar(3);
+
+	ASSERT(!(c1 == c2));
 }
 
 // Cola de prioridad
@@ -370,9 +372,17 @@ void check_cola_de_prioridad_igualdad(){
 	ColaPrioridad<int> c1, c2;
 
 	c1.Encolar(1, 1);
+
+	ASSERT(!(c1 == c2));
+
 	c2.Encolar(2, 2);
 
 	ASSERT(!(c1 == c2));
+
+	c1.Encolar(2, 2);
+	c2.Encolar(1, 1);
+
+	ASSERT(c1 == c2);	
 }
 
 void check_arbol_binario_rotacion_simple(){

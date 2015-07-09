@@ -1,7 +1,6 @@
 #ifndef RED_H_
 #define RED_H_
 
-#include "aed2/dicc_trie.h"
 #include "aed2/Conj.h"
 #include "Tipos.h"
 
@@ -9,33 +8,32 @@ using namespace aed2;
 
 typedef Lista<Compu> Camino;
 
+struct NodoRed {
+	// esto originalmente era un puntero, para que apuntase a la compu dentro de compus (el conj de arriba)
+	// por principios de abstraccion/encapsulamiento/modularidad no sentido que sea un
+	// puntero a algo (eventualmente, desconocido) dentro del tipo Conj: tiene más sentido guardar la Compu completa acá
+
+	Compu pc;
+	Dicc <String , Conj<Camino> > caminos;
+	Dicc <Interfaz, NodoRed*> conexiones;
+	NodoRed() {};
+	NodoRed(const Compu& c) : pc(c) {};
+
+	bool operator==(const NodoRed& otro) const{
+		return (pc == otro.pc);
+	};
+
+};
+
+inline std::ostream& operator << (std::ostream& os, const NodoRed& nr) {
+	return os << "[[Nodo con IP " << nr.pc.ip << "]]";
+};
+
+
+
 class Red{
 private:
 	Conj<Compu> compus;
-
-	struct NodoRed {
-		// esto originalmente era un puntero, para que apuntase a la compu dentro de compus (el conj de arriba)
-		// por principios de abstraccion/encapsulamiento/modularidad no sentido que sea un
-		// puntero a algo (eventualmente, desconocido) dentro del tipo Conj: tiene más sentido guardar la Compu completa acá
-		NodoRed(){
-			// Compu pc;
-			// DiccString< Conj<Camino> > caminos;
-			// Dicc <Interfaz, NodoRed*> conexiones;
-		};
-
-		bool operator==(const NodoRed& otro) const{
-			return (pc == otro.pc);
-		};
-
-		Compu pc;
-
-		Dicc <String , Conj<Camino> > caminos;
-		Dicc <Interfaz, NodoRed*> conexiones;
-
-		NodoRed(const Compu& c) : pc(c) {};
-		NodoRed(const NodoRed& o) : pc(o.pc) {};
-	};
-
 	Dicc <String, NodoRed> dns;
 
 	void CrearTodosLosCaminos();
@@ -70,5 +68,4 @@ public:
 
 	bool operator==(const Red&) const;
 };
-
 #endif

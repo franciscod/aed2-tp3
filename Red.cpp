@@ -23,9 +23,9 @@ void Red::agregarComputadora (const Compu& c) {
 	// inicializarConjCaminos esta embebida en este loop
 	Dicc<String, NodoRed>::Iterador it = dns.CrearIt();
 	while(it.HaySiguiente()) {
-		NodoRed* nrt = &it.SiguienteSignificado();
-		nrt->caminos.Definir(nr.pc.ip, Conj<Camino>());
-		nr.caminos.Definir(nrt->pc.ip, Conj<Camino>());
+		NodoRed& nrt = it.SiguienteSignificado();
+		nrt.caminos.Definir(nr.pc.ip, Conj<Camino>());
+		nr.caminos.Definir(nrt.pc.ip, Conj<Camino>());
 		it.Avanzar();
 	}
 
@@ -35,10 +35,10 @@ void Red::agregarComputadora (const Compu& c) {
 void Red::conectar (const Compu& c1, const Compu& c2, const int i1, const int i2) {
 	// PRE: las interfaces de esas compus existen y estan libres
 
-	NodoRed* n1 = &dns.Significado(c1.ip);
-	NodoRed* n2 = &dns.Significado(c2.ip);
-	n1->conexiones.Definir(i1, n2);
-	n2->conexiones.Definir(i2, n1);
+	NodoRed& n1 = dns.Significado(c1.ip);
+	NodoRed& n2 = dns.Significado(c2.ip);
+	n1.conexiones.Definir(i1, &n2);
+	n2.conexiones.Definir(i2, &n1);
 
 	CrearTodosLosCaminos();
 }
@@ -97,14 +97,12 @@ Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
 			fCandidatos = iCandidatos;
 
 			if (iRecorrido.Ultimo().pc.ip == ipDestino) {
-				res.AgregarRapido(compusDeNodos(iRecorrido)); // originalmente no habia compusDeNodos
+				res.AgregarRapido(compusDeNodos(iRecorrido));
 			} else {
 				frameRecorrido.Apilar(iRecorrido);
 				frameCandidatos.Apilar(fCandidatos);
 
 				if (!nodoEnLista(pCandidatos, iRecorrido)) {
-					// iRecorrido = Copiar(iRecorrido)
-					// no hace falta porque se apiló por copia
 					iRecorrido.AgregarAtras(pCandidatos);
 					frameRecorrido.Apilar(iRecorrido);
 					frameCandidatos.Apilar(listaNodosVecinos(pCandidatos));
@@ -151,8 +149,8 @@ Conj<Camino> Red::Minimos (const Conj<Camino>& caminos) {
 	return res;
 }
 
-Lista<Red::NodoRed> Red::listaNodosVecinos (const NodoRed& n) {
-	Lista<Red::NodoRed> res;
+Lista<NodoRed> Red::listaNodosVecinos (const NodoRed& n) {
+	Lista<NodoRed> res;
 	Dicc<Interfaz, NodoRed*>::const_Iterador itVecinos = n.conexiones.CrearIt(); // agregado const_
 	while (itVecinos.HaySiguiente()) {
 		res.AgregarAdelante(*itVecinos.SiguienteSignificado());
@@ -164,7 +162,7 @@ Lista<Red::NodoRed> Red::listaNodosVecinos (const NodoRed& n) {
 bool Red::nodoEnLista (const NodoRed& n, const Lista<NodoRed>& ns) {
 	Lista<NodoRed>::const_Iterador itNodos = ns.CrearIt(); // agregado el const_
 	while (itNodos.HaySiguiente()) {
-		if (&itNodos.Siguiente() == &n) { // agregados & para chequear que sean el mismo nodo
+		if (itNodos.Siguiente() == n) {
 			return true;
 		};
 		itNodos.Avanzar();
@@ -251,7 +249,7 @@ Red Red::copiar() {
 		res.dns.Definir(c.ip, auxNr);
 		it.Avanzar();
 	}
-	
+
 	// rearma las conexiones
 	it = compus.CrearIt();
 	while(it.HaySiguiente()) {
@@ -270,11 +268,10 @@ Red Red::copiar() {
 	 	}
 	 	it.Avanzar();
 	}
-	
+
 	return res;
 }
 
 bool Red::operator==(const Red& otro) const{
 	return ( (otro.dns == dns) && (otro.compus == compus)  ) ;
 }
-

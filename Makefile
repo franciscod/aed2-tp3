@@ -12,7 +12,7 @@ INCDIR=. #../../../../../Modulos-CPP
 
 # Agregar acá los archivos .cpp a compilar
 # TODO: Descomentar el Driver.cpp cuando esté listo
-SOURCES=test.cpp ArbolSintactico.cpp #Driver.cpp
+SOURCES=test.cpp #Driver.cpp
 
 # Objetos que serán generados (no tocar)
 OBJECTS=$(SOURCES:.cpp=.o)
@@ -21,7 +21,7 @@ OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=test
 
 all: $(SOURCES) tests
-	
+
 $(EXECUTABLE): clean $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 

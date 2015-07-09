@@ -10,14 +10,14 @@
 namespace aed2 {
 
     /**
-     * Esta clase implementa el m骴ulo conjunto acotado de Naturales.
-     * El m骴ulo conjunto acotado de Naturales provee un conjunto en el que se
-     * pueden insertar 鷑icamente los elementos que se encuentran en un rango [l, r]
-     * de Naturales. La inserci髇, eliminaci髇 y testeo de pertenencia de un
+     * Esta clase implementa el m贸dulo conjunto acotado de Naturales.
+     * El m贸dulo conjunto acotado de Naturales provee un conjunto en el que se
+     * pueden insertar 煤nicamente los elementos que se encuentran en un rango [l, r]
+     * de Naturales. La inserci贸n, eliminaci贸n y testeo de pertenencia de un
      * elemento se pueden resolver en tiempo constante. El principal costo se paga
      * cuando se crea la estructura, dado que cuesta tiempo lineal en r - l.
      * En cuanto al recorrido de los elementos, se provee un iterador bidireccional
-     * que tambi閚 permite eliminar los elementos iterados.
+     * que tambi茅n permite eliminar los elementos iterados.
      */
     class ConjAcotado {
         

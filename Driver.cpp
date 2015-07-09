@@ -1,5 +1,4 @@
 #include "Driver.h"
-#include "ArbolSintactico.h"
 
 namespace aed2 {
 
@@ -22,7 +21,7 @@ const Computadora& Driver::IesimaComputadora(const Nat i) const {
     // TODO
 	return 0;
 }
-        
+
 Nat Driver::CantidadInterfacesDe(const Computadora& c) const {
     // TODO
     return 0;
@@ -33,7 +32,7 @@ const Interfaz& Driver::IesimaInterfazDe(const Computadora& c, const Nat i) cons
     // TODO
     return 0;
 
-} 
+}
 
 const Interfaz& Driver::IntefazUsada(const Computadora& c1, const Computadora& c2) const {
     // TODO
@@ -50,12 +49,12 @@ bool Driver::conectadas(const Computadora& c1, const Computadora& c2) const {
 void Driver::AgregarComputadora(const Computadora& ip, const Conj<Interfaz>& ci) {
     // TODO
 }
-        
+
 void Driver::Conectar(const Computadora& c1, const Interfaz& i1, const Computadora& c2, const Interfaz& i2) {
     // TODO
 }
-	
-	
+
+
 Nat Driver::CantidadNodosRecorridosPor(const Paquete& p) const {
     // TODO
     return 0;
@@ -69,7 +68,7 @@ Nat Driver::CantidadEnviadosPor(const Computadora& c) const {
     // TODO
     return 0;
 }
-	
+
 Nat Driver::CantidadEnEsperaEn(const Computadora& c) const {
     // TODO
     return 0;
@@ -83,32 +82,31 @@ const Paquete& Driver::IesimoEnEsperaEn(const Computadora& c) const {
 void Driver::CrearPaquete(const Computadora& origen, const Computadora& destino, Nat prioridad) {
     // TODO
 }
-		
+
 void Driver::AvanzarSegundo() {
     // TODO
 }
-		
+
 const Computadora& Driver::laQueMasEnvio() const {
-    // TODO	
+    // TODO
     return 0;
 }
 
 const Computadora& Driver::origen(const Paquete& p) const {
-    // TODO	
-    return 0;
-} 
-
-const Computadora& Driver::destino(const Paquete& p) const { 
-    // TODO	
+    // TODO
     return 0;
 }
 
-Nat Driver::prioridad(const Paquete& p) const { 
-    // TODO	
+const Computadora& Driver::destino(const Paquete& p) const {
+    // TODO
     return 0;
 }
-		
+
+Nat Driver::prioridad(const Paquete& p) const {
+    // TODO
+    return 0;
+}
+
 
 
 } // namespace aed2
-

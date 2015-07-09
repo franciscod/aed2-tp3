@@ -2,7 +2,7 @@
  * Author: ?
  *
  * Lista doblemente enlazada.
- * 
+ *
  */
 
 #ifndef AED2_LISTA_H_

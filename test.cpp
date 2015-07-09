@@ -522,9 +522,9 @@ void check_red_caminimos_huge(){
 
 	ASSERT(r.hayCamino(A,C));
 
-	//cout << caminosMinimos(A,C) << endl;
+	
 	ASSERT(r.hayCamino(A,Y));
-
+	cout << r.caminosMinimos(A,Y) << endl;
 
 	Conj< Camino > caminos = r.caminosMinimos(A, C);
 
@@ -559,12 +559,42 @@ void check_red_caminimos_mini(){
 	r.conectar(Y, Z, 1, 2);
 	r.conectar(Z, X, 1, 2);
 	r.conectar(X, Y, 1, 2);
+
+	ASSERT(r.hayCamino(X,Z));
+	ASSERT(r.hayCamino(Y,Z));
+	ASSERT(r.hayCamino(X,Y));
 	Conj< Camino > caminos = r.caminosMinimos(X, Y);
 	// cout << endl;
 	// cout << caminos << endl;
-	// ASSERT( r.caminosMinimos(X,Y) == r.caminosMinimos(Y,X) );
-	// ASSERT( r.caminosMinimos(X,Z) == r.caminosMinimos(Z,X) );
-	// ASSERT( r.caminosMinimos(Y,Z) == r.caminosMinimos(Z,Y) );
+// 	ASSERT( r.caminosMinimos(X,Y) == r.caminosMinimos(Y,X) );
+// 	ASSERT( r.caminosMinimos(X,Z) == r.caminosMinimos(Z,X) );
+// 	ASSERT( r.caminosMinimos(Y,Z) == r.caminosMinimos(Z,Y) );
+}
+void check_red_copiar(){
+	Red r;
+	Compu Y; Y.ip = "Y";
+	Y.interfaces.Agregar(1);
+	Y.interfaces.Agregar(2);
+	r.agregarComputadora(Y);
+
+	Compu X; X.ip = "X";
+	X.interfaces.Agregar(1);
+	X.interfaces.Agregar(2);
+	r.agregarComputadora(X);
+
+	Compu Z; Z.ip = "Z";
+	Z.interfaces.Agregar(1);
+	Z.interfaces.Agregar(2);
+	r.agregarComputadora(Z);
+
+	r.conectar(Y, Z, 1, 2);
+	r.conectar(Z, X, 1, 2);
+	r.conectar(X, Y, 1, 2);
+
+	Red auxr = r;
+
+	ASSERT(r == auxr);
+
 }
 // ---------------------------------------------------------------------
 
@@ -653,7 +683,8 @@ int main(int argc, char **argv){
 	RUN_TEST(check_red_conectar);
 	RUN_TEST(check_red_conecta_vecinos);
 	RUN_TEST(check_red_caminimos_mini);
-	RUN_TEST(check_red_caminimos_huge);
+	RUN_TEST(check_red_copiar);
+	// RUN_TEST(check_red_caminimos_huge);
 	
 	return 0;
 }

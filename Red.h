@@ -48,6 +48,8 @@ private:
 public:
 	Red();
 
+	Red (const Red& otro);
+
 	void agregarComputadora( const Compu& c);
 
 	void conectar(const Compu& c1, const Compu&c2, const int i1, const  int i2);

@@ -321,7 +321,7 @@ void check_red_conectar(){
 	Conj <Compu> v2 = r.vecinos(c2) ;
 	ASSERT(v2.Pertenece(c1));
 	//ASSERT_EQ(r.vecinos(c1),r.vecinos(c2));
-	ASSERT(r == r.copiar());
+
 }
 
 void check_red_conecta_vecinos(){
@@ -381,7 +381,7 @@ void check_red_conecta_vecinos(){
 	ASSERT(r.hayCamino(c1,c3));
 	ASSERT(r.hayCamino(c2,c3));
 
-	ASSERT(r == r.copiar());
+
 
 }
 
@@ -528,7 +528,6 @@ void check_red_caminimos_huge(){
 	cout << caminos << endl;
 
 
-	ASSERT(r == r.copiar());
 
 	// waaaaaa no exploto nada?
 	//cout << " > Listo!\n";
@@ -564,8 +563,6 @@ void check_red_caminimos_mini(){
 	// ASSERT( r.caminosMinimos(X,Y) == r.caminosMinimos(Y,X) );
 	// ASSERT( r.caminosMinimos(X,Z) == r.caminosMinimos(Z,X) );
 	// ASSERT( r.caminosMinimos(Y,Z) == r.caminosMinimos(Z,Y) );
-
-	ASSERT(r == r.copiar());
 }
 // ---------------------------------------------------------------------
 

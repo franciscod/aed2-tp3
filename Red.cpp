@@ -9,6 +9,47 @@ Red::Red () {
 	//dns = DiccString<NodoRed>();
 }
 
+Red::Red (const Red& otro) {
+	
+	// copia el conjunto de tuplas
+	compus = otro.compus;
+	// rearma los nodos (con conexiones en blanco) del diccionario dns
+	Conj<Compu>::Iterador it = compus.CrearIt();
+	while(it.HaySiguiente()) {
+		Compu c = it.Siguiente();
+		NodoRed nr = otro.dns.Significado(c.ip);
+		Dicc<String, Conj<Camino> > auxCaminos = nr.caminos;
+		Dicc <Interfaz, NodoRed* > auxConexiones;
+		NodoRed auxNr;
+		auxNr.pc = c;
+		auxNr.caminos = auxCaminos;
+		auxNr.conexiones = auxConexiones;
+		dns.Definir(c.ip, auxNr);
+		it.Avanzar();
+	}
+
+	// rearma las conexiones
+	it = compus.CrearIt();
+	while(it.HaySiguiente()) {
+	 	Compu c = it.Siguiente();
+	 	NodoRed nodoMio = dns.Significado(c.ip);
+	 	NodoRed nodoOtro = otro.dns.Significado(c.ip);
+
+	 	Dicc <Interfaz, NodoRed*>::Iterador itInterfs = nodoMio.conexiones.CrearIt();
+
+	 	while(itInterfs.HaySiguiente()) {
+
+	 		Interfaz interf = itInterfs.SiguienteClave();
+	 		String ip = nodoOtro.conexiones.Significado(interf)->pc.ip;
+	 		nodoMio.conexiones.Definir(interf, &dns.Significado(ip));
+			itInterfs.Avanzar();
+	 	}
+	 	it.Avanzar();
+	}
+
+
+}
+
 Conj<Compu> Red::computadoras () {
 	return compus;
 }
@@ -52,8 +93,8 @@ void Red::CrearTodosLosCaminos () {
 		NodoRed* nr = &dns.Significado(itCompuA.Siguiente().ip);
 
 		Conj<Compu>::Iterador itCompuB = compus.CrearIt();
-		cout << "creo los caminos de "; 
-		cout << nr->pc.ip << endl;
+		// cout << "creo los caminos de "; 
+		// cout << nr->pc.ip << endl;
 		while (itCompuB.HaySiguiente()) {
 			Computadora ipDestino = itCompuB.Siguiente().ip;
 			if(nr->pc.ip != ipDestino){
@@ -62,7 +103,7 @@ void Red::CrearTodosLosCaminos () {
 			}
 			itCompuB.Avanzar();
 		}
-		cout << nr->caminos  << endl;
+		// cout << nr->caminos  << endl;
 
 		itCompuA.Avanzar();
 	}
@@ -80,7 +121,7 @@ Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
 
 	frameRecorrido.Apilar(iRecorrido);
 	frameCandidatos.Apilar(iCandidatos);
-	cout << ipDestino<< endl;
+	// cout << ipDestino<< endl;
 	// cout << "candidatos: " << compusDeNodos(iCandidatos) << endl;
 	// cout << "recorrido: " << compusDeNodos(iRecorrido) << endl;
 	// Compu pCandidatos; movido abajo para simplificar.
@@ -236,46 +277,7 @@ bool Red::conectadas( const Compu& c1, const Compu& c2) {
 	return res;
 }
 
-Red Red::copiar() {
-	Red res;
-	// copia el conjunto de tuplas
-	res.compus = compus;
-	// rearma los nodos (con conexiones en blanco) del diccionario dns
-	Conj<Compu>::Iterador it = compus.CrearIt();
-	while(it.HaySiguiente()) {
-		Compu c = it.Siguiente();
-		NodoRed* nr = &dns.Significado(c.ip);
-		Dicc<String, Conj<Camino> > auxCaminos = nr->caminos;
-		Dicc <Interfaz, NodoRed* > auxConexiones;
-		NodoRed auxNr;
-		auxNr.pc = c;
-		auxNr.caminos = auxCaminos;
-		auxNr.conexiones = auxConexiones;
-		res.dns.Definir(c.ip, auxNr);
-		it.Avanzar();
-	}
 
-	// rearma las conexiones
-	it = compus.CrearIt();
-	while(it.HaySiguiente()) {
-	 	Compu c = it.Siguiente();
-	 	NodoRed nodoMio = res.dns.Significado(c.ip);
-	 	NodoRed nodoOtro = dns.Significado(c.ip);
-
-	 	Dicc <Interfaz, NodoRed*>::Iterador itInterfs = nodoMio.conexiones.CrearIt();
-
-	 	while(itInterfs.HaySiguiente()) {
-
-	 		Interfaz interf = itInterfs.SiguienteClave();
-	 		String ip = nodoOtro.conexiones.Significado(interf)->pc.ip;
-	 		nodoMio.conexiones.Definir(interf, &res.dns.Significado(ip));
-			itInterfs.Avanzar();
-	 	}
-	 	it.Avanzar();
-	}
-
-	return res;
-}
 
 bool Red::operator==(const Red& otro) const{
 	return ( (otro.dns == dns) && (otro.compus == compus)  ) ;

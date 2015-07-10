@@ -54,7 +54,7 @@ public:
 
 	void Conectar(const Compu& c1, const Compu&c2, const int i1, const  int i2);
 
-	Conj<Compu> Computadoras();
+	Conj<Compu>& Computadoras();
 
 	bool Conectadas(const Compu& c1, const Compu& c2);
 

@@ -2,6 +2,7 @@
 #define RED_H_
 
 #include "aed2/Conj.h"
+#include "aed2/dicc_trie.h"
 #include "Tipos.h"
 
 using namespace aed2;
@@ -14,10 +15,15 @@ struct NodoRed {
 	// puntero a algo (eventualmente, desconocido) dentro del tipo Conj: tiene más sentido guardar la Compu completa acá
 
 	Compu pc;
-	Dicc <String , Conj<Camino> > caminos;
+	DiccString < Conj<Camino> > caminos;
 	Dicc <Interfaz, NodoRed*> conexiones;
 	NodoRed() {};
 	NodoRed(const Compu& c) : pc(c) {};
+	NodoRed(const NodoRed& n){
+		pc = n.pc;
+		caminos = n.caminos;
+		conexiones = n.conexiones;
+	}
 
 	bool operator==(const NodoRed& otro) const{
 		return (pc == otro.pc);
@@ -36,7 +42,7 @@ inline std::ostream& operator << (std::ostream& os, const NodoRed& nr) {
 class Red{
 private:
 	Conj<Compu> compus;
-	Dicc <String, NodoRed> dns;
+	DiccString <NodoRed> dns;
 
 	void crearTodosLoscaminos();
 	Conj<Camino> caminos(const NodoRed& c1, const Computadora& ipDestino);

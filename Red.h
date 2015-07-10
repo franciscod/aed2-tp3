@@ -75,6 +75,6 @@ public:
 	//Red operator=(const Red& otro)
 };
 
-Conj<Camino> agCaCC(Compu c, Conj<Camino> cc);
+Conj<Camino> agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(Compu c, Conj<Camino> cc);
 
 #endif

@@ -113,7 +113,7 @@ void Red::crearTodosLoscaminos () {
 
 			Conj<Camino> caminimos = minimos(caminos(*nr, ipDestino));
 			nr->caminos.Definir(ipDestino, caminimos);
-			
+
 			itCompuB.Avanzar();
 		}
 		// cout << nr->caminos  << endl;
@@ -300,7 +300,7 @@ bool Red::operator==(const Red& otro) const{
 }
 
 
-Conj<Camino> agCaCC(Compu c, Conj<Camino> cc) {
+Conj<Camino> agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(Compu c, Conj<Camino> cc) {
 	Conj<Camino> res;
 	Camino cam = cc.CrearIt().Siguiente();
 	cam.AgregarAtras(c);

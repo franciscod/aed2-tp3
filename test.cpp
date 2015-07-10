@@ -15,6 +15,7 @@
 #include "ColaPrioridad.h"
 #include "DiccLog.h"
 #include "Red.h"
+#include "DCNet.h"
 
 using namespace std;
 using namespace aed2;
@@ -1724,49 +1725,6 @@ void check_dicc_log_redefinir(){
 
 
 
-// ---------------------------------------------------------------------
-
-/**
-* Ejemplo de caso de test, con llamadas a las rutinas de aserción
-* definidas en mini_test.h
-* TODO: descomentar cuando esté dcnet
-
-void test_dcnet_ejemplo() {
-	Conj<Interfaz> conjIc1;
-	Conj<Interfaz> conjIc2;
-	Conj<Interfaz> conjIc3;
-
-	conjIc1.Agregar(1);
-	conjIc1.Agregar(2);
-	conjIc1.Agregar(3);
-
-	conjIc2.Agregar(1);
-	conjIc2.Agregar(2);
-	conjIc2.Agregar(3);
-
-	conjIc3.Agregar(1);
-	conjIc3.Agregar(2);
-
-	Computadora c1 = "dc.uba.ar";
-	Computadora c2 = "uba.ar";
-	Computadora c3 = "dm.uba.ar";
-
-	Driver dcnet;
-
-	dcnet.AgregarComputadora(c1, conjIc1);
-	dcnet.AgregarComputadora(c2, conjIc2);
-	dcnet.AgregarComputadora(c3, conjIc3);
-
-	// ejemplo - Indexado en 0
-	Interfaz i1 = dcnet.IesimaInterfazDe(c1, 0);
-	Interfaz i2 = dcnet.IesimaInterfazDe(c2, 2);
-
-	dcnet.Conectar(c1, i1, c2, i2);
-	dcnet.CrearPaquete(c1, c2, 3);
-	dcnet.AvanzarSegundo();
-
-}
-*/
 
 void check_trie() {
 	DiccString<int> trai;
@@ -1814,109 +1772,239 @@ void check_trie_const(){
 	ASSERT_EQ(constDicc.obtener("abc"), 2);
 }
 
+// DCNet
+void check_dcnet_red(){
+	Red r;
+
+	Compu c1; 
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	c1.interfaces.Agregar(2);
+	r.AgregarComputadora(c1);
+
+	Compu c2; c2.ip = "c2";
+	c2.interfaces.Agregar(1);
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	Compu c3; c3.ip = "c3";
+	c3.interfaces.Agregar(1);
+	c3.interfaces.Agregar(2);
+	r.AgregarComputadora(c3);
+
+	r.Conectar(c1, c3, 1, 2);
+	r.Conectar(c3, c2, 1, 2);
+	r.Conectar(c2, c1, 1, 2);
+
+	DCNet dcnet(r);
+
+	ASSERT(dcnet.Red() == r);
+
+}
+
+void check_dcnet_crear_paquete(){
+	Red r;
+
+	Compu c1; 
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2; 
+	c2.ip = "c2";
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	r.Conectar(c2, c1, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p;
+	p.id = 7;
+	p.prioridad = 2;
+	p.origen = c1;
+	p.destino = c2;
+
+	dcnet.CrearPaquete(p);
+
+	ASSERT(dcnet.PaqueteEnTransito(p));
+
+	Conj< ::Paquete> conjPaq;
+	conjPaq.Agregar(p);
+
+	ASSERT(dcnet.EnEspera(c1) == conjPaq);
+
+	p.id = 8;
+	p.prioridad = 2;
+	p.origen = c1;
+	p.destino = c2;
+
+	dcnet.CrearPaquete(p);
+
+	ASSERT(dcnet.PaqueteEnTransito(p));
+
+	conjPaq.Agregar(p);
+
+	ASSERT(dcnet.EnEspera(c1) == conjPaq);
+
+	conjPaq.Eliminar(p);
+
+	ASSERT(!(dcnet.EnEspera(c1) == conjPaq));
+}
+
+// ---------------------------------------------------------------------
+
+/**
+* Ejemplo de caso de test, con llamadas a las rutinas de aserción
+* definidas en mini_test.h
+* TODO: descomentar cuando esté dcnet
+
+void test_dcnet_ejemplo() {
+	Conj<Interfaz> conjIc1;
+	Conj<Interfaz> conjIc2;
+	Conj<Interfaz> conjIc3;
+
+	conjIc1.Agregar(1);
+	conjIc1.Agregar(2);
+	conjIc1.Agregar(3);
+
+	conjIc2.Agregar(1);
+	conjIc2.Agregar(2);
+	conjIc2.Agregar(3);
+
+	conjIc3.Agregar(1);
+	conjIc3.Agregar(2);
+
+	Computadora c1 = "dc.uba.ar";
+	Computadora c2 = "uba.ar";
+	Computadora c3 = "dm.uba.ar";
+
+	Driver dcnet;
+
+	dcnet.AgregarComputadora(c1, conjIc1);
+	dcnet.AgregarComputadora(c2, conjIc2);
+	dcnet.AgregarComputadora(c3, conjIc3);
+
+	// ejemplo - Indexado en 0
+	Interfaz i1 = dcnet.IesimaInterfazDe(c1, 0);
+	Interfaz i2 = dcnet.IesimaInterfazDe(c2, 2);
+
+	dcnet.Conectar(c1, i1, c2, i2);
+	dcnet.CrearPaquete(c1, c2, 3);
+	dcnet.AvanzarSegundo();
+
+}
+*/
+
 int main(int argc, char **argv){
 
 	// Trie
-	RUN_TEST(check_trie);
-	RUN_TEST(check_trie_prefix);
-	RUN_TEST(check_trie_const);
+	// RUN_TEST(check_trie);
+	// RUN_TEST(check_trie_prefix);
+	// RUN_TEST(check_trie_const);
 
-	// Pila
-	RUN_TEST(check_pila_vacia);
-	RUN_TEST(check_pila_apilar);
-	RUN_TEST(check_pila_desapilar);
-	RUN_TEST(check_pila_tamanho);
-	RUN_TEST(check_pila_igualdad);
+	// // Pila
+	// RUN_TEST(check_pila_vacia);
+	// RUN_TEST(check_pila_apilar);
+	// RUN_TEST(check_pila_desapilar);
+	// RUN_TEST(check_pila_tamanho);
+	// RUN_TEST(check_pila_igualdad);
 
-	// Arbol Binario
-	RUN_TEST(check_arbol_binario_nil);
-	RUN_TEST(check_arbol_binario_bin);
-	RUN_TEST(check_arbol_binario_igualdad);
-	RUN_TEST(check_arbol_binario_destructor);
-	RUN_TEST(check_arbol_binario_asignacion);
-	RUN_TEST(check_arbol_binario_swap);
+	// // Arbol Binario
+	// RUN_TEST(check_arbol_binario_nil);
+	// RUN_TEST(check_arbol_binario_bin);
+	// RUN_TEST(check_arbol_binario_igualdad);
+	// RUN_TEST(check_arbol_binario_destructor);
+	// RUN_TEST(check_arbol_binario_asignacion);
+	// RUN_TEST(check_arbol_binario_swap);
 
-	//Cola
-	RUN_TEST(check_cola_vacia);
-	RUN_TEST(check_cola_encolar);
-	RUN_TEST(check_cola_desencolar);
-	RUN_TEST(check_cola_tamanho);
-	RUN_TEST(check_cola_igualdad);
+	// // Cola
+	// RUN_TEST(check_cola_vacia);
+	// RUN_TEST(check_cola_encolar);
+	// RUN_TEST(check_cola_desencolar);
+	// RUN_TEST(check_cola_tamanho);
+	// RUN_TEST(check_cola_igualdad);
 
-	//Cola de prioridad
-	RUN_TEST(check_cola_prioridad_vacia);
-	RUN_TEST(check_cola_prioridad_encolar);
-	RUN_TEST(check_cola_prioridad_desencolar);
-	RUN_TEST(check_cola_de_prioridad_igualdad);
+	// // Cola de prioridad
+	// RUN_TEST(check_cola_prioridad_vacia);
+	// RUN_TEST(check_cola_prioridad_encolar);
+	// RUN_TEST(check_cola_prioridad_desencolar);
+	// RUN_TEST(check_cola_de_prioridad_igualdad);
 
-	RUN_TEST(check_arbol_binario_rotacion_simple);
-	RUN_TEST(check_arbol_binario_inorder);
+	// RUN_TEST(check_arbol_binario_rotacion_simple);
+	// RUN_TEST(check_arbol_binario_inorder);
 
 
-	// Dicc Log
-	RUN_TEST(check_dicc_log_vacio);
-	RUN_TEST(check_dicc_log_definir_uno);
-	RUN_TEST(check_dicc_log_obtener_uno);
-	RUN_TEST(check_dicc_log_minimo_uno);
-	RUN_TEST(check_dicc_log_borrar_uno);
+	// // Dicc Log
+	// RUN_TEST(check_dicc_log_vacio);
+	// RUN_TEST(check_dicc_log_definir_uno);
+	// RUN_TEST(check_dicc_log_obtener_uno);
+	// RUN_TEST(check_dicc_log_minimo_uno);
+	// RUN_TEST(check_dicc_log_borrar_uno);
 
-	RUN_TEST(check_dicc_log_definir_sin_rotacion);
-	RUN_TEST(check_dicc_log_obtener_sin_rotacion);
-	RUN_TEST(check_dicc_log_minimo_sin_rotacion);
+	// RUN_TEST(check_dicc_log_definir_sin_rotacion);
+	// RUN_TEST(check_dicc_log_obtener_sin_rotacion);
+	// RUN_TEST(check_dicc_log_minimo_sin_rotacion);
 
-	RUN_TEST(check_dicc_log_borrar_sin_rotacion);
-	RUN_TEST(check_dicc_log_borrar_directo_raiz_sin_rotacion);
-	RUN_TEST(check_dicc_log_borrar_directo_sin_rotacion);
-	RUN_TEST(check_dicc_log_borrar_indirecto_raiz_sin_rotacion);
-	RUN_TEST(check_dicc_log_borrar_indirecto_sin_rotacion);
+	// RUN_TEST(check_dicc_log_borrar_sin_rotacion);
+	// RUN_TEST(check_dicc_log_borrar_directo_raiz_sin_rotacion);
+	// RUN_TEST(check_dicc_log_borrar_directo_sin_rotacion);
+	// RUN_TEST(check_dicc_log_borrar_indirecto_raiz_sin_rotacion);
+	// RUN_TEST(check_dicc_log_borrar_indirecto_sin_rotacion);
 
-	RUN_TEST(check_dicc_log_definir_rotacion_simple_izq);
-	RUN_TEST(check_dicc_log_definir_rotacion_simple_der);
-	RUN_TEST(check_dicc_log_obtener_rotacion_simple_izq);
-	RUN_TEST(check_dicc_log_obtener_rotacion_simple_der);
-	RUN_TEST(check_dicc_log_minimo_rotacion_simple_izq);
-	RUN_TEST(check_dicc_log_minimo_rotacion_simple_der);
+	// RUN_TEST(check_dicc_log_definir_rotacion_simple_izq);
+	// RUN_TEST(check_dicc_log_definir_rotacion_simple_der);
+	// RUN_TEST(check_dicc_log_obtener_rotacion_simple_izq);
+	// RUN_TEST(check_dicc_log_obtener_rotacion_simple_der);
+	// RUN_TEST(check_dicc_log_minimo_rotacion_simple_izq);
+	// RUN_TEST(check_dicc_log_minimo_rotacion_simple_der);
 
-	RUN_TEST(check_dicc_log_definir_rotacion_doble_uno_der);
-	RUN_TEST(check_dicc_log_definir_rotacion_doble_uno_izq);
-	RUN_TEST(check_dicc_log_obtener_rotacion_doble_uno_der);
-	RUN_TEST(check_dicc_log_obtener_rotacion_doble_uno_izq);
-	RUN_TEST(check_dicc_log_minimo_rotacion_doble_uno_der);
-	RUN_TEST(check_dicc_log_minimo_rotacion_doble_uno_izq);
+	// RUN_TEST(check_dicc_log_definir_rotacion_doble_uno_der);
+	// RUN_TEST(check_dicc_log_definir_rotacion_doble_uno_izq);
+	// RUN_TEST(check_dicc_log_obtener_rotacion_doble_uno_der);
+	// RUN_TEST(check_dicc_log_obtener_rotacion_doble_uno_izq);
+	// RUN_TEST(check_dicc_log_minimo_rotacion_doble_uno_der);
+	// RUN_TEST(check_dicc_log_minimo_rotacion_doble_uno_izq);
 
-	RUN_TEST(check_dicc_log_definir_rotacion_doble_dos_der);
-	RUN_TEST(check_dicc_log_definir_rotacion_doble_dos_izq);
-	RUN_TEST(check_dicc_log_obtener_rotacion_doble_dos_der);
-	RUN_TEST(check_dicc_log_obtener_rotacion_doble_dos_izq);
-	RUN_TEST(check_dicc_log_minimo_rotacion_doble_dos_der);
-	RUN_TEST(check_dicc_log_minimo_rotacion_doble_dos_izq);
+	// RUN_TEST(check_dicc_log_definir_rotacion_doble_dos_der);
+	// RUN_TEST(check_dicc_log_definir_rotacion_doble_dos_izq);
+	// RUN_TEST(check_dicc_log_obtener_rotacion_doble_dos_der);
+	// RUN_TEST(check_dicc_log_obtener_rotacion_doble_dos_izq);
+	// RUN_TEST(check_dicc_log_minimo_rotacion_doble_dos_der);
+	// RUN_TEST(check_dicc_log_minimo_rotacion_doble_dos_izq);
 
-	RUN_TEST(check_dicc_log_definir_rotacion_doble_tres_der);
-	RUN_TEST(check_dicc_log_definir_rotacion_doble_tres_izq);
-	RUN_TEST(check_dicc_log_obtener_rotacion_doble_tres_der);
-	RUN_TEST(check_dicc_log_obtener_rotacion_doble_tres_izq);
-	RUN_TEST(check_dicc_log_minimo_rotacion_doble_tres_der);
-	RUN_TEST(check_dicc_log_minimo_rotacion_doble_tres_izq);
+	// RUN_TEST(check_dicc_log_definir_rotacion_doble_tres_der);
+	// RUN_TEST(check_dicc_log_definir_rotacion_doble_tres_izq);
+	// RUN_TEST(check_dicc_log_obtener_rotacion_doble_tres_der);
+	// RUN_TEST(check_dicc_log_obtener_rotacion_doble_tres_izq);
+	// RUN_TEST(check_dicc_log_minimo_rotacion_doble_tres_der);
+	// RUN_TEST(check_dicc_log_minimo_rotacion_doble_tres_izq);
 
-	RUN_TEST(check_dicc_log_borrar_rotacion_simple_uno);
-	RUN_TEST(check_dicc_log_borrar_rotacion_simple_dos);
-	RUN_TEST(check_dicc_log_borrar_rotacion_doble_uno);
-	RUN_TEST(check_dicc_log_borrar_rotacion_doble_dos);
-	RUN_TEST(check_dicc_log_borrar_rotacion_doble_tres);
-	RUN_TEST(check_dicc_log_borrar_minimo);
+	// RUN_TEST(check_dicc_log_borrar_rotacion_simple_uno);
+	// RUN_TEST(check_dicc_log_borrar_rotacion_simple_dos);
+	// RUN_TEST(check_dicc_log_borrar_rotacion_doble_uno);
+	// RUN_TEST(check_dicc_log_borrar_rotacion_doble_dos);
+	// RUN_TEST(check_dicc_log_borrar_rotacion_doble_tres);
+	// RUN_TEST(check_dicc_log_borrar_minimo);
 
-	RUN_TEST(check_dicc_log_asignacion);
-	RUN_TEST(check_dicc_log_copia);
-	RUN_TEST(check_dicc_log_igualdad);
-	RUN_TEST(check_dicc_log_redefinir);
+	// RUN_TEST(check_dicc_log_asignacion);
+	// RUN_TEST(check_dicc_log_copia);
+	// RUN_TEST(check_dicc_log_igualdad);
+	// RUN_TEST(check_dicc_log_redefinir);
 
-	RUN_TEST(check_red_nueva);
-	RUN_TEST(check_red_agregar_compu);
-	RUN_TEST(check_red_Conectar);
-	RUN_TEST(check_red_conecta_Vecinos);
-	RUN_TEST(check_red_caminimos_linea)
-	RUN_TEST(check_red_caminimos_mini);
-	RUN_TEST(check_red_copiar);
+	// // Red
+	// RUN_TEST(check_red_nueva);
+	// RUN_TEST(check_red_agregar_compu);
+	// RUN_TEST(check_red_Conectar);
+	// RUN_TEST(check_red_conecta_Vecinos);
+	// RUN_TEST(check_red_caminimos_linea)
+	// RUN_TEST(check_red_caminimos_mini);
+	// RUN_TEST(check_red_copiar);
+
+
+	// DCNet
+	RUN_TEST(check_dcnet_red);
+	RUN_TEST(check_dcnet_crear_paquete);
 
 	return 0;
 }

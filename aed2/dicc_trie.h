@@ -39,7 +39,6 @@ private:
             siguiente[clave[index]]->_definir(clave,_significado,index+1);
         }
     }
-
     const bool _definido(const string &clave, unsigned int index) const
     {
         if(index == clave.size())
@@ -123,9 +122,21 @@ public:
         palabra = "";
         vector<string> keys = otro.claves();
         for(unsigned int i=0;i<keys.size();i++)
-            definir(keys[i],*otro.obtener(keys[i]));
+            definir(keys[i],otro.obtener(keys[i]));
         return *this;
     }
+
+		bool operator == (const DiccString<T>& otro) const{
+			bool sonIguales = claves().size() == otro.claves().size();
+			if(sonIguales){
+				unsigned int i = 0;
+				while(i < claves().size() && sonIguales){
+					sonIguales = claves()[i] == otro.claves()[i];
+					i++;
+				}
+			}
+			return sonIguales;
+		}
 
     ~DiccString()
     {
@@ -185,7 +196,7 @@ public:
         for(unsigned int i=0;i<256;i++)
         if(siguiente.find(i) != siguiente.end())
         {
-            vector<string> aux = siguiente[i]->claves();
+            vector<string> aux = siguiente.find(i)->second->claves();
             for(unsigned int i=0;i<aux.size();i++)
                 resultado.push_back(aux[i]);
         }

@@ -24,7 +24,7 @@ class Driver
 
         const Interfaz& IntefazUsada(const Computadora& c1, const Computadora& c2) const;
 
-        bool Conectadas(const Computadora& c1, const Computadora& c2) const;
+        bool conectadas(const Computadora& c1, const Computadora& c2) const;
 
         /// Armado Red ////////////////////////////////////////////////////////////////
 

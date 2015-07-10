@@ -13,7 +13,7 @@ Driver::~Driver() {
 // TAD RED
 Nat Driver::CantidadComputadoras() const {
     // TODO
-    return 0;
+    return topologia.Computadoras.Cardinal();
 
 }
 
@@ -40,7 +40,7 @@ const Interfaz& Driver::IntefazUsada(const Computadora& c1, const Computadora& c
 
 }
 
-bool Driver::conectadas(const Computadora& c1, const Computadora& c2) const {
+bool Driver::Conectadas(const Computadora& c1, const Computadora& c2) const {
     // TODO
     return 0;
 }

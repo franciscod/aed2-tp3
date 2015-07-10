@@ -432,11 +432,11 @@ void check_red_caminimos_linea(){
 
 	Conj<Camino> cc;
 	cc.Agregar(Camino());
-	cc = agCaCC(A, cc); ASSERT(r.caminosMinimos(A, A) == cc);
-	cc = agCaCC(B, cc); ASSERT(r.caminosMinimos(A, B) == cc);
-	cc = agCaCC(C, cc); ASSERT(r.caminosMinimos(A, C) == cc);
-	cc = agCaCC(D, cc); ASSERT(r.caminosMinimos(A, D) == cc);
-	cc = agCaCC(E, cc); ASSERT(r.caminosMinimos(A, E) == cc);
+	cc = agCaCC(A, cc); ASSERT(r.CaminosMinimos(A, A) == cc);
+	cc = agCaCC(B, cc); ASSERT(r.CaminosMinimos(A, B) == cc);
+	cc = agCaCC(C, cc); ASSERT(r.CaminosMinimos(A, C) == cc);
+	cc = agCaCC(D, cc); ASSERT(r.CaminosMinimos(A, D) == cc);
+	cc = agCaCC(E, cc); ASSERT(r.CaminosMinimos(A, E) == cc);
 }
 
 void check_red_caminimos_mini(){
@@ -454,11 +454,11 @@ void check_red_caminimos_mini(){
 	r.Conectar(Z, X, 1, 2);
 
 	Conj<Camino> cxy; cxy.Agregar(Camino());
-	cxy = agCaCC(X, cxy); ASSERT(r.caminosMinimos(X, X) == cxy);
-	cxy = agCaCC(Y, cxy); ASSERT(r.caminosMinimos(X, Y) == cxy);
+	cxy = agCaCC(X, cxy); ASSERT(r.CaminosMinimos(X, X) == cxy);
+	cxy = agCaCC(Y, cxy); ASSERT(r.CaminosMinimos(X, Y) == cxy);
 
 	Conj<Camino> cxz; cxz.Agregar(Camino());
-	cxz = agCaCC(Z, agCaCC(X, cxz)); ASSERT(r.caminosMinimos(X, Z) == cxz);
+	cxz = agCaCC(Z, agCaCC(X, cxz)); ASSERT(r.CaminosMinimos(X, Z) == cxz);
 }
 
 
@@ -601,9 +601,9 @@ void check_red_caminimos_huge(){
 
 
 	ASSERT(r.HayCamino(A,Y));
-	cout << r.caminosMinimos(A,Y) << endl;
+	cout << r.CaminosMinimos(A,Y) << endl;
 
-	Conj< Camino > caminos = r.caminosMinimos(A, C);
+	Conj< Camino > caminos = r.CaminosMinimos(A, C);
 
 
 

@@ -8,7 +8,9 @@ Red::Red () {
 	//compus = Conj<Compu>();
 	//dns = DiccString<NodoRed>();
 }
-
+//Red Red::operator=(const Red& otro) {
+	// To Do
+//}
 Red::Red (const Red& otro) {
 
 	// copia el conjunto de tuplas
@@ -46,7 +48,6 @@ Red::Red (const Red& otro) {
 	 	}
 	 	it.Avanzar();
 	}
-
 
 }
 
@@ -261,7 +262,7 @@ bool Red::HayCamino( const Compu& c1, const Compu& c2){
 
 }
 
-Conj< Camino > Red::caminosMinimos( const Compu& c1, const Compu& c2){
+Conj< Camino > Red::CaminosMinimos( const Compu& c1, const Compu& c2){
 	return dns.Significado(c1.ip).caminos.Significado(c2.ip);
 };
 

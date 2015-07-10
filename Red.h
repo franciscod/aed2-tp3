@@ -64,11 +64,13 @@ public:
 
 	bool UsaInterfaz( const Compu& c, const int i);
 
-	Conj< Camino > caminosMinimos( const Compu& c1, const Compu& c2);
+	Conj< Camino > CaminosMinimos( const Compu& c1, const Compu& c2);
 
 	bool HayCamino( const Compu& c1, const Compu& c2);
 
 	bool operator==(const Red&) const;
+
+	//Red operator=(const Red& otro)
 };
 
 Conj<Camino> agCaCC(Compu c, Conj<Camino> cc);

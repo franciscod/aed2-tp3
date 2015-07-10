@@ -196,7 +196,7 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& v) {
 
 template<class T>
 bool operator==(const Vector<T>& v, const Vector<T>& w) {
-    for(Nat p = 0; p < v.Tamanho() and p < w.Tamanho(); ++p)
+    for(Nat p = 0; p < v.Longitud() and p < w.Longitud(); ++p)
         if(v[p] != w[p]) return false;
     return true;
 }

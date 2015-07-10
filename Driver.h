@@ -2,6 +2,8 @@
 #define DRIVER_H_
 
 #include "Tipos.h"
+#include "Red.h"
+#include "DCNet.h"
 #include "aed2/Conj.h"
 
 namespace aed2 {
@@ -58,6 +60,9 @@ class Driver
 
     private:
 
+    DCNet dcNet;
+
+    Red topologia;
     /*********************************************************************
      * TODO: Va a ser necesario instanciar privadamente un Modulo DCNet *
      * con el cuál interactuar. Además, pueden declarar todas las        *

@@ -11,7 +11,7 @@ DCNet::DCNet(const class Red& r){
     //conjPaquetesDCNet = Conj();
     laQueMasEnvio = NULL;
 
-    Conj<Compu>::Iterador it = topologia.Computadoras().CrearIt();
+    Conj<Compu>::Iterador it = dcNet.red().Computadoras().CrearIt();
     /*
     no tiene sentido asignar una Compu a laQueMasEnvio (tipo CompuDCNet*)
     if(it.HaySiguiente())
@@ -73,7 +73,7 @@ void DCNet::AvanzarSegundo(){
             }
 
             ::Paquete pAEnviar = vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.Siguiente();
-            Conj<Lista<Compu> >::Iterador iterCaminos = topologia.CaminosMinimos(vectorCompusDCNet[i].pc, pAEnviar.destino).CrearIt();
+            Conj<Lista<Compu> >::Iterador iterCaminos = dcNet.red().CaminosMinimos(vectorCompusDCNet[i].pc, pAEnviar.destino).CrearIt();
             Compu siguienteCompu = iterCaminos.Siguiente()[1];
 
             if(pAEnviar.destino != siguienteCompu){

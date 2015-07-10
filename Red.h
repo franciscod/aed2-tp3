@@ -56,6 +56,8 @@ public:
 
 	Conj<Compu> Computadoras();
 
+	Conj<Interfaz> Interfaces(const Compu& c);
+
 	bool Conectadas(const Compu& c1, const Compu& c2);
 
 	int InterfazUsada( const Compu& c1, const Compu& c2);

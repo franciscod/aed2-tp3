@@ -55,17 +55,6 @@ Conj<Compu> Red::Computadoras () {
 	return compus;
 }
 
-Conj<Interfaz> Red::Interfaces(const Compu& c){
-	Conj<Interfaz> res;
-	NodoRed nr = dns.Significado(c.ip);
-	Dicc <Interfaz, NodoRed*>::Iterador itInterfs = nr.conexiones.CrearIt();
-	while(itInterfs.HaySiguiente()) {
-		res.Agregar(itInterfs.SiguienteClave());
-		itInterfs.Avanzar();
-	}
-	return res;
-}
-
 void Red::AgregarComputadora(const Compu& c) {
 	// PRE: c no está en la red
 

@@ -639,6 +639,7 @@ void check_red_copiar(){
 	Red auxr = r;
 
 	ASSERT(r == auxr);
+}
 
 //Cola
 
@@ -762,7 +763,6 @@ void check_cola_de_prioridad_igualdad(){
 	c2.Encolar(1, 1);
 
 	ASSERT(c1 == c2);
->>>>>>> master
 }
 
 void check_arbol_binario_rotacion_simple(){

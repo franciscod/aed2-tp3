@@ -40,20 +40,27 @@ private:
         }
     }
 
-    bool _definido(const string &clave, unsigned int index)
+    const bool _definido(const string &clave, unsigned int index) const
     {
         if(index == clave.size())
             return es_final;
         if(siguiente.find(clave[index])==siguiente.end())
             return false;
-        return siguiente[clave[index]]->_definido(clave,index+1);
+        return siguiente.find(clave[index])->second->_definido(clave,index+1);
     }
 
-    T* _obtener(const string &clave, unsigned int index)
+    T& _obtener(const string &clave, unsigned int index)
     {
         if(index == clave.size())
-            return significado;
-        return siguiente[clave[index]]->_obtener(clave,index+1);
+            return *significado;
+        return siguiente.find(clave[index])->second->_obtener(clave,index+1);
+    }
+
+    const T& _obtener(const string &clave, unsigned int index) const
+    {
+        if(index == clave.size())
+            return *significado;
+        return siguiente.find(clave[index])->second->_obtener(clave,index+1);
     }
 
     void _borrar(const string &clave, unsigned int index)
@@ -71,6 +78,9 @@ private:
                 delete siguiente[clave[index]];
                 siguiente.erase(clave[index]);
             }
+						else{
+							_borrar(clave, index+1);
+						}
         }
     }
 
@@ -97,7 +107,7 @@ public:
         cant = 0;
         vector<string> keys = otro.claves();
         for(unsigned int i=0;i<keys.size();i++)
-            definir(keys[i],*otro.obtener(keys[i]));
+            definir(keys[i],otro.obtener(keys[i]));
     }
 
     DiccString operator=(const DiccString<T> &otro)
@@ -129,12 +139,18 @@ public:
         _definir(clave,_significado,0);
     }
 
-    bool definido(const string &clave)
+    const bool definido(const string &clave) const
     {
         return _definido(clave,0);
     }
 
-    T* obtener(const string &clave)
+    T& obtener(const string &clave)
+    {
+        assert(definido(clave));
+        return _obtener(clave,0);
+    }
+
+    const T& obtener(const string &clave) const
     {
         assert(definido(clave));
         return _obtener(clave,0);
@@ -161,7 +177,7 @@ public:
         return resultado;
     }
 
-    /*const vector<string> claves() const
+    const vector<string> claves() const
     {
         vector<string> resultado;
         if(es_final)
@@ -174,7 +190,7 @@ public:
                 resultado.push_back(aux[i]);
         }
         return resultado;
-    }*/
+		}
 
     class Iterador{
     private:
@@ -188,7 +204,7 @@ public:
 
         void irAlFondoUltimo()
         {
-            while(!dicc->siguiente.empty())
+            while(!dicc->siguiente.empty() && !dicc->es_final)
                 dicc = (*(dicc->siguiente.rbegin())).second;
         }
 

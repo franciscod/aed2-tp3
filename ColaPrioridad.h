@@ -15,6 +15,7 @@ class ColaPrioridad{
         bool EsVacia() const;
         
         T& Proximo();
+        const T& Proximo() const;
         
         T Desencolar();
         void Encolar(const Nat, const T);
@@ -47,6 +48,15 @@ bool ColaPrioridad<T>::EsVacia() const{
 
 template <typename T>
 T& ColaPrioridad<T>::Proximo(){
+    #ifdef DEBUG
+        assert(!EsVacia());
+    #endif
+
+    return(diccCola.Minimo().encolados.Proximo());
+}
+
+template <typename T>
+const T& ColaPrioridad<T>::Proximo() const{
     #ifdef DEBUG
         assert(!EsVacia());
     #endif

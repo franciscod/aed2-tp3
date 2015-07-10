@@ -250,7 +250,7 @@ public:
         {
             assert(_dicc->definido(clave));
             dicc = _dicc;
-            int index = 0;
+            unsigned int index = 0;
             while(index != clave.size())
             {
                 dicc = dicc->siguiente[clave[index]];

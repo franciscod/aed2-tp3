@@ -14,6 +14,7 @@
 #include "ArbolBinario.h"
 #include "ColaPrioridad.h"
 #include "DiccLog.h"
+#include "Red.h"
 
 using namespace std;
 using namespace aed2;
@@ -261,6 +262,384 @@ void check_arbol_binario_swap(){
 	delete b;
 }
 
+// Red
+
+void check_red_nueva(){
+	Red r;
+	ASSERT(r.Computadoras().EsVacio());
+}
+
+void check_red_agregar_compu(){
+	Red r;
+	ASSERT(r.Computadoras().EsVacio())
+	Compu c1;
+	c1.ip = "gugel.com";
+	c1.interfaces.Agregar(1);
+	c1.interfaces.Agregar(2);
+	c1.interfaces.Agregar(3);
+
+	Compu c2;
+	c2.ip = "hamason.com";
+	c2.interfaces.Agregar(4);
+	c2.interfaces.Agregar(5);
+	c2.interfaces.Agregar(6);
+
+	r.AgregarComputadora(c1);
+	r.AgregarComputadora(c2);
+
+	ASSERT(r.Computadoras().Pertenece(c1));
+	ASSERT(r.Computadoras().Pertenece(c2));
+
+}
+
+
+void check_red_Conectar(){
+	Red r;
+	Compu c1;
+	c1.ip = "riquelme";
+	c1.interfaces.Agregar(1);
+	c1.interfaces.Agregar(2);
+
+	Compu c2;
+	c2.ip = "pekerman";
+	c2.interfaces.Agregar(3);
+	c2.interfaces.Agregar(4);
+
+	r.AgregarComputadora(c1);
+	r.AgregarComputadora(c2);
+
+	r.Conectar(c1, c2, 1, 3);
+
+	ASSERT(r.Conectadas(c1, c2));
+
+	ASSERT(r.UsaInterfaz(c1, 1));
+	ASSERT(!r.UsaInterfaz(c1, 2));
+	ASSERT(r.UsaInterfaz(c2, 3));
+	ASSERT(!r.UsaInterfaz(c2, 4));
+
+	ASSERT_EQ(r.InterfazUsada(c1, c2), 1);
+	ASSERT_EQ(r.InterfazUsada(c2, c1), 3);
+
+
+	Conj <Compu> v1 = r.Vecinos(c1) ;
+	ASSERT(v1.Pertenece(c2));
+	Conj <Compu> v2 = r.Vecinos(c2) ;
+	ASSERT(v2.Pertenece(c1));
+	//ASSERT_EQ(r.Vecinos(c1),r.Vecinos(c2));
+
+}
+
+void check_red_conecta_Vecinos(){
+	Red r;
+	Compu c1;
+	c1.ip = "1";
+	c1.interfaces.Agregar(1);
+	c1.interfaces.Agregar(2);
+
+	Compu c2;
+	c2.ip = "2";
+	c2.interfaces.Agregar(1);
+	c2.interfaces.Agregar(2);
+
+	Compu c3;
+	c3.ip = "3";
+	c3.interfaces.Agregar(1);
+	c3.interfaces.Agregar(2);
+
+	r.AgregarComputadora(c1);
+	r.AgregarComputadora(c2);
+	r.AgregarComputadora(c3);
+
+	ASSERT(r.Vecinos(c1).EsVacio());
+	ASSERT(r.Vecinos(c2).EsVacio());
+	ASSERT(r.Vecinos(c3).EsVacio());
+
+	r.Conectar(c1, c2, 1, 1);
+	ASSERT_EQ(r.Vecinos(c1).Cardinal(), 1);
+	ASSERT_EQ(r.Vecinos(c2).Cardinal(), 1);
+	ASSERT_EQ(r.Vecinos(c3).Cardinal(), 0);
+
+	ASSERT(r.Vecinos(c1).Pertenece(c2));
+	ASSERT(r.Vecinos(c2).Pertenece(c1));
+
+	r.Conectar(c1, c3, 2, 1);
+	ASSERT_EQ(r.Vecinos(c1).Cardinal(), 2);
+	ASSERT_EQ(r.Vecinos(c2).Cardinal(), 1);
+	ASSERT_EQ(r.Vecinos(c3).Cardinal(), 1);
+
+	ASSERT(r.Vecinos(c1).Pertenece(c2));
+	ASSERT(r.Vecinos(c1).Pertenece(c3));
+	ASSERT(r.Vecinos(c2).Pertenece(c1));
+	ASSERT(r.Vecinos(c3).Pertenece(c1));
+
+	r.Conectar(c2, c3, 2, 2);
+
+	ASSERT_EQ(r.Vecinos(c1).Cardinal(), 2);
+	ASSERT_EQ(r.Vecinos(c2).Cardinal(), 2);
+	ASSERT_EQ(r.Vecinos(c3).Cardinal(), 2);
+
+	ASSERT(r.Vecinos(c1).Pertenece(c2));
+	ASSERT(r.Vecinos(c1).Pertenece(c3));
+	ASSERT(r.Vecinos(c2).Pertenece(c1));
+	ASSERT(r.Vecinos(c2).Pertenece(c3));
+	ASSERT(r.Vecinos(c3).Pertenece(c1));
+	ASSERT(r.Vecinos(c3).Pertenece(c2));
+
+	ASSERT(r.HayCamino(c1, c1));
+	ASSERT(r.HayCamino(c1, c2));
+	ASSERT(r.HayCamino(c1, c3));
+	ASSERT(r.HayCamino(c2, c1));
+	ASSERT(r.HayCamino(c2, c2));
+	ASSERT(r.HayCamino(c2, c3));
+	ASSERT(r.HayCamino(c3, c1));
+	ASSERT(r.HayCamino(c3, c2));
+	ASSERT(r.HayCamino(c3, c3));
+
+
+
+}
+
+
+void check_red_caminimos_linea(){
+	Red r;
+	Compu A("A", 2); r.AgregarComputadora(A);
+	Compu B("B", 2); r.AgregarComputadora(B); r.Conectar(A, B, 2, 1);
+	Compu C("C", 2); r.AgregarComputadora(C); r.Conectar(B, C, 2, 1);
+	Compu D("D", 2); r.AgregarComputadora(D); r.Conectar(C, D, 2, 1);
+	Compu E("E", 2); r.AgregarComputadora(E); r.Conectar(D, E, 2, 1);
+
+	ASSERT(r.HayCamino(A, B));
+	ASSERT(r.HayCamino(A, C));
+	ASSERT(r.HayCamino(A, D));
+	ASSERT(r.HayCamino(A, E));
+	ASSERT(r.HayCamino(B, C));
+	ASSERT(r.HayCamino(B, D));
+	ASSERT(r.HayCamino(B, E));
+	ASSERT(r.HayCamino(C, D));
+	ASSERT(r.HayCamino(C, E));
+	ASSERT(r.HayCamino(D, E));
+
+	ASSERT(r.HayCamino(E, D));
+	ASSERT(r.HayCamino(E, C));
+	ASSERT(r.HayCamino(E, B));
+	ASSERT(r.HayCamino(E, A));
+	ASSERT(r.HayCamino(D, C));
+	ASSERT(r.HayCamino(D, B));
+	ASSERT(r.HayCamino(D, A));
+	ASSERT(r.HayCamino(C, B));
+	ASSERT(r.HayCamino(C, A));
+	ASSERT(r.HayCamino(B, A));
+
+	Conj<Camino> cc;
+	cc.Agregar(Camino());
+	cc = agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(A, cc); ASSERT(r.CaminosMinimos(A, A) == cc);
+	cc = agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(B, cc); ASSERT(r.CaminosMinimos(A, B) == cc);
+	cc = agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(C, cc); ASSERT(r.CaminosMinimos(A, C) == cc);
+	cc = agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(D, cc); ASSERT(r.CaminosMinimos(A, D) == cc);
+	cc = agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(E, cc); ASSERT(r.CaminosMinimos(A, E) == cc);
+}
+
+void check_red_caminimos_mini(){
+	Red r;
+	Compu X("X", 2);
+	Compu Y("Y", 2);
+	Compu Z("Z", 2);
+
+	r.AgregarComputadora(X);
+	r.AgregarComputadora(Y);
+	r.AgregarComputadora(Z);
+
+	r.Conectar(X, Y, 1, 2);
+	r.Conectar(Y, Z, 1, 2);
+	r.Conectar(Z, X, 1, 2);
+
+	Conj<Camino> cxy; cxy.Agregar(Camino());
+	cxy = agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(X, cxy); ASSERT(r.CaminosMinimos(X, X) == cxy);
+	cxy = agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(Y, cxy); ASSERT(r.CaminosMinimos(X, Y) == cxy);
+
+	Conj<Camino> cxz; cxz.Agregar(Camino());
+	cxz = agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(Z, agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(X, cxz)); ASSERT(r.CaminosMinimos(X, Z) == cxz);
+}
+
+
+void check_red_caminimos_huge(){
+
+	/*
+		¡¡¡ CALATE ESTA RED !!!
+
+	       /-----A----\
+	      |   |   |   |
+	      |   |   |   |
+	J-- JAB  AB1 AB2 AB3
+	      \   |  |  /
+	            B----------Z-\
+	         BC1 BC2          X
+	            C----------Y-/
+	*/
+	Red r;
+
+	cout << "\n > Agregando compus...\n";
+
+	Compu J; J.ip = "J";
+	J.interfaces.Agregar(1);
+	r.AgregarComputadora(J);
+
+	Compu A; A.ip = "A";
+	A.interfaces.Agregar(1);
+	A.interfaces.Agregar(2);
+	A.interfaces.Agregar(3);
+	A.interfaces.Agregar(4);
+	r.AgregarComputadora(A);
+
+	Compu B; B.ip = "B";
+	B.interfaces.Agregar(1);
+	B.interfaces.Agregar(2);
+	B.interfaces.Agregar(3);
+	B.interfaces.Agregar(4);
+	B.interfaces.Agregar(5);
+	B.interfaces.Agregar(6);
+	B.interfaces.Agregar(7);
+	r.AgregarComputadora(B);
+
+	Compu C; C.ip = "C";
+	C.interfaces.Agregar(1);
+	C.interfaces.Agregar(2);
+	C.interfaces.Agregar(3);
+	r.AgregarComputadora(C);
+
+	Compu JAB; JAB.ip = "JAB";
+	JAB.interfaces.Agregar(1);
+	JAB.interfaces.Agregar(2);
+	JAB.interfaces.Agregar(3);
+	r.AgregarComputadora(JAB);
+
+	Compu AB1; AB1.ip = "AB1";
+	AB1.interfaces.Agregar(1);
+	AB1.interfaces.Agregar(2);
+	r.AgregarComputadora(AB1);
+
+	Compu AB2; AB2.ip = "AB2";
+	AB2.interfaces.Agregar(1);
+	AB2.interfaces.Agregar(2);
+	r.AgregarComputadora(AB2);
+
+	Compu AB3; AB3.ip = "AB3";
+	AB3.interfaces.Agregar(1);
+	AB3.interfaces.Agregar(2);
+	r.AgregarComputadora(AB3);
+
+	Compu BC1; BC1.ip = "BC1";
+	BC1.interfaces.Agregar(1);
+	BC1.interfaces.Agregar(2);
+	r.AgregarComputadora(BC1);
+
+	Compu BC2; BC2.ip = "BC2";
+	BC2.interfaces.Agregar(1);
+	BC2.interfaces.Agregar(2);
+	r.AgregarComputadora(BC2);
+
+	Compu Y; Y.ip = "Y";
+	Y.interfaces.Agregar(1);
+	Y.interfaces.Agregar(2);
+	r.AgregarComputadora(Y);
+
+	Compu X; X.ip = "X";
+	X.interfaces.Agregar(1);
+	X.interfaces.Agregar(2);
+	r.AgregarComputadora(X);
+
+	Compu Z; Z.ip = "Z";
+	Z.interfaces.Agregar(1);
+	Z.interfaces.Agregar(2);
+	r.AgregarComputadora(Z);
+
+	// ufffff, a Conectar... cómo era el dibujito?
+    /*
+		¡¡¡ CALATE ESTA RED !!!
+
+	       /-----A----\
+	      |   |   |   |
+	      |   |   |   |
+	J-- JAB  AB1 AB2 AB3
+	      \   |  |  /
+	            B----------Z-\
+	         BC1 BC2          X
+	            C----------Y-/
+	*/
+	cout << " > Conectando y generando caminos...\n";
+
+		r.Conectar(A, AB3, 4, 1);
+		r.Conectar(A, AB2, 3, 1);
+		r.Conectar(A, AB1, 2, 1);
+		r.Conectar(A, JAB, 1, 1);
+	r.Conectar(J, JAB, 1, 3);
+	    r.Conectar(B, JAB, 1, 2);
+		r.Conectar(B, AB1, 2, 2);
+		r.Conectar(B, AB2, 3, 2);
+		r.Conectar(B, AB3, 4, 2);
+		                r.Conectar(B, Z, 5, 1);
+	r.Conectar(B, BC1, 6, 1);          r.Conectar(Z, X, 2, 1);
+	r.Conectar(B, BC2, 7, 1);          r.Conectar(X, Y, 2, 1);
+		                r.Conectar(C, X, 1, 2);
+	r.Conectar(C, BC1, 2, 2);
+	r.Conectar(C, BC2, 3, 2);
+
+	ASSERT(r.HayCamino(A, JAB));
+	ASSERT(r.HayCamino(A, AB1));
+	ASSERT(r.HayCamino(A, AB2));
+	ASSERT(r.HayCamino(A, AB3));
+	ASSERT(r.HayCamino(A, J));
+
+	ASSERT(r.HayCamino(A, B));
+	ASSERT(r.HayCamino(A, Z));
+
+	ASSERT(r.HayCamino(A, BC1));
+	ASSERT(r.HayCamino(A, BC2));
+	ASSERT(r.HayCamino(A, X));
+
+	ASSERT(r.HayCamino(A,C));
+
+
+	ASSERT(r.HayCamino(A,Y));
+	cout << r.CaminosMinimos(A,Y) << endl;
+
+	Conj< Camino > caminos = r.CaminosMinimos(A, C);
+
+
+
+
+	// waaaaaa no exploto nada?
+	//cout << " > Listo!\n";
+
+	//cout << r.dns.Significado(B.ip)->caminos.Significado(J.ip) << '\n';
+
+}
+
+void check_red_copiar(){
+	Red r;
+	Compu Y; Y.ip = "Y";
+	Y.interfaces.Agregar(1);
+	Y.interfaces.Agregar(2);
+	r.AgregarComputadora(Y);
+
+	Compu X; X.ip = "X";
+	X.interfaces.Agregar(1);
+	X.interfaces.Agregar(2);
+	r.AgregarComputadora(X);
+
+	Compu Z; Z.ip = "Z";
+	Z.interfaces.Agregar(1);
+	Z.interfaces.Agregar(2);
+	r.AgregarComputadora(Z);
+
+	r.Conectar(Y, Z, 1, 2);
+	r.Conectar(Z, X, 1, 2);
+	r.Conectar(X, Y, 1, 2);
+
+	Red auxr = r;
+
+	ASSERT(r == auxr);
+
 //Cola
 
 void check_cola_vacia(){
@@ -275,7 +654,7 @@ void check_cola_encolar(){
 	cola.Encolar(3);
 
 	ASSERT_EQ(cola.Proximo(), 3);
-	
+
 	cola.Encolar(-3);
 
 	ASSERT_EQ(cola.Proximo(), 3);
@@ -382,7 +761,8 @@ void check_cola_de_prioridad_igualdad(){
 	c1.Encolar(2, 2);
 	c2.Encolar(1, 1);
 
-	ASSERT(c1 == c2);	
+	ASSERT(c1 == c2);
+>>>>>>> master
 }
 
 void check_arbol_binario_rotacion_simple(){
@@ -1466,6 +1846,7 @@ int main(int argc, char **argv){
 	RUN_TEST(check_arbol_binario_rotacion_simple);
 	RUN_TEST(check_arbol_binario_inorder);
 
+
 	// Dicc Log
 	RUN_TEST(check_dicc_log_vacio);
 	RUN_TEST(check_dicc_log_definir_uno);
@@ -1522,6 +1903,14 @@ int main(int argc, char **argv){
 	RUN_TEST(check_dicc_log_copia);
 	RUN_TEST(check_dicc_log_igualdad);
 	RUN_TEST(check_dicc_log_redefinir);
-	
+
+	RUN_TEST(check_red_nueva);
+	RUN_TEST(check_red_agregar_compu);
+	RUN_TEST(check_red_Conectar);
+	RUN_TEST(check_red_conecta_Vecinos);
+	RUN_TEST(check_red_caminimos_linea)
+	RUN_TEST(check_red_caminimos_mini);
+	RUN_TEST(check_red_copiar);
+
 	return 0;
 }

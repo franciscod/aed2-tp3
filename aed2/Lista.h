@@ -186,6 +186,8 @@ std::ostream& operator << (std::ostream& os, const Lista<T>& l);
 
 template<class T>
 bool operator == (const Lista<T>& l1, const Lista<T>& k2);
+template<class T>
+bool operator != (const Lista<T>& l1, const Lista<T>& k2);
 
   //  Implementacion de Lista
 
@@ -673,6 +675,12 @@ bool operator == (const Lista<T>& l1, const Lista<T>& l2)
   }
 
   return not it1.HaySiguiente() and not it2.HaySiguiente();
+}
+
+template <typename T>
+bool operator != (const Lista<T>& l1, const Lista<T>& l2)
+{
+  return !(l1 == l2);
 }
 
 }

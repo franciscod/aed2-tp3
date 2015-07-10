@@ -12,37 +12,55 @@ Driver::~Driver() {
 
 // TAD RED
 Nat Driver::CantidadComputadoras() const {
-    // TODO
-    return 0;
+
+    return topologia.Computadoras().Cardinal();
 
 }
 
 const Computadora& Driver::IesimaComputadora(const Nat i) const {
-    // TODO
-	return 0;
+    Conj<Compu>::Iterador it = compus.CrearIt();
+    int j = 0
+    while(j < i){
+        it.Avanzar();
+        j++;
+    }
+	return it.Siguiente();
 }
 
 Nat Driver::CantidadInterfacesDe(const Computadora& c) const {
-    // TODO
-    return 0;
+    Conj<Compu>::Iterador itCompuB = compus.CrearIt();
+     while(c != it.Siguiente()){
+        it.Avanzar();
+    }
+    return topologia.Interfaces(it.Siguiente()).Cardinal();
 
 }
 
 const Interfaz& Driver::IesimaInterfazDe(const Computadora& c, const Nat i) const{
-    // TODO
-    return 0;
+    Conj<Compu>::Iterador itCompus= compus.CrearIt();
+    while(c != itCompus.Siguiente()){
+        itCompus.Avanzar();
+    }
+    Conj<Interfaz> interfaces = topologia.Interfaces(it.Siguiente());
+    Conj<Compu>::Iterador itInterfs = compus.CrearIt();
+    int j = 0
+    while(j < i){
+        itInterfs.Avanzar();
+        j++;
+    }
+    return itInterfs.Siguiente();
 
 }
 
 const Interfaz& Driver::IntefazUsada(const Computadora& c1, const Computadora& c2) const {
     // TODO
-    return 0;
+    return topologia.InterfazUsada(c1,c2);
 
 }
 
-bool Driver::conectadas(const Computadora& c1, const Computadora& c2) const {
+bool Driver::Conectadas(const Computadora& c1, const Computadora& c2) const {
     // TODO
-    return 0;
+    return topologia.Conectadas(c1,c2);
 }
 
 // TAD DCNET

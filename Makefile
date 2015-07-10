@@ -14,7 +14,7 @@ INCDIR=. #../../../../../Modulos-CPP
 # TODO: Descomentar el Driver.cpp cuando esté listo
 # TODO: Descomentar el test-catedra
 #
-SOURCES=test.cpp Red.cpp #Driver.cpp test-catedra.cpp
+SOURCES=test.cpp Red.cpp DCNet.cpp #Driver.cpp test-catedra.cpp
 
 # Objetos que serán generados (no tocar)
 OBJECTS=$(SOURCES:.cpp=.o)

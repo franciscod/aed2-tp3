@@ -1,37 +1,47 @@
 #include "DCNet.h"
 
-DCNet::DCNet(const Red r){
+#include "Tipos.h"
+using namespace aed2;
+
+DCNet::DCNet(const class Red& r){
     topologia = r;
-    vectorCompusDCNet = Vector();
-    diccCompusDCNet = DiccString();
-    conjPaquetesDCNet = Conj();
+    // estas cosas se inicializan solas
+    //vectorCompusDCNet = Vector();
+    //diccCompusDCNet = DiccString();
+    //conjPaquetesDCNet = Conj();
     laQueMasEnvio = NULL;
 
-    Conj<compu>::Iterador it = topologia.Computadoras().CrearIt();
+    Conj<Compu>::Iterador it = topologia.Computadoras().CrearIt();
+    /*
+    no tiene sentido asignar una Compu a laQueMasEnvio (tipo CompuDCNet*)
     if(it.HaySiguiente())
-        laQueMasEnvio = *it.Siguiente();
-
+        laQueMasEnvio = it.Siguiente();
+*/
     while(it.HaySiguiente()){
         CompuDCNet compudcnet;
-        compudcnet.pc = *it.Siguiente();
+        compudcnet.pc = it.Siguiente();
+        /*
+        de todo esto se encarga el constructor defautl de cpp
         compudcnet.conjPaquetes = Conj();
         compudcnet.diccPaquetesDCNet = DiccLog();
         compudcnet.colaPaquetesDCNet = ColaPrioridad();
         compudcnet.paqueteAEnviar = Conj().CrearIt();
         compudcnet.enviados = 0;
+        */
 
         vectorCompusDCNet.AgregarAtras(compudcnet);
 
-        diccCompusDCNet.Definir(it.Siguiente().ip, *compudcnet);
+        diccCompusDCNet.definir(it.Siguiente().ip, &vectorCompusDCNet.Ultimo());
 
         it.Avanzar();
     }
 }
 
-void DCNet::CrearPaquete(const Paquete p){
-    CompuDCNet *compudcnet = diccCompusDCNet.Significado(p.origen.ip);
-    Conj<Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);
-    Lista<Compu> recorr = Lista().AgregarAtras(p.origen);
+void DCNet::CrearPaquete(const ::Paquete& p){
+    CompuDCNet *compudcnet = diccCompusDCNet.obtener(p.origen.ip);
+    Conj< ::Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);
+    Lista<Compu> recorr;
+    recorr.AgregarAtras(p.origen);
 
     PaqueteDCNet paqDCNet;
     paqDCNet.it = itPaq;
@@ -59,55 +69,60 @@ void DCNet::AvanzarSegundo(){
 
             vectorCompusDCNet[i].enviados++;
             if(vectorCompusDCNet[i].enviados > maxEnviados){
-                laQueMasEnvio = *vectorCompusDCNet[i];
+                laQueMasEnvio = &vectorCompusDCNet[i];
             }
 
-            Paquete pAEnviar = vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.Siguiente();
-            Conj<Lista<Compu> >::Iterador iterCaminos = topologia.CaminosMinimos(*vectorCompusDCNet[i].pc, pAEnviar.destino).CrearIt();
+            ::Paquete pAEnviar = vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.Siguiente();
+            Conj<Lista<Compu> >::Iterador iterCaminos = topologia.CaminosMinimos(vectorCompusDCNet[i].pc, pAEnviar.destino).CrearIt();
             Compu siguienteCompu = iterCaminos.Siguiente()[1];
 
             if(pAEnviar.destino != siguienteCompu){
-                
-                CompuDCNet siguienteCompuDCNet = *(diccCompusDCNet.Obtener(siguienteCompu.ip));
-                Conj<Paquete>::Iterador itPaquete = siguienteCompuDCNet.conjPaquetes.AgregarRapido(pAEnviar);
+
+                CompuDCNet siguienteCompuDCNet = *(diccCompusDCNet.obtener(siguienteCompu.ip));
+                Conj< ::Paquete>::Iterador itPaquete = siguienteCompuDCNet.conjPaquetes.AgregarRapido(pAEnviar);
                 Conj<PaqueteDCNet>::Iterador itPaqAEnviar = vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(pAEnviar.id);
 
-                itPaqDCNet.Siguiente().recorrido.AgregarAtras(siguienteCompu);
-                siguienteCompuDCNet.colaPaquetesDCNet.Encolar(itPaqAEnviar);
+                itPaqAEnviar.Siguiente().recorrido.AgregarAtras(siguienteCompu);
+                siguienteCompuDCNet.colaPaquetesDCNet.Encolar(pAEnviar.prioridad, itPaqAEnviar);
                 siguienteCompuDCNet.diccPaquetesDCNet.Definir(pAEnviar.id, itPaqAEnviar);
             }
 
             vectorCompusDCNet[i].diccPaquetesDCNet.Borrar(vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.Siguiente().id);
             vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.EliminarSiguiente();
             vectorCompusDCNet[i].paqueteAEnviar.EliminarSiguiente();
-            vectorCompusDCNet[i].paqueteAEnviar = Conj().CrearIt();
+            vectorCompusDCNet[i].paqueteAEnviar = Conj<PaqueteDCNet>().CrearIt();
         }
         i++;
     }
 }
 
 Red DCNet::Red() const{
-    return(topologia);
+    return topologia;
 }
 
-Lista<Compu> DCNet::CaminoRecorrido(const Paquete p) const{
+Lista<Compu> DCNet::CaminoRecorrido(const ::Paquete& p) const{
     Nat i = 0;
+    Lista<Compu> res;
     while(i < vectorCompusDCNet.Longitud()){
-        if(vectorCompusDCNet[i].diccPaquetesDCNet.Definido(p.id))
-            return(vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(p.id).Siguiente().recorrido);
+        if(vectorCompusDCNet[i].diccPaquetesDCNet.Definido(p.id)) {
+            res = vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(p.id).Siguiente().recorrido;
+            break;
+        }
         i++;
     }
+
+    return res;
 }
 
-Nat DCNet::CantidadEnviados(const Compu c) const{
-    return(diccCompusDCNet.Obtener(c.ip)->enviados);
+Nat DCNet::CantidadEnviados(const Compu& c) const{
+    return diccCompusDCNet.obtener(c.ip)->enviados;
 }
 
-Nat DCNet::EnEspera(const Compu c) const{
-    return(diccCompusDCNet.Obtener(c.ip)->conjPaquetes);   
+Conj< ::Paquete> DCNet::EnEspera(const Compu& c) const{
+    return diccCompusDCNet.obtener(c.ip)->conjPaquetes;
 }
 
-bool DCNet::PaqueteEnTransito(const Paquete p) const{
+bool DCNet::PaqueteEnTransito(const ::Paquete& p) const{
     bool enTransito = false;
     Nat i = 0;
     while(i < vectorCompusDCNet.Longitud()){
@@ -115,12 +130,13 @@ bool DCNet::PaqueteEnTransito(const Paquete p) const{
             enTransito = true;
         i++;
     }
-    return(enTransito);
+    return enTransito;
 }
 
 Compu DCNet::LaQueMasEnvio() const{
-    return(laQueMasEnvio->pc);
+    return laQueMasEnvio->pc;
 }
+
 
 bool DCNet::operator == (const DCNet& otra) const{
     bool boolTopo = (topologia == otra.topologia);
@@ -130,8 +146,8 @@ bool DCNet::operator == (const DCNet& otra) const{
     return(boolTopo && boolVec && boolConj && boolMasEnvio);
 }
 
-bool DCNet::CompuDCNet::operator == (const DCNet::CompuDCNet& otra) const{
-    bool boolPC = (*pc == *(otra.pc));
+inline bool DCNet::CompuDCNet::operator == (const DCNet::CompuDCNet& otra) const{
+    bool boolPC = (pc == (otra.pc));
     bool boolConj = (conjPaquetes == otra.conjPaquetes);
     bool boolAVL = true;
     bool boolCola = true;
@@ -139,11 +155,12 @@ bool DCNet::CompuDCNet::operator == (const DCNet::CompuDCNet& otra) const{
     bool boolEnviados = (enviados == otra.enviados);
 
     if(boolConj){
-        Conj<Paquete>::Iterador itConj = conjPaquetes.CrearIt();
+        Conj< ::Paquete>::const_Iterador itConj = conjPaquetes.CrearIt();
         while(itConj.HaySiguiente()){
             if(otra.diccPaquetesDCNet.Definido(itConj.Siguiente().id)){
                 if(!(diccPaquetesDCNet.Obtener(itConj.Siguiente().id).Siguiente() == otra.diccPaquetesDCNet.Obtener(itConj.Siguiente().id).Siguiente())){
                     boolAVL = false;
+                }
             }
             else
                 boolAVL = false;
@@ -151,28 +168,19 @@ bool DCNet::CompuDCNet::operator == (const DCNet::CompuDCNet& otra) const{
         }
     }
 
-    if(colaPaquetesDCNet.EsVacia())
-        if(!otra.colaPaquetesDCNet.EsVacia())
+    if(colaPaquetesDCNet.EsVacia()) {
+        if(!otra.colaPaquetesDCNet.EsVacia()) {
             boolCola = false;
-    else
-        if(!(colaPaquetesDCNet.Proximo().Siguiente() == otra.colaPaquetesDCNet.Proximo().Siguiente()))
+        }
+    } else {
+        if(!(colaPaquetesDCNet.Proximo().Siguiente() == otra.colaPaquetesDCNet.Proximo().Siguiente())){
             boolCola = false;
+        }
+    }
 
-    return(boolPC && boolConj && boolAVL && boolCola && boolPaq && boolEnviados);
+    return boolPC && boolConj && boolAVL && boolCola && boolPaq && boolEnviados;
 }
 
-bool DCNet::PaqueteDCNet::operator == (const PaqueteDCNet& otro) const{
-    return((it.Siguiente() == otro.it.Siguiente()) && (recorrido == otro.recorrido));
-}
-
-bool DCNet::Paquete::operator == (const Paquete& otro) const{
-    bool boolID = (id == otro.id);
-    bool boolPrior = (prioridad == otro.prioridad);
-    bool boolOrigen = (origen == otro.origen);
-    bool boolDestino = (destino == otro.destino);
-    return(boolID && boolPrior && boolOrigen && boolDestino);
-}
-
-bool DCNet::Compu::operator == (const Compu& otra) const{
-    return((ip == otra.ip) && (interfaces == otra.interfaces));
+inline bool DCNet::CompuDCNet::operator != (const DCNet::CompuDCNet& otra) const{
+    return !(*this==otra);
 }

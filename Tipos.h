@@ -12,6 +12,10 @@ typedef Nat ID;
 typedef String Computadora;
 typedef Nat Paquete;
 
+} // namespace aed2
+
+using namespace aed2;
+
 struct Compu {
 	String ip;
 	Conj<Nat> interfaces;
@@ -38,6 +42,24 @@ inline std::ostream& operator<<(std::ostream& os, const Compu& compu) {
 	return os;
 }
 
-} // namespace aed2
+struct Paquete{
+    int id;
+    int prioridad;
+    Compu origen;
+    Compu destino;
+
+	bool operator == (const Paquete& otro) const{
+	    bool boolID = (id == otro.id);
+	    bool boolPrior = (prioridad == otro.prioridad);
+	    bool boolOrigen = (origen == otro.origen);
+	    bool boolDestino = (destino == otro.destino);
+	    return boolID && boolPrior && boolOrigen && boolDestino;
+	}
+
+	bool operator != (const Paquete& otro) const{
+	    return !(*this==otro);
+	}
+};
+
 
 #endif // AED2_TIPOS_H_

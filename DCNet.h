@@ -1,7 +1,8 @@
 #ifndef DCNET_H_
 #define DCNET_H_
 
-#include "red.h"
+#include "Tipos.h"
+#include "Red.h"
 #include "DiccLog.h"
 #include "ColaPrioridad.h"
 #include "aed2/Vector.h"
@@ -9,65 +10,58 @@
 #include "aed2/Conj.h"
 #include "aed2/Lista.h"
 
+using namespace aed2;
+
 class DCNet{
-    
-    struct Compu{
-        String ip;
-        Conj<int> interfaces;
-
-        bool operator == (const Compu) const;
-    };
-
-    struct Paquete{
-        int id;
-        int prioridad;
-        Compu origen;
-        Compu destino;
-
-        bool operator == (const Paquete) const;
-    };
 
     struct PaqueteDCNet{
-        Conj<Paquete>::Iterador it;
+        Conj< ::Paquete>::Iterador it;
         Lista<Compu> recorrido;
 
-        bool operator == (const PaqueteDCNet) const;
+        bool operator == (const PaqueteDCNet& otro) const{
+            return (it.Siguiente() == otro.it.Siguiente()) && (recorrido == otro.recorrido);
+        }
+
+        bool operator != (const PaqueteDCNet& otro) const{
+            return !(*this==otro);
+        }
     };
-    
+
     struct CompuDCNet{
-        Compu *pc;
-        Conj<Paquete> conjPaquetes;
+        Compu pc;
+        Conj< ::Paquete> conjPaquetes;
         DiccLog<Conj<PaqueteDCNet>::Iterador> diccPaquetesDCNet;
         ColaPrioridad<Conj<PaqueteDCNet>::Iterador> colaPaquetesDCNet;
         Conj<PaqueteDCNet>::Iterador paqueteAEnviar;
-        int enviados;
+        Nat enviados;
 
-        bool operator == (const CompuDCNet) const;
+        bool operator == (const CompuDCNet&) const;
+        bool operator != (const CompuDCNet&) const;
     };
 
     public:
-        
-        DCNet(Red);
+
+        DCNet(const class Red&);
         ~DCNet();
 
-        void CrearPaquete(const Paquete);
+        void CrearPaquete(const ::Paquete&);
         void AvanzarSegundo();
-        Red Red() const;
-        Lista<Compu> CaminoRecorrido(const Paquete) const;
-        int CantidadDeEnviados(const Compu) const;
-        Conj<Paquete> EnEspera(const Compu) const;
-        bool PaqueteEnTransito(Paquete) const;
+        class Red Red() const;
+        Lista<Compu> CaminoRecorrido(const ::Paquete&) const;
+        Nat CantidadEnviados(const Compu&) const;
+        Conj< ::Paquete> EnEspera(const Compu&) const;
+        bool PaqueteEnTransito(const ::Paquete&) const;
         Compu LaQueMasEnvio() const;
 
-        bool operator == (const DCNet) const;
+        bool operator == (const DCNet&) const;
 
     private:
 
-        Red topologia;
+        class Red topologia;
         Vector<CompuDCNet> vectorCompusDCNet;
-        DiccString<*CompuDCNet> diccCompusDCNet;
+        DiccString<CompuDCNet*> diccCompusDCNet;
         Conj<PaqueteDCNet> conjPaquetesDCNet;
-        CompuDCNet *laQueMasEnvio;
+        CompuDCNet* laQueMasEnvio;
 
 };
 

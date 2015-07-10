@@ -42,7 +42,6 @@ class DCNet{
     public:
 
         DCNet(const class Red&);
-        ~DCNet();
 
         void CrearPaquete(const ::Paquete&);
         void AvanzarSegundo();

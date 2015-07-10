@@ -52,7 +52,7 @@ Red& Red::operator=(const Red& otro) {
 }
 
 
-Conj<Compu> Red::Computadoras () {
+Conj<Compu>& Red::Computadoras () {
 	return compus;
 }
 

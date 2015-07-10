@@ -1,33 +1,17 @@
 #include "DCNet.h"
-
 #include "Tipos.h"
+
 using namespace aed2;
 
 DCNet::DCNet(const class Red& r){
     topologia = r;
-    // estas cosas se inicializan solas
-    //vectorCompusDCNet = Vector();
-    //diccCompusDCNet = DiccString();
-    //conjPaquetesDCNet = Conj();
     laQueMasEnvio = NULL;
-
     Conj<Compu>::Iterador it = topologia.Computadoras().CrearIt();
-    /*
-    no tiene sentido asignar una Compu a laQueMasEnvio (tipo CompuDCNet*)
-    if(it.HaySiguiente())
-        laQueMasEnvio = it.Siguiente();
-*/
+
     while(it.HaySiguiente()){
+
         CompuDCNet compudcnet;
         compudcnet.pc = it.Siguiente();
-        /*
-        de todo esto se encarga el constructor defautl de cpp
-        compudcnet.conjPaquetes = Conj();
-        compudcnet.diccPaquetesDCNet = DiccLog();
-        compudcnet.colaPaquetesDCNet = ColaPrioridad();
-        compudcnet.paqueteAEnviar = Conj().CrearIt();
-        compudcnet.enviados = 0;
-        */
 
         vectorCompusDCNet.AgregarAtras(compudcnet);
 

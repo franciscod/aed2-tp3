@@ -38,10 +38,10 @@ private:
 	Conj<Compu> compus;
 	Dicc <String, NodoRed> dns;
 
-	void CrearTodosLosCaminos();
-	Conj<Camino> Caminos(const NodoRed& c1, const Computadora& ipDestino);
+	void crearTodosLoscaminos();
+	Conj<Camino> caminos(const NodoRed& c1, const Computadora& ipDestino);
 	Lista<Compu> compusDeNodos (const Lista<NodoRed>& ns);
-	Conj<Camino> Minimos(const Conj<Camino>& caminos);
+	Conj<Camino> minimos(const Conj<Camino>& caminos);
 	Lista<NodoRed> agregarListaNodosVecinos(const NodoRed& n, const Lista<NodoRed>& original);
 	bool nodoEnLista(const NodoRed& n, const Lista<NodoRed>& ns);
 
@@ -50,25 +50,23 @@ public:
 
 	Red (const Red& otro);
 
-	void agregarComputadora( const Compu& c);
+	void AgregarComputadora( const Compu& c);
 
-	void conectar(const Compu& c1, const Compu&c2, const int i1, const  int i2);
+	void Conectar(const Compu& c1, const Compu&c2, const int i1, const  int i2);
 
-	Conj<Compu> computadoras();
+	Conj<Compu> Computadoras();
 
-	bool conectadas(const Compu& c1, const Compu& c2);
+	bool Conectadas(const Compu& c1, const Compu& c2);
 
-	int interfazUsada( const Compu& c1, const Compu& c2);
+	int InterfazUsada( const Compu& c1, const Compu& c2);
 
-	Conj<Compu> vecinos( const Compu& c);
+	Conj<Compu> Vecinos( const Compu& c);
 
-	bool usaInterfaz( const Compu& c, const int i);
+	bool UsaInterfaz( const Compu& c, const int i);
 
 	Conj< Camino > caminosMinimos( const Compu& c1, const Compu& c2);
 
-	bool hayCamino( const Compu& c1, const Compu& c2);
-
-	Red copiar();
+	bool HayCamino( const Compu& c1, const Compu& c2);
 
 	bool operator==(const Red&) const;
 };

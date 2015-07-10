@@ -18,11 +18,11 @@ Red::Red (const Red& otro) {
 	while(it.HaySiguiente()) {
 		Compu c = it.Siguiente();
 		NodoRed nr = otro.dns.Significado(c.ip);
-		Dicc<String, Conj<Camino> > auxCaminos = nr.caminos;
+		Dicc<String, Conj<Camino> > auxcaminos = nr.caminos;
 		Dicc <Interfaz, NodoRed* > auxConexiones;
 		NodoRed auxNr;
 		auxNr.pc = c;
-		auxNr.caminos = auxCaminos;
+		auxNr.caminos = auxcaminos;
 		auxNr.conexiones = auxConexiones;
 		dns.Definir(c.ip, auxNr);
 		it.Avanzar();
@@ -50,18 +50,18 @@ Red::Red (const Red& otro) {
 
 }
 
-Conj<Compu> Red::computadoras () {
+Conj<Compu> Red::Computadoras () {
 	return compus;
 }
 
-void Red::agregarComputadora (const Compu& c) {
+void Red::AgregarComputadora(const Compu& c) {
 	// PRE: c no está en la red
 
 	NodoRed nr(c);
 
 	compus.AgregarRapido(c);
 
-	// inicializarConjCaminos esta embebida en este loop
+	// inicializarConjcaminos esta embebida en este loop
 	Dicc<String, NodoRed>::Iterador it = dns.CrearIt();
 	while(it.HaySiguiente()) {
 		NodoRed& nrt = it.SiguienteSignificado();
@@ -73,7 +73,7 @@ void Red::agregarComputadora (const Compu& c) {
 	dns.Definir(c.ip, nr);
 }
 
-void Red::conectar (const Compu& c1, const Compu& c2, const int i1, const int i2) {
+void Red::Conectar(const Compu& c1, const Compu& c2, const int i1, const int i2) {
 	// PRE: las interfaces de esas compus existen y estan libres
 
 	NodoRed& n1 = dns.Significado(c1.ip);
@@ -82,12 +82,12 @@ void Red::conectar (const Compu& c1, const Compu& c2, const int i1, const int i2
 	n2.conexiones.Definir(i2, &n1);
 
 	//cout << "Conectadas " << c1.ip << "(" << i1 << ") con " << c2.ip << "(" << i2 << ")" << endl;
-	CrearTodosLosCaminos();
+	crearTodosLoscaminos();
 }
 
 
 
-void Red::CrearTodosLosCaminos () {
+void Red::crearTodosLoscaminos () {
 	Conj<Compu>::Iterador itCompuA = compus.CrearIt();
 
 	while (itCompuA.HaySiguiente()) {
@@ -99,7 +99,7 @@ void Red::CrearTodosLosCaminos () {
 		while (itCompuB.HaySiguiente()) {
 			Computadora ipDestino = itCompuB.Siguiente().ip;
 
-			Conj<Camino> caminimos = Minimos(Caminos(*nr, ipDestino));
+			Conj<Camino> caminimos = minimos(caminos(*nr, ipDestino));
 			nr->caminos.Definir(ipDestino, caminimos);
 			
 			itCompuB.Avanzar();
@@ -110,7 +110,7 @@ void Red::CrearTodosLosCaminos () {
 	}
 }
 
-Conj<Camino> Red::Caminos (const NodoRed& c1, const Computadora& ipDestino) {
+Conj<Camino> Red::caminos (const NodoRed& c1, const Computadora& ipDestino) {
 	Conj<Camino> res;
 	//cout << "Buscando caminos de " << c1.pc.ip << " a " << ipDestino << endl;
 
@@ -176,25 +176,25 @@ Lista<Compu> Red::compusDeNodos (const Lista<NodoRed>& ns) {
 	return res;
 }
 
-Conj<Camino> Red::Minimos (const Conj<Camino>& caminos) {
+Conj<Camino> Red::minimos (const Conj<Camino>& caminos) {
 	Conj<Camino> res;
 	Nat longMinima;
-	Conj<Camino>::const_Iterador itCaminos = caminos.CrearIt(); // agregado const_
-	if (itCaminos.HaySiguiente()) {
-		longMinima = itCaminos.Siguiente().Longitud();
-		itCaminos.Avanzar();
-		while(itCaminos.HaySiguiente()) {
-			if (itCaminos.Siguiente().Longitud() < longMinima) {
-				longMinima = itCaminos.Siguiente().Longitud();
+	Conj<Camino>::const_Iterador itcaminos = caminos.CrearIt(); // agregado const_
+	if (itcaminos.HaySiguiente()) {
+		longMinima = itcaminos.Siguiente().Longitud();
+		itcaminos.Avanzar();
+		while(itcaminos.HaySiguiente()) {
+			if (itcaminos.Siguiente().Longitud() < longMinima) {
+				longMinima = itcaminos.Siguiente().Longitud();
 			}
-			itCaminos.Avanzar();
+			itcaminos.Avanzar();
 		}
-		itCaminos = caminos.CrearIt();
-		while(itCaminos.HaySiguiente()) {
-			if (itCaminos.Siguiente().Longitud() == longMinima) {
-				res.AgregarRapido(itCaminos.Siguiente());
+		itcaminos = caminos.CrearIt();
+		while(itcaminos.HaySiguiente()) {
+			if (itcaminos.Siguiente().Longitud() == longMinima) {
+				res.AgregarRapido(itcaminos.Siguiente());
 			}
-			itCaminos.Avanzar();
+			itcaminos.Avanzar();
 		}
 	}
 	return res;
@@ -222,11 +222,11 @@ bool Red::nodoEnLista (const NodoRed& n, const Lista<NodoRed>& ns) {
 }
 
 
-bool Red::usaInterfaz( const Compu& c, const int i) {
+bool Red::UsaInterfaz( const Compu& c, const int i) {
 	return dns.Significado(c.ip).conexiones.Definido(i);
 }
 
-int Red::interfazUsada (const Compu& c1, const Compu& c2) {
+int Red::InterfazUsada (const Compu& c1, const Compu& c2) {
 	// PRE: c2 esta conectada a alguna interfaz de c1
 
 	NodoRed* n1 = &dns.Significado(c1.ip);
@@ -244,7 +244,7 @@ int Red::interfazUsada (const Compu& c1, const Compu& c2) {
 	return -1; // esto no deberia alcanzarse por la PRE
 }
 
-Conj<Compu> Red::vecinos (const Compu& c) {
+Conj<Compu> Red::Vecinos (const Compu& c) {
 	// PRE: c esta en la red
 	Conj<Compu> res;
 	Dicc<Interfaz, NodoRed*>::const_Iterador it = dns.Significado(c.ip).conexiones.CrearIt();
@@ -255,7 +255,7 @@ Conj<Compu> Red::vecinos (const Compu& c) {
 	return res;
 }
 
-bool Red::hayCamino( const Compu& c1, const Compu& c2){
+bool Red::HayCamino( const Compu& c1, const Compu& c2){
 	NodoRed& nr = dns.Significado(c1.ip);
 	return !(nr.caminos.Significado(c2.ip).EsVacio());
 
@@ -265,9 +265,9 @@ Conj< Camino > Red::caminosMinimos( const Compu& c1, const Compu& c2){
 	return dns.Significado(c1.ip).caminos.Significado(c2.ip);
 };
 
-bool Red::conectadas( const Compu& c1, const Compu& c2) {
+bool Red::Conectadas( const Compu& c1, const Compu& c2) {
 	//TODO: esto esta bien? no tiene que chequear que haya algún camino?
-	// NO porque si estan conectadas -> existe un camino , osea estan al lado mano son vecinas osea entende amigou?
+	// NO porque si estan Conectadas -> existe un camino , osea estan al lado mano son vecinas osea entende amigou?
 	bool res = false;
 	Dicc <Interfaz, NodoRed*>::Iterador it = dns.Significado(c1.ip).conexiones.CrearIt();
 

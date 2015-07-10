@@ -47,7 +47,7 @@ void DCNet::CrearPaquete(const ::Paquete& p){
     paqDCNet.it = itPaq;
     paqDCNet.recorrido = recorr;
 
-    Conj<PaqueteDCNet>::Iterador itPaqDCNet = conjPaquetesDCNet.AgregarRapido(paqDCNet);
+    Lista<PaqueteDCNet>::Iterador itPaqDCNet = listaPaquetesDCNet.AgregarAtras(paqDCNet);
 
     (compudcnet->diccPaquetesDCNet).Definir(p.id, itPaqDCNet);
     (compudcnet->colaPaquetesDCNet).Encolar(p.prioridad, itPaqDCNet);
@@ -79,8 +79,8 @@ void DCNet::AvanzarSegundo(){
             if(pAEnviar.destino != siguienteCompu){
 
                 CompuDCNet siguienteCompuDCNet = *(diccCompusDCNet.obtener(siguienteCompu.ip));
-                Conj< ::Paquete>::Iterador itPaquete = siguienteCompuDCNet.conjPaquetes.AgregarRapido(pAEnviar);
-                Conj<PaqueteDCNet>::Iterador itPaqAEnviar = vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(pAEnviar.id);
+                siguienteCompuDCNet.conjPaquetes.AgregarRapido(pAEnviar);
+                Lista<PaqueteDCNet>::Iterador itPaqAEnviar = vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(pAEnviar.id);
 
                 itPaqAEnviar.Siguiente().recorrido.AgregarAtras(siguienteCompu);
                 siguienteCompuDCNet.colaPaquetesDCNet.Encolar(pAEnviar.prioridad, itPaqAEnviar);
@@ -90,7 +90,7 @@ void DCNet::AvanzarSegundo(){
             vectorCompusDCNet[i].diccPaquetesDCNet.Borrar(vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.Siguiente().id);
             vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.EliminarSiguiente();
             vectorCompusDCNet[i].paqueteAEnviar.EliminarSiguiente();
-            vectorCompusDCNet[i].paqueteAEnviar = Conj<PaqueteDCNet>().CrearIt();
+            vectorCompusDCNet[i].paqueteAEnviar = Lista<PaqueteDCNet>().CrearIt();
         }
         i++;
     }
@@ -141,7 +141,7 @@ Compu DCNet::LaQueMasEnvio() const{
 bool DCNet::operator == (const DCNet& otra) const{
     bool boolTopo = (topologia == otra.topologia);
     bool boolVec = (vectorCompusDCNet == otra.vectorCompusDCNet);
-    bool boolConj = (conjPaquetesDCNet == otra.conjPaquetesDCNet);
+    bool boolConj = (listaPaquetesDCNet == otra.listaPaquetesDCNet);
     bool boolMasEnvio = (*laQueMasEnvio == *(otra.laQueMasEnvio));
     return(boolTopo && boolVec && boolConj && boolMasEnvio);
 }

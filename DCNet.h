@@ -30,9 +30,9 @@ class DCNet{
     struct CompuDCNet{
         Compu pc;
         Conj< ::Paquete> conjPaquetes;
-        DiccLog<Conj<PaqueteDCNet>::Iterador> diccPaquetesDCNet;
-        ColaPrioridad<Conj<PaqueteDCNet>::Iterador> colaPaquetesDCNet;
-        Conj<PaqueteDCNet>::Iterador paqueteAEnviar;
+        DiccLog<Lista<PaqueteDCNet>::Iterador> diccPaquetesDCNet;
+        ColaPrioridad<Lista<PaqueteDCNet>::Iterador> colaPaquetesDCNet;
+        Lista<PaqueteDCNet>::Iterador paqueteAEnviar;
         Nat enviados;
 
         bool operator == (const CompuDCNet&) const;
@@ -60,7 +60,7 @@ class DCNet{
         class Red topologia;
         Vector<CompuDCNet> vectorCompusDCNet;
         DiccString<CompuDCNet*> diccCompusDCNet;
-        Conj<PaqueteDCNet> conjPaquetesDCNet;
+        Lista<PaqueteDCNet> listaPaquetesDCNet;
         CompuDCNet* laQueMasEnvio;
 
 };

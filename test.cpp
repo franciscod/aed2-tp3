@@ -617,6 +617,7 @@ void check_red_caminimos_huge(){
 
 void check_red_copiar(){
 	Red r;
+
 	Compu Y; Y.ip = "Y";
 	Y.interfaces.Agregar(1);
 	Y.interfaces.Agregar(2);
@@ -636,9 +637,14 @@ void check_red_copiar(){
 	r.Conectar(Z, X, 1, 2);
 	r.Conectar(X, Y, 1, 2);
 
-	Red auxr = r;
+	Red auxr;
+	auxr = r;
 
 	ASSERT(r == auxr);
+
+	Red auxr2 = r;
+
+	ASSERT(r == auxr2);
 }
 
 //Cola

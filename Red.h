@@ -70,7 +70,7 @@ public:
 
 	bool operator==(const Red&) const;
 
-	Red operator=(const Red& otro);
+	Red& operator=(const Red& otro);
 
 	Conj<Interfaz> Interfaces(const Compu& c);
 };

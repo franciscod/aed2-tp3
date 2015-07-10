@@ -4,26 +4,28 @@
 using namespace std;
 using namespace aed2;
 
-Red::Red () {
-	//compus = Conj<Compu>();
-	//dns = DiccString<NodoRed>();
+Red::Red () {}
+
+Red::Red (const Red& otro) {
+	*this = otro;
 }
-Red Red::operator=(const Red& otro) {
-	Red nuevo;
+
+Red& Red::operator=(const Red& otro) {
+
+	if(this == &otro){
+		return *this;
+	}
+
 	// copia el conjunto de tuplas
-	nuevo.compus = otro.compus;
+	compus = otro.compus;
+
 	// rearma los nodos (con conexiones en blanco) del diccionario dns
 	Conj<Compu>::Iterador it = compus.CrearIt();
 	while(it.HaySiguiente()) {
 		Compu c = it.Siguiente();
-		NodoRed nr = otro.dns.Significado(c.ip);
-		Dicc<String, Conj<Camino> > auxcaminos = nr.caminos;
-		Dicc <Interfaz, NodoRed* > auxConexiones;
-		NodoRed auxNr;
-		auxNr.pc = c;
-		auxNr.caminos = auxcaminos;
-		auxNr.conexiones = auxConexiones;
-		nuevo.dns.Definir(c.ip, auxNr);
+		NodoRed auxNr(c);
+		auxNr.caminos = otro.dns.Significado(c.ip).caminos;
+		dns.Definir(c.ip, auxNr);
 		it.Avanzar();
 	}
 
@@ -31,26 +33,24 @@ Red Red::operator=(const Red& otro) {
 	it = compus.CrearIt();
 	while(it.HaySiguiente()) {
 	 	Compu c = it.Siguiente();
-	 	NodoRed nodoMio = nuevo.dns.Significado(c.ip);
+	 	NodoRed nodoMio = dns.Significado(c.ip);
 	 	NodoRed nodoOtro = otro.dns.Significado(c.ip);
 
 	 	Dicc <Interfaz, NodoRed*>::Iterador itInterfs = nodoMio.conexiones.CrearIt();
 
 	 	while(itInterfs.HaySiguiente()) {
-
 	 		Interfaz interf = itInterfs.SiguienteClave();
 	 		String ip = nodoOtro.conexiones.Significado(interf)->pc.ip;
 	 		nodoMio.conexiones.Definir(interf, &dns.Significado(ip));
 			itInterfs.Avanzar();
 	 	}
+
 	 	it.Avanzar();
 	}
-	return nuevo;
+
+	return *this;
 }
-Red::Red (const Red& otro) {
-	*this = otro;
-	
-}
+
 
 Conj<Compu> Red::Computadoras () {
 	return compus;
@@ -296,8 +296,8 @@ bool Red::Conectadas( const Compu& c1, const Compu& c2) {
 
 
 
-bool Red::operator==(const Red& otro) const{
-	return ( (otro.dns == dns) && (otro.compus == compus)  ) ;
+bool Red::operator==(const Red& otro) const {
+	return (otro.dns == dns) && (otro.compus == compus);
 }
 
 

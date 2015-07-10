@@ -36,12 +36,12 @@ class Driver
        /// Observadores DCNet //////////////////////////////////////////////////////////////
 
         Nat CantidadNodosRecorridosPor(const Paquete& p) const;
-        const Computadora& IesimoNodoRecorridoPor(const Paquete& p) const;
+        const Computadora& IesimoNodoRecorridoPor(const Paquete& p, const Nat i) const;
 
         Nat CantidadEnviadosPor(const Computadora& c) const;
 
         Nat CantidadEnEsperaEn(const Computadora& c) const;
-        const Paquete& IesimoEnEsperaEn(const Computadora& c) const;
+        const Paquete& IesimoEnEsperaEn(const Computadora& c, const Nat i) const;
 
         /// Acciones DCNet ////////////////////////////////////////////////////////////
 

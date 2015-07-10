@@ -14,6 +14,7 @@ class Cola{
         Nat Tamanho() const;
 
         T& Proximo();
+        const T& Proximo() const;
 
         void Desencolar();
         void Encolar(const T&);
@@ -40,6 +41,15 @@ Nat Cola<T>::Tamanho() const{
 
 template <typename T>
 T& Cola<T>::Proximo(){
+    #ifdef DEBUG
+        assert(!EsVacia());
+    #endif
+
+    return listaCola.Primero();
+}
+
+template <typename T>
+const T& Cola<T>::Proximo() const{
     #ifdef DEBUG
         assert(!EsVacia());
     #endif

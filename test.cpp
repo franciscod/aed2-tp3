@@ -1949,12 +1949,10 @@ void check_dcnet_en_espera(){
 	ASSERT(dcnet.EnEspera(c1) == conjPaq);
 
 	dcnet.CrearPaquete(p1);
-
-	ASSERT(!(dcnet.EnEspera(c1) == conjPaq));
-
 	conjPaq.Agregar(p1);
 
 	ASSERT(dcnet.EnEspera(c1) == conjPaq);
+
 
 	dcnet.CrearPaquete(p2);
 	conjPaq.Agregar(p2);
@@ -2000,7 +1998,7 @@ void check_dcnet_camino_recorrido(){
 	Lista<Compu> crEsperado;
 
 	dcnet.CrearPaquete(p1);
-	
+
 	crEsperado.AgregarAtras(c1);
 
 	ASSERT(dcnet.CaminoRecorrido(p1) == crEsperado);

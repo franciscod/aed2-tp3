@@ -96,7 +96,7 @@ void DCNet::AvanzarSegundo(){
                 cDNdestino.colaPaquetesDCNet.Encolar(p.prioridad, itPaq); // y lo encola para mandarlo
 
             } else { // llego a destino
-
+                paqDN.it.EliminarSiguiente(); // borra el paquete del conjPaquetes de la compu original
                 itPaq.EliminarSiguiente(); // destruye el elemento de la lista principal de paquetesdcnet
 
             }

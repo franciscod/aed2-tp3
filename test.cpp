@@ -86,6 +86,15 @@ bool Comparar(const T& t, const S& s){
 	return true;
 }
 
+
+Conj<Camino> agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(Compu c, Conj<Camino> cc) {
+	Conj<Camino> res;
+	Camino cam = cc.CrearIt().Siguiente();
+	cam.AgregarAtras(c);
+	res.Agregar(cam);
+	return res;
+}
+
 // Pila
 
 void check_pila_vacia(){

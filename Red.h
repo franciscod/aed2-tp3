@@ -80,6 +80,4 @@ public:
 	Red& operator=(const Red& otro);
 };
 
-Conj<Camino> agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(Compu c, Conj<Camino> cc);
-
 #endif

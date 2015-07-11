@@ -325,12 +325,3 @@ bool Red::operator==(const Red& otro) const {
 
 	return true;
 }
-
-
-Conj<Camino> agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(Compu c, Conj<Camino> cc) {
-	Conj<Camino> res;
-	Camino cam = cc.CrearIt().Siguiente();
-	cam.AgregarAtras(c);
-	res.Agregar(cam);
-	return res;
-}

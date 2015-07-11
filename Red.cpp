@@ -261,7 +261,7 @@ bool Red::HayCamino( const Compu& c1, const Compu& c2) const {
 
 }
 
-Conj< Camino > Red::CaminosMinimos( const Compu& c1, const Compu& c2) const {
+const Conj< Camino >& Red::CaminosMinimos( const Compu& c1, const Compu& c2) const {
 	return dns.obtener(c1.ip).caminos.obtener(c2.ip);
 };
 

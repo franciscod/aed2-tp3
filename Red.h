@@ -71,7 +71,7 @@ public:
 
 	bool UsaInterfaz( const Compu& c, const int i) const;
 
-	Conj< Camino > CaminosMinimos( const Compu& c1, const Compu& c2) const;
+	const Conj< Camino >& CaminosMinimos( const Compu& c1, const Compu& c2) const;
 
 	bool HayCamino( const Compu& c1, const Compu& c2) const;
 

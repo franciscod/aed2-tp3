@@ -58,7 +58,7 @@ void DCNet::AvanzarSegundo(){
             }
 
             ::Paquete pAEnviar = vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.Siguiente();
-            Conj<Lista<Compu> >::Iterador iterCaminos = topologia.CaminosMinimos(vectorCompusDCNet[i].pc, pAEnviar.destino).CrearIt();
+            Conj<Lista<Compu> >::const_Iterador iterCaminos = topologia.CaminosMinimos(vectorCompusDCNet[i].pc, pAEnviar.destino).CrearIt();
             Compu siguienteCompu = iterCaminos.Siguiente()[1];
 
             if(pAEnviar.destino != siguienteCompu){

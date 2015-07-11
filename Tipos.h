@@ -62,4 +62,10 @@ struct Paquete{
 };
 
 
+inline std::ostream& operator<<(std::ostream& os, const ::Paquete& p) {
+	os << "[Paquete (id: " << p.id << ", prioridad: " << p.prioridad << ") de " << p.origen << " a " << p.destino << "]";
+	return os;
+}
+
+
 #endif // AED2_TIPOS_H_

@@ -1867,6 +1867,284 @@ void check_dcnet_crear_paquete(){
 	ASSERT(!(dcnet.EnEspera(c1) == conjPaq));
 }
 
+void check_dcnet_paquete_en_transito(){
+	Red r;
+
+	Compu c1; 
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2; 
+	c2.ip = "c2";
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	r.Conectar(c2, c1, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 7;
+	p1.prioridad = 2;
+	p1.origen = c1;
+	p1.destino = c2;
+
+	 ::Paquete p2;
+	p2.id = 5;
+	p2.prioridad = 1;
+	p2.origen = c1;
+	p2.destino = c2;
+
+	ASSERT(!(dcnet.PaqueteEnTransito(p1)));
+	ASSERT(!(dcnet.PaqueteEnTransito(p2)));
+
+	dcnet.CrearPaquete(p1);
+
+	ASSERT(dcnet.PaqueteEnTransito(p1));
+	ASSERT(!(dcnet.PaqueteEnTransito(p2)));
+
+	dcnet.CrearPaquete(p2);
+
+	ASSERT(dcnet.PaqueteEnTransito(p1));
+	ASSERT(dcnet.PaqueteEnTransito(p2));
+
+	dcnet.AvanzarSegundo();
+
+	ASSERT(dcnet.PaqueteEnTransito(p1));
+	ASSERT(!(dcnet.PaqueteEnTransito(p2)));
+}
+
+void check_dcnet_en_espera(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	r.Conectar(c2, c1, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 7;
+	p1.prioridad = 2;
+	p1.origen = c1;
+	p1.destino = c2;
+
+	 ::Paquete p2;
+	p2.id = 5;
+	p2.prioridad = 1;
+	p2.origen = c1;
+	p2.destino = c2;
+
+	Conj< ::Paquete> conjPaq;
+
+	ASSERT(dcnet.EnEspera(c1) == conjPaq);
+
+	dcnet.CrearPaquete(p1);
+
+	ASSERT(!(dcnet.EnEspera(c1) == conjPaq));
+
+	conjPaq.Agregar(p1);
+
+	ASSERT(dcnet.EnEspera(c1) == conjPaq);
+
+	dcnet.CrearPaquete(p2);
+	conjPaq.Agregar(p2);
+
+	ASSERT(dcnet.EnEspera(c1) == conjPaq);
+
+	conjPaq.Eliminar(p2);
+	dcnet.AvanzarSegundo();
+
+	ASSERT(dcnet.EnEspera(c1) == conjPaq);
+}
+
+void check_dcnet_camino_recorrido(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(1);
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	Compu c3;
+	c3.ip = "c3";
+	c3.interfaces.Agregar(2);
+	r.AgregarComputadora(c3);
+
+	r.Conectar(c1, c2, 1, 1);
+	r.Conectar(c2, c3, 2, 2);
+
+	cout << endl << "caminimos: " << r.CaminosMinimos(c1, c3) << endl;
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 7;
+	p1.prioridad = 2;
+	p1.origen = c1;
+	p1.destino = c3;
+
+	Lista<Compu> recorridix;
+
+	dcnet.CrearPaquete(p1);
+
+	ASSERT(!(dcnet.CaminoRecorrido(p1) == recorridix));
+	
+	recorridix.AgregarAtras(c1);
+
+	ASSERT(dcnet.CaminoRecorrido(p1) == recorridix);
+
+	dcnet.AvanzarSegundo();
+
+	ASSERT(!(dcnet.CaminoRecorrido(p1) == recorridix));
+
+	recorridix.AgregarAtras(c2);
+
+	ASSERT(dcnet.CaminoRecorrido(p1) == recorridix);
+
+	dcnet.AvanzarSegundo();
+
+	ASSERT(!(dcnet.PaqueteEnTransito(p1)));
+
+	ASSERT(dcnet.EnEspera(c1).EsVacio());
+}
+
+void check_dcnet_cantidad_enviados(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(1);
+	r.AgregarComputadora(c2);
+
+	r.Conectar(c1, c2, 1, 1);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 7;
+	p1.prioridad = 2;
+	p1.origen = c1;
+	p1.destino = c2;
+
+	 ::Paquete p2;
+	p2.id = 8;
+	p2.prioridad = 3;
+	p2.origen = c1;
+	p2.destino = c2;
+
+	 ::Paquete p3;
+	p3.id = 9;
+	p3.prioridad = 4;
+	p3.origen = c1;
+	p3.destino = c2;
+
+	dcnet.CrearPaquete(p1);
+	dcnet.CrearPaquete(p2);
+	dcnet.CrearPaquete(p3);
+
+	ASSERT_EQ(dcnet.CantidadEnviados(c1), 0);
+
+	dcnet.AvanzarSegundo();
+
+	ASSERT_EQ(dcnet.CantidadEnviados(c1), 1);
+
+	dcnet.AvanzarSegundo();
+
+	ASSERT_EQ(dcnet.CantidadEnviados(c1), 2);
+
+	dcnet.AvanzarSegundo();
+
+	ASSERT_EQ(dcnet.CantidadEnviados(c1), 3);
+
+	dcnet.AvanzarSegundo();
+
+	ASSERT_EQ(dcnet.CantidadEnviados(c1), 3);
+}
+
+void check_dcnet_la_que_mas_envio(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(1);
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	Compu c3;
+	c3.ip = "c3";
+	c3.interfaces.Agregar(2);
+	r.AgregarComputadora(c3);
+
+	r.Conectar(c1, c2, 1, 1);
+	r.Conectar(c2, c3, 2, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 7;
+	p1.prioridad = 2;
+	p1.origen = c1;
+	p1.destino = c2;
+
+	 ::Paquete p2;
+	p2.id = 8;
+	p2.prioridad = 3;
+	p2.origen = c2;
+	p2.destino = c3;
+
+	 ::Paquete p3;
+	p3.id = 9;
+	p3.prioridad = 4;
+	p3.origen = c1;
+	p3.destino = c3;
+
+	dcnet.CrearPaquete(p2);
+	dcnet.AvanzarSegundo();
+
+	ASSERT(dcnet.LaQueMasEnvio() == c2);
+
+	dcnet.CrearPaquete(p1);
+	dcnet.CrearPaquete(p3);
+	dcnet.AvanzarSegundo();
+
+	ASSERT((dcnet.LaQueMasEnvio() == c1) || (dcnet.LaQueMasEnvio() == c2));
+
+	dcnet.AvanzarSegundo();
+
+	ASSERT(dcnet.LaQueMasEnvio() == c1);
+
+	dcnet.AvanzarSegundo();
+	dcnet.CrearPaquete(p2);
+	dcnet.AvanzarSegundo();
+	
+	ASSERT(dcnet.LaQueMasEnvio() == c2);		
+}
 
 // ---------------------------------------------------------------------
 
@@ -1979,6 +2257,11 @@ int main(int argc, char **argv){
 	// DCNet
 	RUN_TEST(check_dcnet_red);
 	RUN_TEST(check_dcnet_crear_paquete);
+	RUN_TEST(check_dcnet_paquete_en_transito);
+	RUN_TEST(check_dcnet_en_espera);
+	RUN_TEST(check_dcnet_camino_recorrido);
+	RUN_TEST(check_dcnet_cantidad_enviados);
+	RUN_TEST(check_dcnet_la_que_mas_envio);
 
 	return 0;
 }

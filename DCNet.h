@@ -35,6 +35,23 @@ class DCNet{
         Lista<PaqueteDCNet>::Iterador paqueteAEnviar;
         Nat enviados;
 
+        CompuDCNet(const Compu& c): pc(c) {
+            conjPaquetes = Conj< ::Paquete>();
+            diccPaquetesDCNet = DiccLog<Lista<PaqueteDCNet>::Iterador>();
+            colaPaquetesDCNet = ColaPrioridad<Lista<PaqueteDCNet>::Iterador>();
+            paqueteAEnviar = Lista<PaqueteDCNet>::Iterador();
+            enviados = 0;
+        };
+        CompuDCNet(const CompuDCNet& otra) {
+            //cout << "LLAMANDO CONST POR COPIA DE COMPUDCNET" <<endl; //TODO volar
+            pc = otra.pc;
+            conjPaquetes = otra.conjPaquetes;
+            diccPaquetesDCNet = otra.diccPaquetesDCNet;
+            colaPaquetesDCNet = otra.colaPaquetesDCNet;
+            paqueteAEnviar = otra.paqueteAEnviar;
+            enviados = otra.enviados;
+        };
+
         bool operator == (const CompuDCNet&) const;
         bool operator != (const CompuDCNet&) const;
     };

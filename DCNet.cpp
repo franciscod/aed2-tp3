@@ -10,9 +10,9 @@ DCNet::DCNet(const class Red& r){
     Conj<Compu>::const_Iterador it = topologia.Computadoras().CrearIt();
 
     while(it.HaySiguiente()){
+        CompuDCNet compudcnet(it.Siguiente());
 
-        CompuDCNet compudcnet;
-        compudcnet.pc = it.Siguiente();
+        cout << compudcnet.pc.ip << endl;
 
         vectorCompusDCNet.AgregarAtras(compudcnet);
 
@@ -25,6 +25,13 @@ DCNet::DCNet(const class Red& r){
 void DCNet::CrearPaquete(const ::Paquete& p){
     CompuDCNet *compudcnet = diccCompusDCNet.obtener(p.origen.ip);
     Conj< ::Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);
+
+    cout << "ESTAS ROTO?" << endl;
+    cout << compudcnet->pc.ip << endl;
+    cout << "ESTAS ROTO?" << endl;
+    return;
+
+
     Lista<Compu> recorr;
     recorr.AgregarAtras(p.origen);
 

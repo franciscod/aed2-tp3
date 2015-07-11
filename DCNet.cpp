@@ -12,8 +12,6 @@ DCNet::DCNet(const class Red& r){
     while(it.HaySiguiente()){
         CompuDCNet compudcnet(it.Siguiente());
 
-        //cout << compudcnet.pc.ip << endl;
-
         vectorCompusDCNet.AgregarAtras(compudcnet);
 
         diccCompusDCNet.definir(it.Siguiente().ip, &vectorCompusDCNet.Ultimo());
@@ -29,13 +27,6 @@ DCNet::DCNet(const class Red& r){
 void DCNet::CrearPaquete(const ::Paquete& p){
     CompuDCNet *compudcnet = diccCompusDCNet.obtener(p.origen.ip);
     Conj< ::Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);
-
-    /*
-    cout << "ESTAS ROTO?" << endl;
-    cout << compudcnet->pc.ip << endl;
-    cout << "ESTAS ROTO?" << endl;
-    return;
-    */
 
     Lista<Compu> recorr;
     recorr.AgregarAtras(p.origen);
@@ -153,46 +144,36 @@ const Compu& DCNet::LaQueMasEnvio() const{
 
 
 bool DCNet::operator == (const DCNet& otra) const{
-    bool boolTopo = (topologia == otra.topologia);
-    bool boolVec = (vectorCompusDCNet == otra.vectorCompusDCNet);
-    bool boolConj = (listaPaquetesDCNet == otra.listaPaquetesDCNet);
-    bool boolMasEnvio = (*laQueMasEnvio == *(otra.laQueMasEnvio));
-    return(boolTopo && boolVec && boolConj && boolMasEnvio);
+    if (!(topologia == otra.topologia)) {
+        return false;
+    }
+
+    if (!(vectorCompusDCNet == otra.vectorCompusDCNet)) {
+        return false;
+    }
+
+    // esto asume que estan bien formadas listaPaquetesDCNet y laqueMasEnvio
+    // y que las compudcnet vienen bien formadas tambien
+    
+    return true;
 }
 
 inline bool DCNet::CompuDCNet::operator == (const DCNet::CompuDCNet& otra) const{
-    bool boolPC = (pc == (otra.pc));
-    bool boolConj = (conjPaquetes == otra.conjPaquetes);
-    bool boolAVL = true;
-    bool boolCola = true;
-    bool boolPaq = (paqueteAEnviar.Siguiente() == otra.paqueteAEnviar.Siguiente());
-    bool boolEnviados = (enviados == otra.enviados);
-
-    if(boolConj){
-        Conj< ::Paquete>::const_Iterador itConj = conjPaquetes.CrearIt();
-        while(itConj.HaySiguiente()){
-            if(otra.diccPaquetesDCNet.Definido(itConj.Siguiente().id)){
-                if(!(diccPaquetesDCNet.Obtener(itConj.Siguiente().id).Siguiente() == otra.diccPaquetesDCNet.Obtener(itConj.Siguiente().id).Siguiente())){
-                    boolAVL = false;
-                }
-            }
-            else
-                boolAVL = false;
-            itConj.Avanzar();
-        }
+    if (!(pc == otra.pc)) {
+        return false;
+    }
+    if (!(conjPaquetes == otra.conjPaquetes)) {
+        return false;
+    }
+    if (!(enviados == otra.enviados)) {
+        return false;
     }
 
-    if(colaPaquetesDCNet.EsVacia()) {
-        if(!otra.colaPaquetesDCNet.EsVacia()) {
-            boolCola = false;
-        }
-    } else {
-        if(!(colaPaquetesDCNet.Proximo().Siguiente() == otra.colaPaquetesDCNet.Proximo().Siguiente())){
-            boolCola = false;
-        }
-    }
+	// OJO, esto no chequea diccPaquetesDCNet ni colaPaquetesDCNet
+    // pero es redundante a la data que hay en conjPaquetes
+    // (con mas o menos info para salvar complejidades)
 
-    return boolPC && boolConj && boolAVL && boolCola && boolPaq && boolEnviados;
+    return true;
 }
 
 inline bool DCNet::CompuDCNet::operator != (const DCNet::CompuDCNet& otra) const{

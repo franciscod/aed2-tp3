@@ -9,8 +9,10 @@
 #include "aed2/dicc_trie.h"
 #include "aed2/Conj.h"
 #include "aed2/Lista.h"
+#include <iostream>
 
 using namespace aed2;
+using namespace std;
 
 class DCNet{
 
@@ -18,8 +20,25 @@ class DCNet{
         Conj< ::Paquete>::Iterador it;
         Lista<Compu> recorrido;
 
+        PaqueteDCNet(){
+            it = Conj< ::Paquete>::Iterador();
+            recorrido = Lista<Compu>();
+        }
+
         bool operator == (const PaqueteDCNet& otro) const{
-            return (it.Siguiente() == otro.it.Siguiente()) && (recorrido == otro.recorrido);
+            if (!(recorrido == otro.recorrido)) {
+                return false;
+            }
+
+            if (it.HaySiguiente() != otro.it.HaySiguiente()) {
+                return false;
+            }
+
+            if (!it.HaySiguiente()) {
+                return true;
+            }
+
+            return it.Siguiente() == otro.it.Siguiente();
         }
 
         bool operator != (const PaqueteDCNet& otro) const{

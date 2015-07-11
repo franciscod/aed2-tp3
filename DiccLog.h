@@ -117,6 +117,8 @@ bool DiccLog<T>::Definido(const Nat& clave) const{
 
 template <typename T>
 void DiccLog<T>::Definir(const Nat& clave, const T& data){
+	cout << "dicclog quieren definir " << clave << endl;
+
 	if(ptrAbAvl->EsNil()){
 		delete ptrAbAvl;
 		ptrAbAvl = crearArbol(clave, data);
@@ -130,8 +132,14 @@ void DiccLog<T>::Definir(const Nat& clave, const T& data){
 		pilaUpDir.Apilar(ptrAbIt->Raiz().clave < clave);
 		pilaUpPtrAb.Apilar(ptrAbIt);
 
+		unsigned int marcecount = 0; //TODO volar esto despues de debuggear
 		// Busco dónde insertar el nuevo elemento
 		while(!(ptrAbIt->Raiz().clave == clave || subArbol(ptrAbIt, pilaUpDir.Tope())->EsNil())){
+
+			cout << "en el while del avl, " << marcecount++ << ' ';
+			cout << ptrAbIt->Raiz().clave << ' ';
+			cout << subArbol(ptrAbIt, pilaUpDir.Tope())->EsNil() << endl;
+
 			ptrAbIt = subArbol(ptrAbIt, pilaUpDir.Tope());
 
 			pilaUpDir.Apilar(ptrAbIt->Raiz().clave < clave);

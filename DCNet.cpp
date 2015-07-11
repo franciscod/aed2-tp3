@@ -128,6 +128,7 @@ DCNet& DCNet::operator = (const DCNet& otro){
 
 void DCNet::CrearPaquete(const ::Paquete& p){
     CompuDCNet *compudcnet = diccCompusDCNet.obtener(p.origen.ip);
+
     Conj< ::Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);
 
     Lista<Compu> recorr;
@@ -139,8 +140,13 @@ void DCNet::CrearPaquete(const ::Paquete& p){
 
     Lista<PaqueteDCNet>::Iterador itPaqDCNet = listaPaquetesDCNet.AgregarAtras(paqDCNet);
 
-    (compudcnet->diccPaquetesDCNet).Definir(p.id, itPaqDCNet);
-    (compudcnet->colaPaquetesDCNet).Encolar(p.prioridad, itPaqDCNet);
+    cout << "a punto de definir en el avl" << endl;
+    cout << compudcnet << endl;
+    compudcnet->diccPaquetesDCNet.Definir(p.id, itPaqDCNet); // aca rompe
+
+    cout << "definiendo en cola" << endl;
+    compudcnet->colaPaquetesDCNet.Encolar(p.prioridad, itPaqDCNet);
+    cout << "listo" << endl;
 }
 
 void DCNet::AvanzarSegundo(){

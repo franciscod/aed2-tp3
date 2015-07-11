@@ -24,7 +24,7 @@ class Driver
         Nat CantidadInterfacesDe(const Computadora& c) const;
         const Interfaz& IesimaInterfazDe(const Computadora& c, const Nat i) const ;
 
-        const Interfaz& IntefazUsada(const Computadora& c1, const Computadora& c2) const;
+        Interfaz IntefazUsada(const Computadora& c1, const Computadora& c2) const;
 
         bool conectadas(const Computadora& c1, const Computadora& c2) const;
 

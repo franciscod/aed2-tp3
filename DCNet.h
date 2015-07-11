@@ -80,7 +80,7 @@ class DCNet{
         DCNet(const class Red&);
 				DCNet(const DCNet&);
 
-        void CrearPaquete(const ::Paquete&);
+        void CrearPaquete( ::Paquete);
         void AvanzarSegundo();
         class Red Red() const;
         Lista<Compu> CaminoRecorrido(const ::Paquete&) const;

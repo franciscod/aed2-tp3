@@ -22,6 +22,84 @@ DCNet::DCNet(const class Red& r){
     }
 }
 
+DCNet::DCNet(const DCNet& otro){
+	*this = otro;
+}
+
+DCNet& DCNet::operator = (const DCNet& otro){
+	if(this == &otro){
+		return *this;
+	}
+	// limpio todo 
+	vectorCompusDCNet = Vector<CompuDCNet>();
+	diccCompusDCNet = DiccString<CompuDCNet*>();
+	listaPaquetesDCNet = Lista<PaqueteDCNet>();
+	laQueMasEnvio = NULL;
+
+	topologia = otro.topologia;
+  Conj<Compu>::const_Iterador it = topologia.Computadoras().CrearIt();
+
+  while(it.HaySiguiente()){
+      CompuDCNet compudcnet(it.Siguiente());
+			// Copio del otro los campos sin punteros
+			const CompuDCNet* compudcnetOtro = otro.diccCompusDCNet.obtener(it.Siguiente().ip);	
+
+			// Copio conjPaquetes y enviados
+			compudcnet.conjPaquetes = compudcnetOtro->conjPaquetes;
+			compudcnet.enviados = compudcnetOtro->enviados;	
+
+      vectorCompusDCNet.AgregarAtras(compudcnet);
+      diccCompusDCNet.definir(it.Siguiente().ip, &vectorCompusDCNet.Ultimo());
+      it.Avanzar();
+  }
+	// Acá tengo vectorCompusDCNet, diccCompusDCNet y topología
+
+	// Genero lista PaquetesDCNet
+	Lista<PaqueteDCNet>::const_Iterador itPDCNet = otro.listaPaquetesDCNet.CrearIt();
+	while(itPDCNet.HaySiguiente()){
+		PaqueteDCNet pdcn;
+		pdcn.recorrido = itPDCNet.Siguiente().recorrido;
+		
+		Conj< ::Paquete>::Iterador itPaquetes = diccCompusDCNet.obtener(pdcn.recorrido.Ultimo().ip)->conjPaquetes.CrearIt();
+		while(itPaquetes.Siguiente() != itPDCNet.Siguiente().it.Siguiente()){
+			itPaquetes.Avanzar();
+		}
+		pdcn.it = itPaquetes;
+		listaPaquetesDCNet.AgregarAtras(pdcn);
+
+		itPDCNet.Avanzar();
+	}
+	// Acá tengo PaquetesDCNet copiado
+	
+	for(unsigned int i = 0; i < vectorCompusDCNet.Longitud(); i++){
+		if(otro.laQueMasEnvio != NULL && otro.laQueMasEnvio->pc == vectorCompusDCNet[i].pc){
+			laQueMasEnvio = &vectorCompusDCNet[i];
+		}
+
+		Conj< ::Paquete>::const_Iterador itPaquetes = vectorCompusDCNet[i].conjPaquetes.CrearIt();
+		while(itPaquetes.HaySiguiente()){
+			Lista<PaqueteDCNet>::Iterador itPDCNet = listaPaquetesDCNet.CrearIt();
+			while(itPDCNet.Siguiente().it.Siguiente() != itPaquetes.Siguiente()){
+				itPDCNet.Avanzar();
+			}
+			vectorCompusDCNet[i].diccPaquetesDCNet.Definir(itPaquetes.Siguiente().id, itPDCNet);
+			itPaquetes.Avanzar();	
+		}
+
+		// Acá tengo diccPaquetesDCNet
+		ColaPrioridad<Lista<PaqueteDCNet>::Iterador> copiaColaPrioridadOtro(otro.vectorCompusDCNet[i].colaPaquetesDCNet);
+
+		while(!copiaColaPrioridadOtro.EsVacia()){
+			::Paquete paqueteAEncolar = copiaColaPrioridadOtro.Proximo().Siguiente().it.Siguiente();
+			vectorCompusDCNet[i].colaPaquetesDCNet.Encolar(paqueteAEncolar.prioridad, 
+																											vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(paqueteAEncolar.id));
+			copiaColaPrioridadOtro.Desencolar();
+		}
+		// Acá tengo colaDePrioridad
+	}
+	return *this;
+}
+
 void DCNet::CrearPaquete(const ::Paquete& p){
     CompuDCNet *compudcnet = diccCompusDCNet.obtener(p.origen.ip);
     Conj< ::Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);

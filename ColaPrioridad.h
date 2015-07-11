@@ -18,7 +18,7 @@ class ColaPrioridad{
         const T& Proximo() const;
         
         T Desencolar();
-        void Encolar(const Nat, const T);
+        void Encolar(const Nat&, const T&);
 
         bool operator == (const ColaPrioridad<T>&) const;
 
@@ -65,7 +65,7 @@ const T& ColaPrioridad<T>::Proximo() const{
 }
 
 template <typename T>
-void ColaPrioridad<T>::Encolar(const Nat p, const T elem){
+void ColaPrioridad<T>::Encolar(const Nat& p, const T& elem){
     if(diccCola.Definido(p)){
         diccCola.Obtener(p).encolados.Encolar(elem);
     }

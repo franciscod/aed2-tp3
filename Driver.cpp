@@ -180,7 +180,6 @@ void Driver::CrearPaquete(const Computadora& origen, const Computadora& destino,
         while(itPaqs.HaySiguiente()){
             if(maxId <= itPaqs.Siguiente().id) {
                 maxId = itPaqs.Siguiente().id;
-                cout << "el nuevo maxId es " << maxId << endl;
             }
             itPaqs.Avanzar();
         }
@@ -193,7 +192,6 @@ void Driver::CrearPaquete(const Computadora& origen, const Computadora& destino,
     p.prioridad = prioridad;
     p.id = maxId + 1;
 
-    cout << "   ..creando paquete" << endl;
     dcNet.CrearPaquete(p);
 }
 

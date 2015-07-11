@@ -2423,6 +2423,8 @@ void check_dcnet_copia_cola_mantiene_orden(){
 	ASSERT(dcnet == dcnetCopia);
 	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
 
+}
+
 void test_conectar_computadoras() {
 	Driver dcnet;
 	Computadora c1 = "skynet";
@@ -2500,9 +2502,7 @@ void test_crear_paquetes() {
 
 	dcnet.Conectar(c1, i1,c2, i2);
 	dcnet.Conectar(c2, i5,c3, i3);
-	cout << "CREA PRIMER PAQ\n";
 	dcnet.CrearPaquete(c1,c2,2);
-	cout << "CREA SEGUNDO PAQ\n";
 	dcnet.CrearPaquete(c1,c2,1);
 	dcnet.CrearPaquete(c2,c3,3);
 	dcnet.CrearPaquete(c2,c3,2);
@@ -2857,7 +2857,6 @@ void test_crear_paquetes_mini_LoPibe() {
     p.prioridad = 2;
     p.id = 1234;
 
-	cout << "CREA PRIMER PAQ\n";
 	dcnet.CrearPaquete(p);
 
 }
@@ -2893,7 +2892,6 @@ void test_crear_paquetes_mini() {
 
 	dcnet.Conectar(c1, i1,c2, i2);
 	dcnet.Conectar(c2, i5,c3, i3);
-	cout << "CREA PRIMER PAQ\n";
 	dcnet.CrearPaquete(c1,c2,2);
 
 }

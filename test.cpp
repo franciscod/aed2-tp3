@@ -2146,6 +2146,49 @@ void check_dcnet_la_que_mas_envio(){
 	ASSERT(dcnet.LaQueMasEnvio() == c2);		
 }
 
+void check_dcnet_igualdad(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(1);
+	r.AgregarComputadora(c2);
+
+	r.Conectar(c1, c2, 1, 1);
+
+	DCNet dcnet1(r);
+	DCNet dcnet2(r);
+
+	ASSERT(dcnet1 == dcnet2)
+
+	 ::Paquete p1;
+	p1.id = 7;
+	p1.prioridad = 2;
+	p1.origen = c1;
+	p1.destino = c2;
+
+	dcnet1.CrearPaquete(p1);
+
+	ASSERT(!(dcnet1 == dcnet2));
+
+	dcnet2.CrearPaquete(p1);
+
+	ASSERT(dcnet1 == dcnet2)
+
+	dcnet1.AvanzarSegundo();	
+
+	ASSERT(!(dcnet1 == dcnet2));
+
+	dcnet2.AvanzarSegundo();
+
+	ASSERT(dcnet1 == dcnet2);
+}
+
 // ---------------------------------------------------------------------
 
 int main(int argc, char **argv){
@@ -2253,7 +2296,6 @@ int main(int argc, char **argv){
 	RUN_TEST(check_red_caminimos_mini);
 	RUN_TEST(check_red_copiar);
 
-
 	// DCNet
 	RUN_TEST(check_dcnet_red);
 	RUN_TEST(check_dcnet_crear_paquete);
@@ -2262,6 +2304,7 @@ int main(int argc, char **argv){
 	RUN_TEST(check_dcnet_camino_recorrido);
 	RUN_TEST(check_dcnet_cantidad_enviados);
 	RUN_TEST(check_dcnet_la_que_mas_envio);
+	RUN_TEST(check_dcnet_igualdad);
 
 	return 0;
 }

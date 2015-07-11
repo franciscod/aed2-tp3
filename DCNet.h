@@ -100,6 +100,8 @@ class DCNet{
         Lista<PaqueteDCNet> listaPaquetesDCNet;
         CompuDCNet* laQueMasEnvio;
 
+        Lista<Compu> caminoDeMentiraParaEvitarWarning;
+
 };
 
 #endif // DCNET_H_INCLUDED

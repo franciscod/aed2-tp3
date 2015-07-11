@@ -209,17 +209,20 @@ Red DCNet::Red() const{
 }
 
 const Lista<Compu>& DCNet::CaminoRecorrido(const ::Paquete& p) const{
+	// PRE: p está en el DCNet.
     Nat i = 0;
-    const Lista<Compu>& res;
 
     while(i < vectorCompusDCNet.Longitud()){
         if(vectorCompusDCNet[i].diccPaquetesDCNet.Definido(p.id)) {
-            res = vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(p.id).Siguiente().recorrido;
+            return vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(p.id).Siguiente().recorrido;
         }
         i++;
     }
 
-    return res;
+	// Para dejar contento al compilador, hacemos esta payasada en caso de que no se cumpla el PRE
+	cout << "Esto no debería pasar JAMAS." << cout;
+	assert(false);
+    return caminoDeMentiraParaEvitarWarning;
 }
 
 Nat DCNet::CantidadEnviados(const Compu& c) const{

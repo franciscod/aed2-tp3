@@ -2156,7 +2156,7 @@ void check_dcnet_igualdad(){
 	DCNet dcnet2(r);
 
 	ASSERT(dcnet1 == dcnet2)
-	 ::Paquete p1;
+	::Paquete p1;
 	p1.id = 7;
 	p1.prioridad = 2;
 	p1.origen = c1;
@@ -2178,6 +2178,252 @@ void check_dcnet_igualdad(){
 
 	ASSERT(dcnet1 == dcnet2);
 }
+
+void check_dcnet_red_copia(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(1);
+
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	Compu c3;
+	c3.ip = "c3";
+	c3.interfaces.Agregar(2);
+	r.AgregarComputadora(c3);
+
+	r.Conectar(c1, c2, 1, 1);
+	r.Conectar(c2, c3, 2, 2);
+
+	DCNet dcnet(r);
+
+	DCNet dcnetCopia(dcnet);
+
+	ASSERT(dcnet.Red() == dcnetCopia.Red());
+
+	DCNet dcnetAsignada = DCNet(r);
+
+	ASSERT(dcnet.Red() == dcnetAsignada.Red());
+
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet == dcnetAsignada);
+
+	// no hay paquetes pero esto no esta prohibido
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+	dcnetAsignada.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet == dcnetAsignada);
+
+}
+
+void check_dcnet_crear_paquete_copia(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	r.Conectar(c2, c1, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p;
+	p.id = 7;
+	p.prioridad = 2;
+	p.origen = c1;
+	p.destino = c2;
+
+	dcnet.CrearPaquete(p);
+
+	DCNet dcnetCopia(dcnet);
+
+	ASSERT(dcnet.PaqueteEnTransito(p) == dcnetCopia.PaqueteEnTransito(p));
+
+	ASSERT(dcnet == dcnetCopia);
+
+	// no hay paquetes pero esto no esta prohibido
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+}
+
+void check_dcnet_muchos_paquetes(){
+	Red r;
+	Compu c1("Uno", 2);
+	Compu c2("Dos", 2);
+	r.AgregarComputadora(c1);
+	r.AgregarComputadora(c2);
+	r.Conectar(c1, c2, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 1;
+	p1.prioridad = 1;
+	p1.origen = c1;
+	p1.destino = c2;
+	dcnet.CrearPaquete(p1);
+
+	 ::Paquete p2;
+	p2.id = 2;
+	p2.prioridad = 1;
+	p2.origen = c1;
+	p2.destino = c2;
+	dcnet.CrearPaquete(p2);
+
+	 ::Paquete p3;
+	p3.id = 3;
+	p3.prioridad = 2;
+	p3.origen = c1;
+	p3.destino = c2;
+	dcnet.CrearPaquete(p3);
+
+	 ::Paquete p4;
+	p4.id = 4;
+	p4.prioridad = 2;
+	p4.origen = c1;
+	p4.destino = c2;
+	dcnet.CrearPaquete(p4);
+
+	 ::Paquete p5;
+	p5.id = 5;
+	p5.prioridad = 3;
+	p5.origen = c1;
+	p5.destino = c2;
+	dcnet.CrearPaquete(p5);
+
+	 ::Paquete p6;
+	p6.id = 6;
+	p6.prioridad = 3;
+	p6.origen = c1;
+	p6.destino = c2;
+	dcnet.CrearPaquete(p6);
+
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+
+}
+
+
+void check_dcnet_copia_cola_mantiene_orden(){
+	Red r;
+	Compu c1("Uno", 2);
+	Compu c2("Dos", 2);
+	r.AgregarComputadora(c1);
+	r.AgregarComputadora(c2);
+	r.Conectar(c1, c2, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 1;
+	p1.prioridad = 1;
+	p1.origen = c1;
+	p1.destino = c2;
+	dcnet.CrearPaquete(p1);
+
+	 ::Paquete p2;
+	p2.id = 2;
+	p2.prioridad = 1;
+	p2.origen = c1;
+	p2.destino = c2;
+	dcnet.CrearPaquete(p2);
+
+	 ::Paquete p3;
+	p3.id = 3;
+	p3.prioridad = 2;
+	p3.origen = c1;
+	p3.destino = c2;
+	dcnet.CrearPaquete(p3);
+
+	 ::Paquete p4;
+	p4.id = 4;
+	p4.prioridad = 2;
+	p4.origen = c1;
+	p4.destino = c2;
+	dcnet.CrearPaquete(p4);
+
+	 ::Paquete p5;
+	p5.id = 5;
+	p5.prioridad = 3;
+	p5.origen = c1;
+	p5.destino = c2;
+	dcnet.CrearPaquete(p5);
+
+	 ::Paquete p6;
+	p6.id = 6;
+	p6.prioridad = 3;
+	p6.origen = c1;
+	p6.destino = c2;
+	dcnet.CrearPaquete(p6);
+
+	DCNet dcnetCopia(dcnet);
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+
+}
+
+
 
 // ---------------------------------------------------------------------
 
@@ -2295,6 +2541,10 @@ int main(int argc, char **argv){
 	RUN_TEST(check_dcnet_cantidad_enviados);
 	RUN_TEST(check_dcnet_la_que_mas_envio);
 	RUN_TEST(check_dcnet_igualdad);
+	RUN_TEST(check_dcnet_red_copia);
+	RUN_TEST(check_dcnet_crear_paquete_copia);
+	RUN_TEST(check_dcnet_muchos_paquetes);
+	RUN_TEST(check_dcnet_copia_cola_mantiene_orden);
 
 	return 0;
 }

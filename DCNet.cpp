@@ -24,6 +24,108 @@ DCNet::DCNet(const class Red& r){
     }
 }
 
+DCNet::DCNet(const DCNet& otro){
+	*this = otro;
+}
+
+DCNet& DCNet::operator = (const DCNet& otro){
+	if(this == &otro){
+		return *this;
+	}
+	topologia = otro.topologia;
+	// limpio todo
+	vectorCompusDCNet = Vector<CompuDCNet>();
+	diccCompusDCNet = DiccString<CompuDCNet*>();
+	listaPaquetesDCNet = Lista<PaqueteDCNet>();
+	laQueMasEnvio = NULL;
+
+	//regenero vector mas o menos, y diccCompusDCNet
+
+	for(Nat i = 0; i < otro.vectorCompusDCNet.Longitud(); i++){
+		CompuDCNet otraCDN = otro.vectorCompusDCNet[i];
+		CompuDCNet nuevaCDN(otraCDN.pc);
+		nuevaCDN.conjPaquetes = otraCDN.conjPaquetes;
+		nuevaCDN.enviados = otraCDN.enviados;
+		//nuevaCDN.diccPaquetesDCNet pendiente
+		//nuevaCDN.colaPaquetesDCNet pendiente
+
+		vectorCompusDCNet.AgregarAtras(nuevaCDN);
+		diccCompusDCNet.definir(nuevaCDN.pc.ip, &vectorCompusDCNet.Ultimo());
+
+		if(otro.laQueMasEnvio != NULL && *otro.laQueMasEnvio == otraCDN){
+			laQueMasEnvio = &vectorCompusDCNet[i];
+		}
+	}
+	// Acá tengo laQueMasEnvio, topología, diccCompusDCNet y vectorCompusDCNet (mas o menos)
+
+	// Genero lista PaquetesDCNet
+	Lista<PaqueteDCNet>::const_Iterador itPDCNet = otro.listaPaquetesDCNet.CrearIt();
+	while(itPDCNet.HaySiguiente()){
+		PaqueteDCNet otroPaqDCN = itPDCNet.Siguiente();
+		// paquetedcnet es un iterador al paquete en el conjunto de paquetes de
+		// la compu ultima del recorrido.
+
+		PaqueteDCNet pdcn;
+		pdcn.recorrido = otroPaqDCN.recorrido;
+		Computadora& ultimaDelRecorrido = pdcn.recorrido.Ultimo().ip;
+
+		// conseguimos el iterador al conjunto de la compu
+		Conj< ::Paquete>::Iterador itPaquete = diccCompusDCNet.obtener(ultimaDelRecorrido)->conjPaquetes.CrearIt();
+		// nos movemos hasta encontrar el paquete
+		while(itPaquete.Siguiente() != otroPaqDCN.it.Siguiente()) {
+			itPaquete.Avanzar();
+		}
+		// itPaquete apunta a donde queremos
+		pdcn.it = itPaquete;
+
+		// el PaqueteDCnet está listo, inserto
+		listaPaquetesDCNet.AgregarAtras(pdcn);
+
+
+		itPDCNet.Avanzar();
+	}
+	// Acá tengo listaPaquetesDCNet, y ya tenia laQueMasEnvio, topología, diccCompusDCNet y vectorCompusDCNet (mas o menos)
+
+	// Ahora que la lista de paquetes esta completa puedo rellenar lo que me falta de las compusdcnet:
+
+		// por cada paquete del conjPaquetes, agregarlo a ambas estructuras:
+		// diccPaquetesDCNet
+		// colaPaquetesDCNet
+
+	for(unsigned int i = 0; i < vectorCompusDCNet.Longitud(); i++) {
+		CompuDCNet& compu = vectorCompusDCNet[i];
+
+		Conj< ::Paquete>::const_Iterador itPaquetes = compu.conjPaquetes.CrearIt();
+		while(itPaquetes.HaySiguiente()) {
+
+			::Paquete paq = itPaquetes.Siguiente();
+			// Esta es la tupla paquete, necesitamos obtener un iterador al PaqueteDCNet dentro de la lista.
+
+			Lista<PaqueteDCNet>::Iterador itPaqDCN = listaPaquetesDCNet.CrearIt();
+			while(itPaqDCN.Siguiente().it.Siguiente() != paq){
+				itPaqDCN.Avanzar();
+			}
+			// Ahora agregamos itPaqDCN al dicc
+			compu.diccPaquetesDCNet.Definir(paq.id, itPaqDCN);
+			itPaquetes.Avanzar();
+		}
+
+		// ahora la cola, en el mismo orden que la original
+		ColaPrioridad<Lista<PaqueteDCNet>::Iterador> copiaColaPrioridadOtro(otro.vectorCompusDCNet[i].colaPaquetesDCNet);
+		while(!copiaColaPrioridadOtro.EsVacia()){
+			Lista<PaqueteDCNet>::Iterador itPaqDCNOtro = copiaColaPrioridadOtro.Proximo();
+			::Paquete paq = itPaqDCNOtro.Siguiente().it.Siguiente();
+
+			compu.colaPaquetesDCNet.Encolar(paq.prioridad, compu.diccPaquetesDCNet.Obtener(paq.id));
+			copiaColaPrioridadOtro.Desencolar();
+		}
+	}
+
+	// listo!
+
+	return *this;
+}
+
 void DCNet::CrearPaquete(const ::Paquete& p){
     CompuDCNet *compudcnet = diccCompusDCNet.obtener(p.origen.ip);
     Conj< ::Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);
@@ -144,6 +246,7 @@ const Compu& DCNet::LaQueMasEnvio() const{
 
 
 bool DCNet::operator == (const DCNet& otra) const{
+
     if (!(topologia == otra.topologia)) {
         return false;
     }
@@ -154,7 +257,7 @@ bool DCNet::operator == (const DCNet& otra) const{
 
     // esto asume que estan bien formadas listaPaquetesDCNet y laqueMasEnvio
     // y que las compudcnet vienen bien formadas tambien
-    
+
     return true;
 }
 

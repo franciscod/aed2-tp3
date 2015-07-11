@@ -78,6 +78,7 @@ class DCNet{
     public:
         DCNet();
         DCNet(const class Red&);
+				DCNet(const DCNet&);
 
         void CrearPaquete(const ::Paquete&);
         void AvanzarSegundo();
@@ -89,6 +90,7 @@ class DCNet{
         const Compu& LaQueMasEnvio() const;
 
         bool operator == (const DCNet&) const;
+				DCNet& operator=(const DCNet&);
 
     private:
 

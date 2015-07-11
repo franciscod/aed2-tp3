@@ -208,7 +208,7 @@ Red DCNet::Red() const{
     return topologia;
 }
 
-Lista<Compu> DCNet::CaminoRecorrido(const ::Paquete& p) const{
+const Lista<Compu>& DCNet::CaminoRecorrido(const ::Paquete& p) const{
     Nat i = 0;
 
     while(i < vectorCompusDCNet.Longitud()){

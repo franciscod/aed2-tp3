@@ -83,7 +83,7 @@ class DCNet{
         void CrearPaquete( ::Paquete);
         void AvanzarSegundo();
         class Red Red() const;
-        Lista<Compu> CaminoRecorrido(const ::Paquete&) const;
+        const Lista<Compu>& CaminoRecorrido(const ::Paquete&) const;
         Nat CantidadEnviados(const Compu&) const;
         const Conj< ::Paquete>& EnEspera(const Compu&) const;
         bool PaqueteEnTransito(const ::Paquete&) const;

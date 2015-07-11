@@ -129,12 +129,15 @@ const Computadora& Driver::IesimoNodoRecorridoPor(const Paquete& p, const Nat i)
         Conj< ::Paquete>::const_Iterador itPaqs = dcNet.EnEspera(itCompus.Siguiente()).CrearIt();
         while(itPaqs.HaySiguiente()){
             if(p == itPaqs.Siguiente().id) {
-                return dcNet.CaminoRecorrido(itPaqs.Siguiente())[i].ip;
+                const Camino& cam = dcNet.CaminoRecorrido(itPaqs.Siguiente());
+                return cam[i].ip;
             }
             itPaqs.Avanzar();
         }
         itCompus.Avanzar();
     }
+    cout << "ESTO NO DEBERIA PASARR!!!" << endl;
+    assert(false);
 }
 
 Nat Driver::CantidadEnviadosPor(const Computadora& c) const {

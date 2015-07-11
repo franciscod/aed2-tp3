@@ -1776,7 +1776,7 @@ void check_trie_const(){
 void check_dcnet_red(){
 	Red r;
 
-	Compu c1; 
+	Compu c1;
 	c1.ip = "c1";
 	c1.interfaces.Agregar(1);
 	c1.interfaces.Agregar(2);
@@ -1805,12 +1805,12 @@ void check_dcnet_red(){
 void check_dcnet_crear_paquete(){
 	Red r;
 
-	Compu c1; 
+	Compu c1;
 	c1.ip = "c1";
 	c1.interfaces.Agregar(1);
 	r.AgregarComputadora(c1);
 
-	Compu c2; 
+	Compu c2;
 	c2.ip = "c2";
 	c2.interfaces.Agregar(2);
 	r.AgregarComputadora(c2);

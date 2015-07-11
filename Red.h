@@ -25,8 +25,9 @@ struct NodoRed {
 		conexiones = n.conexiones;
 	}
 
-	bool operator==(const NodoRed& otro) const{
-		return (pc == otro.pc);
+	bool operator==(const NodoRed& otro) const {
+		// OJO, esto no chequea conexiones
+		return (pc == otro.pc) && (caminos == otro.caminos);
 	};
 
 };

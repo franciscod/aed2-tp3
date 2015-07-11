@@ -33,10 +33,10 @@ Red& Red::operator=(const Red& otro) {
 	it = compus.CrearIt();
 	while(it.HaySiguiente()) {
 		Compu c = it.Siguiente();
-		NodoRed nodoMio = dns.obtener(c.ip);
+		NodoRed& nodoMio = dns.obtener(c.ip);
 		NodoRed nodoOtro = otro.dns.obtener(c.ip);
 
-	 	Dicc <Interfaz, NodoRed*>::Iterador itInterfs = nodoMio.conexiones.CrearIt();
+	 	Dicc <Interfaz, NodoRed*>::Iterador itInterfs = nodoOtro.conexiones.CrearIt();
 
 		while(itInterfs.HaySiguiente()) {
 			Interfaz interf = itInterfs.SiguienteClave();
@@ -296,7 +296,48 @@ bool Red::Conectadas( const Compu& c1, const Compu& c2) {
 
 
 bool Red::operator==(const Red& otro) const {
-	return (otro.dns == dns) && (otro.compus == compus);
+	if (!(otro.compus == compus)) {
+		return false;
+	};
+	// todas las compus son iguales
+
+	Conj<Compu>::const_Iterador itCompus = compus.CrearIt();
+
+	while (itCompus.HaySiguiente()) {
+		Compu c = itCompus.Siguiente();
+
+		if (!(dns.definido(c.ip))) return false;
+		if (!(otro.dns.definido(c.ip))) return false;
+
+		// la compu esta definida en ambos dns
+
+		NodoRed nr1 = dns.obtener(c.ip);
+		NodoRed nr2 = otro.dns.obtener(c.ip);
+
+		if (!(nr1 == nr2)) return false;
+		// las compus y los caminos de los nodored son iguales
+
+		Conj<Interfaz>::const_Iterador itInterfs = c.interfaces.CrearIt();
+
+		while (itInterfs.HaySiguiente()) {
+			Interfaz i = itInterfs.Siguiente();
+			if (nr1.conexiones.Definido(i) != nr2.conexiones.Definido(i)) return false;
+
+			if (!nr1.conexiones.Definido(i)) continue;
+
+			NodoRed* pnr1 = nr1.conexiones.Significado(i);
+			NodoRed* pnr2 = nr2.conexiones.Significado(i);
+
+			if (!(*pnr1 == *pnr2)) return false;
+
+			itInterfs.Avanzar();
+		}
+
+
+		itCompus.Avanzar();
+	}
+
+	return true;
 }
 
 

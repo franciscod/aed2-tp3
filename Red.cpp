@@ -309,7 +309,10 @@ bool Red::operator==(const Red& otro) const {
 			Interfaz i = itInterfs.Siguiente();
 			if (nr1.conexiones.Definido(i) != nr2.conexiones.Definido(i)) return false;
 
-			if (!nr1.conexiones.Definido(i)) continue;
+			if (!nr1.conexiones.Definido(i)) {
+				itInterfs.Avanzar();
+				continue;
+			}
 
 			NodoRed* pnr1 = nr1.conexiones.Significado(i);
 			NodoRed* pnr2 = nr2.conexiones.Significado(i);

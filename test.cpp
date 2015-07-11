@@ -2211,6 +2211,19 @@ void check_dcnet_red_copia(){
 	DCNet dcnetAsignada = DCNet(r);
 
 	ASSERT(dcnet.Red() == dcnetAsignada.Red());
+
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet == dcnetAsignada);
+
+	// no hay paquetes pero esto no esta prohibido
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+	dcnetAsignada.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet == dcnetAsignada);
+
 }
 
 void check_dcnet_crear_paquete_copia(){
@@ -2241,6 +2254,15 @@ void check_dcnet_crear_paquete_copia(){
 	DCNet dcnetCopia(dcnet);
 
 	ASSERT(dcnet.PaqueteEnTransito(p) == dcnetCopia.PaqueteEnTransito(p));
+
+	cout << "igualando dcnet..." << endl;
+	ASSERT(dcnet == dcnetCopia);
+
+	// no hay paquetes pero esto no esta prohibido
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
 }
 
 // ---------------------------------------------------------------------

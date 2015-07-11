@@ -32,73 +32,89 @@ DCNet& DCNet::operator = (const DCNet& otro){
 	if(this == &otro){
 		return *this;
 	}
-	// limpio todo 
+	topologia = otro.topologia;
+	// limpio todo
 	vectorCompusDCNet = Vector<CompuDCNet>();
 	diccCompusDCNet = DiccString<CompuDCNet*>();
 	listaPaquetesDCNet = Lista<PaqueteDCNet>();
 	laQueMasEnvio = NULL;
 
-	topologia = otro.topologia;
-  Conj<Compu>::const_Iterador it = topologia.Computadoras().CrearIt();
+	//regenero vector mas o menos, y diccCompusDCNet
 
-  while(it.HaySiguiente()){
-      CompuDCNet compudcnet(it.Siguiente());
-			// Copio del otro los campos sin punteros
-			const CompuDCNet* compudcnetOtro = otro.diccCompusDCNet.obtener(it.Siguiente().ip);	
+	for(Nat i = 0; i < otro.vectorCompusDCNet.Longitud(); i++){
+		CompuDCNet otraCDN = otro.vectorCompusDCNet[i];
+		CompuDCNet nuevaCDN(otraCDN.pc);
+		nuevaCDN.conjPaquetes = otraCDN.conjPaquetes;
+		nuevaCDN.enviados = otraCDN.enviados;
+		//nuevaCDN.diccPaquetesDCNet pendiente
+		//nuevaCDN.colaPaquetesDCNet pendiente
 
-			// Copio conjPaquetes y enviados
-			compudcnet.conjPaquetes = compudcnetOtro->conjPaquetes;
-			compudcnet.enviados = compudcnetOtro->enviados;	
+		vectorCompusDCNet.AgregarAtras(nuevaCDN);
+		diccCompusDCNet.definir(nuevaCDN.pc.ip, &vectorCompusDCNet.Ultimo());
 
-      vectorCompusDCNet.AgregarAtras(compudcnet);
-      diccCompusDCNet.definir(it.Siguiente().ip, &vectorCompusDCNet.Ultimo());
-      it.Avanzar();
-  }
-	// Acá tengo vectorCompusDCNet, diccCompusDCNet y topología
+		if(otro.laQueMasEnvio != NULL && *otro.laQueMasEnvio == otraCDN){
+			laQueMasEnvio = &vectorCompusDCNet[i];
+		}
+	}
+	// Acá tengo laQueMasEnvio, topología, diccCompusDCNet y vectorCompusDCNet (mas o menos)
 
 	// Genero lista PaquetesDCNet
 	Lista<PaqueteDCNet>::const_Iterador itPDCNet = otro.listaPaquetesDCNet.CrearIt();
 	while(itPDCNet.HaySiguiente()){
+		PaqueteDCNet otroPaqDCN = itPDCNet.Siguiente();
+		// paquetedcnet es un iterador al paquete en el conjunto de paquetes de
+		// la compu ultima del recorrido.
+
 		PaqueteDCNet pdcn;
-		pdcn.recorrido = itPDCNet.Siguiente().recorrido;
-		
-		Conj< ::Paquete>::Iterador itPaquetes = diccCompusDCNet.obtener(pdcn.recorrido.Ultimo().ip)->conjPaquetes.CrearIt();
-		while(itPaquetes.Siguiente() != itPDCNet.Siguiente().it.Siguiente()){
-			itPaquetes.Avanzar();
+		pdcn.recorrido = otroPaqDCN.recorrido;
+		Computadora& ultimaDelRecorrido = pdcn.recorrido.Ultimo().ip;
+
+		// conseguimos el iterador al conjunto de la compu
+		Conj< ::Paquete>::Iterador itPaquete = diccCompusDCNet.obtener(ultimaDelRecorrido)->conjPaquetes.CrearIt();
+		// nos movemos hasta encontrar el paquete
+		while(itPaquete.Siguiente() != otroPaqDCN.it.Siguiente()) {
+			itPaquete.Avanzar();
 		}
-		pdcn.it = itPaquetes;
+		// itPaquete apunta a donde queremos
+		pdcn.it = itPaquete;
+
+		// el PaqueteDCnet está listo, inserto
 		listaPaquetesDCNet.AgregarAtras(pdcn);
+
 
 		itPDCNet.Avanzar();
 	}
-	// Acá tengo PaquetesDCNet copiado
-	
-	for(unsigned int i = 0; i < vectorCompusDCNet.Longitud(); i++){
-		if(otro.laQueMasEnvio != NULL && otro.laQueMasEnvio->pc == vectorCompusDCNet[i].pc){
-			laQueMasEnvio = &vectorCompusDCNet[i];
-		}
+	// Acá tengo listaPaquetesDCNet, y ya tenia laQueMasEnvio, topología, diccCompusDCNet y vectorCompusDCNet (mas o menos)
 
-		Conj< ::Paquete>::const_Iterador itPaquetes = vectorCompusDCNet[i].conjPaquetes.CrearIt();
-		while(itPaquetes.HaySiguiente()){
-			Lista<PaqueteDCNet>::Iterador itPDCNet = listaPaquetesDCNet.CrearIt();
-			while(itPDCNet.Siguiente().it.Siguiente() != itPaquetes.Siguiente()){
-				itPDCNet.Avanzar();
+	// Ahora que la lista de paquetes esta completa puedo rellenar lo que me falta de las compusdcnet:
+
+		// por cada paquete del conjPaquetes, agregarlo a ambas estructuras:
+		// diccPaquetesDCNet
+		// colaPaquetesDCNet
+
+	for(unsigned int i = 0; i < vectorCompusDCNet.Longitud(); i++) {
+		CompuDCNet& compu = vectorCompusDCNet[i];
+
+		Conj< ::Paquete>::const_Iterador itPaquetes = compu.conjPaquetes.CrearIt();
+		while(itPaquetes.HaySiguiente()) {
+
+			::Paquete paq = itPaquetes.Siguiente();
+			// Esta es la tupla paquete, necesitamos obtener un iterador al PaqueteDCNet dentro de la lista.
+
+			Lista<PaqueteDCNet>::Iterador itPaqDCN = listaPaquetesDCNet.CrearIt();
+			while(itPaqDCN.Siguiente().it.Siguiente() != paq){
+				itPaqDCN.Avanzar();
 			}
-			vectorCompusDCNet[i].diccPaquetesDCNet.Definir(itPaquetes.Siguiente().id, itPDCNet);
-			itPaquetes.Avanzar();	
-		}
+			// Ahora agregamos itPaqDCN al dicc y a la cola.
+			compu.diccPaquetesDCNet.Definir(paq.id, itPaqDCN);
+			compu.colaPaquetesDCNet.Encolar(paq.prioridad, itPaqDCN);
 
-		// Acá tengo diccPaquetesDCNet
-		ColaPrioridad<Lista<PaqueteDCNet>::Iterador> copiaColaPrioridadOtro(otro.vectorCompusDCNet[i].colaPaquetesDCNet);
-
-		while(!copiaColaPrioridadOtro.EsVacia()){
-			::Paquete paqueteAEncolar = copiaColaPrioridadOtro.Proximo().Siguiente().it.Siguiente();
-			vectorCompusDCNet[i].colaPaquetesDCNet.Encolar(paqueteAEncolar.prioridad, 
-																											vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(paqueteAEncolar.id));
-			copiaColaPrioridadOtro.Desencolar();
+			itPaquetes.Avanzar();
 		}
-		// Acá tengo colaDePrioridad
 	}
+
+	// listo!
+
 	return *this;
 }
 
@@ -222,6 +238,7 @@ const Compu& DCNet::LaQueMasEnvio() const{
 
 
 bool DCNet::operator == (const DCNet& otra) const{
+	
     if (!(topologia == otra.topologia)) {
         return false;
     }
@@ -232,7 +249,7 @@ bool DCNet::operator == (const DCNet& otra) const{
 
     // esto asume que estan bien formadas listaPaquetesDCNet y laqueMasEnvio
     // y que las compudcnet vienen bien formadas tambien
-    
+
     return true;
 }
 

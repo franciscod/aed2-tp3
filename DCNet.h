@@ -26,24 +26,19 @@ class DCNet{
         }
 
         bool operator == (const PaqueteDCNet& otro) const{
-            bool uno;
-            cout << "llega paquetedcnet" << endl;
-            cout << "recorrido: " << recorrido << endl;
-            cout << "haysiguiente: " << it.HaySiguiente() << endl;
-            if(it.HaySiguiente()){
-                if(otro.it.HaySiguiente())
-                    uno = (it.Siguiente() == otro.it.Siguiente());
-                else
-                    uno = false;
+            if (!(recorrido == otro.recorrido)) {
+                return false;
             }
-            else{
-                if(otro.it.HaySiguiente())
-                    uno = false;
-                else
-                    uno = true;
+
+            if (it.HaySiguiente() != otro.it.HaySiguiente()) {
+                return false;
             }
-            bool dos = (recorrido == otro.recorrido);
-            return uno && dos;
+
+            if (!it.HaySiguiente()) {
+                return true;
+            }
+
+            return it.Siguiente() == otro.it.Siguiente();
         }
 
         bool operator != (const PaqueteDCNet& otro) const{

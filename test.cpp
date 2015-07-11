@@ -2165,13 +2165,12 @@ void check_dcnet_igualdad(){
 	dcnet1.CrearPaquete(p1);
 
 	ASSERT(!(dcnet1 == dcnet2));
-	cout << "pasa" << endl;
 
 	dcnet2.CrearPaquete(p1);
 
 	ASSERT(dcnet1 == dcnet2)
 
-	dcnet1.AvanzarSegundo();	
+	dcnet1.AvanzarSegundo();
 
 	ASSERT(!(dcnet1 == dcnet2));
 

@@ -103,7 +103,7 @@ Nat DCNet::CantidadEnviados(const Compu& c) const{
     return diccCompusDCNet.obtener(c.ip)->enviados;
 }
 
-Conj< ::Paquete>& DCNet::EnEspera(const Compu& c) const{
+const Conj< ::Paquete>& DCNet::EnEspera(const Compu& c) const{
     return diccCompusDCNet.obtener(c.ip)->conjPaquetes;
 }
 
@@ -118,7 +118,7 @@ bool DCNet::PaqueteEnTransito(const ::Paquete& p) const{
     return enTransito;
 }
 
-Compu& DCNet::LaQueMasEnvio() const{
+const Compu& DCNet::LaQueMasEnvio() const{
     return laQueMasEnvio->pc;
 }
 

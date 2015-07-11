@@ -61,25 +61,23 @@ public:
 
 	void Conectar(const Compu& c1, const Compu&c2, const int i1, const  int i2);
 
-	Conj<Compu>& Computadoras();
+	const Conj<Compu>& Computadoras() const;
 
-	bool Conectadas(const Compu& c1, const Compu& c2);
+	bool Conectadas(const Compu& c1, const Compu& c2) const;
 
-	int InterfazUsada( const Compu& c1, const Compu& c2);
+	Interfaz InterfazUsada( const Compu& c1, const Compu& c2) const;
 
-	Conj<Compu> Vecinos( const Compu& c);
+	Conj<Compu> Vecinos( const Compu& c) const;
 
-	bool UsaInterfaz( const Compu& c, const int i);
+	bool UsaInterfaz( const Compu& c, const int i) const;
 
-	Conj< Camino > CaminosMinimos( const Compu& c1, const Compu& c2);
+	Conj< Camino > CaminosMinimos( const Compu& c1, const Compu& c2) const;
 
-	bool HayCamino( const Compu& c1, const Compu& c2);
+	bool HayCamino( const Compu& c1, const Compu& c2) const;
 
 	bool operator==(const Red&) const;
 
 	Red& operator=(const Red& otro);
-
-	Conj<Interfaz> Interfaces(const Compu& c);
 };
 
 Conj<Camino> agregarCompuAlPrimerCaminoDeConjuntoDeCaminos(Compu c, Conj<Camino> cc);

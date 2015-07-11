@@ -40,7 +40,7 @@ class DCNet{
     };
 
     public:
-
+        DCNet();
         DCNet(const class Red&);
 
         void CrearPaquete(const ::Paquete&);
@@ -48,9 +48,9 @@ class DCNet{
         class Red Red() const;
         Lista<Compu> CaminoRecorrido(const ::Paquete&) const;
         Nat CantidadEnviados(const Compu&) const;
-        Conj< ::Paquete> EnEspera(const Compu&) const;
+        const Conj< ::Paquete>& EnEspera(const Compu&) const;
         bool PaqueteEnTransito(const ::Paquete&) const;
-        Compu LaQueMasEnvio() const;
+        const Compu& LaQueMasEnvio() const;
 
         bool operator == (const DCNet&) const;
 

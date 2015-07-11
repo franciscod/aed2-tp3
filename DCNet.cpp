@@ -2,11 +2,12 @@
 #include "Tipos.h"
 
 using namespace aed2;
+DCNet::DCNet() {}
 
 DCNet::DCNet(const class Red& r){
     topologia = r;
     laQueMasEnvio = NULL;
-    Conj<Compu>::Iterador it = topologia.Computadoras().CrearIt();
+    Conj<Compu>::const_Iterador it = topologia.Computadoras().CrearIt();
 
     while(it.HaySiguiente()){
 
@@ -102,7 +103,7 @@ Nat DCNet::CantidadEnviados(const Compu& c) const{
     return diccCompusDCNet.obtener(c.ip)->enviados;
 }
 
-Conj< ::Paquete> DCNet::EnEspera(const Compu& c) const{
+const Conj< ::Paquete>& DCNet::EnEspera(const Compu& c) const{
     return diccCompusDCNet.obtener(c.ip)->conjPaquetes;
 }
 
@@ -117,7 +118,7 @@ bool DCNet::PaqueteEnTransito(const ::Paquete& p) const{
     return enTransito;
 }
 
-Compu DCNet::LaQueMasEnvio() const{
+const Compu& DCNet::LaQueMasEnvio() const{
     return laQueMasEnvio->pc;
 }
 

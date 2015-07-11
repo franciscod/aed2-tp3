@@ -52,7 +52,7 @@ Red& Red::operator=(const Red& otro) {
 }
 
 
-Conj<Compu>& Red::Computadoras () {
+const Conj<Compu>& Red::Computadoras () const{
 	return compus;
 }
 
@@ -72,17 +72,6 @@ void Red::AgregarComputadora(const Compu& c) {
 
 	compus.AgregarRapido(c);
 	dns.definir(c.ip, nr);
-}
-
-Conj<Interfaz> Red::Interfaces(const Compu& c){
-	Conj<Interfaz> res;
-	NodoRed nr = dns.obtener(c.ip);
-	Dicc <Interfaz, NodoRed*>::Iterador itInterfs = nr.conexiones.CrearIt();
-	while(itInterfs.HaySiguiente()) {
-		res.Agregar(itInterfs.SiguienteClave());
-		itInterfs.Avanzar();
-	}
-	return res;
 }
 
 void Red::Conectar(const Compu& c1, const Compu& c2, const int i1, const int i2) {
@@ -234,29 +223,28 @@ bool Red::nodoEnLista (const NodoRed& n, const Lista<NodoRed>& ns) {
 }
 
 
-bool Red::UsaInterfaz( const Compu& c, const int i) {
+bool Red::UsaInterfaz( const Compu& c, const int i) const {
 	return dns.obtener(c.ip).conexiones.Definido(i);
 }
 
-int Red::InterfazUsada (const Compu& c1, const Compu& c2) {
+Interfaz Red::InterfazUsada (const Compu& c1, const Compu& c2) const {
 	// PRE: c2 esta conectada a alguna interfaz de c1
 
-	NodoRed* n1 = &dns.obtener(c1.ip);
-
-	Dicc <Interfaz, NodoRed*>::Iterador it = n1->conexiones.CrearIt();
+	NodoRed n1 = dns.obtener(c1.ip);
+	Dicc <Interfaz, NodoRed*>::const_Iterador it = n1.conexiones.CrearIt();
 
 	while (it.HaySiguiente()) {
-		NodoRed* n2 = it.SiguienteSignificado();
-		if (c2.ip == n2->pc.ip) {
+		NodoRed n2 = *it.SiguienteSignificado();
+		if (c2.ip == n2.pc.ip) {
 			return it.SiguienteClave();
 		}
 		it.Avanzar();
 	}
 
-	return -1; // esto no deberia alcanzarse por la PRE
+	return -1;
 }
 
-Conj<Compu> Red::Vecinos (const Compu& c) {
+Conj<Compu> Red::Vecinos (const Compu& c) const {
 	// PRE: c esta en la red
 	Conj<Compu> res;
 	Dicc<Interfaz, NodoRed*>::const_Iterador it = dns.obtener(c.ip).conexiones.CrearIt();
@@ -267,25 +255,23 @@ Conj<Compu> Red::Vecinos (const Compu& c) {
 	return res;
 }
 
-bool Red::HayCamino( const Compu& c1, const Compu& c2){
-	NodoRed& nr = dns.obtener(c1.ip);
+bool Red::HayCamino( const Compu& c1, const Compu& c2) const {
+	NodoRed nr = dns.obtener(c1.ip);
 	return !(nr.caminos.obtener(c2.ip).EsVacio());
 
 }
 
-Conj< Camino > Red::CaminosMinimos( const Compu& c1, const Compu& c2){
+Conj< Camino > Red::CaminosMinimos( const Compu& c1, const Compu& c2) const {
 	return dns.obtener(c1.ip).caminos.obtener(c2.ip);
 };
 
-bool Red::Conectadas( const Compu& c1, const Compu& c2) {
-	//TODO: esto esta bien? no tiene que chequear que haya algún camino?
-	// NO porque si estan Conectadas -> existe un camino , osea estan al lado mano son vecinas osea entende amigou?
+bool Red::Conectadas( const Compu& c1, const Compu& c2) const{
 	bool res = false;
-	Dicc <Interfaz, NodoRed*>::Iterador it = dns.obtener(c1.ip).conexiones.CrearIt();
+	Dicc <Interfaz, NodoRed*>::const_Iterador it = dns.obtener(c1.ip).conexiones.CrearIt();
 
 	while(it.HaySiguiente()) {
-		NodoRed* nr =  it.SiguienteSignificado();
-		if (c2.ip == (nr->pc.ip)) {
+		NodoRed nr = *it.SiguienteSignificado();
+		if (c2.ip == (nr.pc.ip)) {
 			res = true;
 		}
 		it.Avanzar();

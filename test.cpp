@@ -646,6 +646,12 @@ void check_red_copiar(){
 	Red auxr2 = r;
 
 	ASSERT(r == auxr2);
+
+	r.AgregarComputadora(Compu("ROBERTITO", 50));
+
+	ASSERT(!(r == auxr));
+	ASSERT(!(r == auxr2));
+
 }
 
 //Cola

@@ -25,6 +25,7 @@ private:
         if(index == clave.size())
         {
             es_final = true;
+						delete significado;
             significado = new T(_significado);
         }
         else
@@ -95,7 +96,7 @@ public:
         cant = 0;
     }
 
-    DiccString(DiccString<T> &otro)
+    DiccString(const DiccString<T> &otro)
     {
         siguiente.clear();
         padre = NULL;

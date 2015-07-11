@@ -24,7 +24,7 @@ class Driver
         Nat CantidadInterfacesDe(const Computadora& c) const;
         const Interfaz& IesimaInterfazDe(const Computadora& c, const Nat i) const ;
 
-        const Interfaz& IntefazUsada(const Computadora& c1, const Computadora& c2) const;
+        Interfaz IntefazUsada(const Computadora& c1, const Computadora& c2) const;
 
         bool conectadas(const Computadora& c1, const Computadora& c2) const;
 
@@ -63,11 +63,10 @@ class Driver
     DCNet dcNet;
 
     Red topologia;
-    /*********************************************************************
-     * TODO: Va a ser necesario instanciar privadamente un Modulo DCNet *
-     * con el cuál interactuar. Además, pueden declarar todas las        *
-     * funciones auxiliares que les hagan falta.                         *
-     *********************************************************************/
+
+    const ::Compu& compuConIp(aed2::Computadora ip) const;
+    const ::Paquete& paqueteConId(aed2::Paquete id) const;
+
 
 }; // class Driver
 

@@ -126,8 +126,9 @@ DCNet& DCNet::operator = (const DCNet& otro){
 	return *this;
 }
 
-void DCNet::CrearPaquete(const ::Paquete& p){
+void DCNet::CrearPaquete( ::Paquete p){
     CompuDCNet *compudcnet = diccCompusDCNet.obtener(p.origen.ip);
+
     Conj< ::Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);
 
     Lista<Compu> recorr;
@@ -139,8 +140,10 @@ void DCNet::CrearPaquete(const ::Paquete& p){
 
     Lista<PaqueteDCNet>::Iterador itPaqDCNet = listaPaquetesDCNet.AgregarAtras(paqDCNet);
 
-    (compudcnet->diccPaquetesDCNet).Definir(p.id, itPaqDCNet);
-    (compudcnet->colaPaquetesDCNet).Encolar(p.prioridad, itPaqDCNet);
+    compudcnet->diccPaquetesDCNet.Definir(p.id, itPaqDCNet); // aca rompe
+
+
+    compudcnet->colaPaquetesDCNet.Encolar(p.prioridad, itPaqDCNet);
 }
 
 void DCNet::AvanzarSegundo(){
@@ -205,7 +208,8 @@ Red DCNet::Red() const{
     return topologia;
 }
 
-Lista<Compu> DCNet::CaminoRecorrido(const ::Paquete& p) const{
+const Lista<Compu>& DCNet::CaminoRecorrido(const ::Paquete& p) const{
+	// PRE: p está en el DCNet.
     Nat i = 0;
 
     while(i < vectorCompusDCNet.Longitud()){
@@ -215,10 +219,10 @@ Lista<Compu> DCNet::CaminoRecorrido(const ::Paquete& p) const{
         i++;
     }
 
-    cout << "AAAAAAAAA EXPLOSIONNNNN MUERE TODOOOOO AAAAAAAA" << endl;
-    assert(false);
-
-    return Lista<Compu>();
+	// Para dejar contento al compilador, hacemos esta payasada en caso de que no se cumpla el PRE
+	cout << "Esto no debería pasar JAMAS." << cout;
+	assert(false);
+    return caminoDeMentiraParaEvitarWarning;
 }
 
 Nat DCNet::CantidadEnviados(const Compu& c) const{

@@ -43,8 +43,8 @@ inline std::ostream& operator<<(std::ostream& os, const Compu& compu) {
 }
 
 struct Paquete{
-    int id;
-    int prioridad;
+    Nat id;
+    Nat prioridad;
     Compu origen;
     Compu destino;
 

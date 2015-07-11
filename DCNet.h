@@ -80,10 +80,10 @@ class DCNet{
         DCNet(const class Red&);
 				DCNet(const DCNet&);
 
-        void CrearPaquete(const ::Paquete&);
+        void CrearPaquete( ::Paquete);
         void AvanzarSegundo();
         class Red Red() const;
-        Lista<Compu> CaminoRecorrido(const ::Paquete&) const;
+        const Lista<Compu>& CaminoRecorrido(const ::Paquete&) const;
         Nat CantidadEnviados(const Compu&) const;
         const Conj< ::Paquete>& EnEspera(const Compu&) const;
         bool PaqueteEnTransito(const ::Paquete&) const;
@@ -99,6 +99,8 @@ class DCNet{
         DiccString<CompuDCNet*> diccCompusDCNet;
         Lista<PaqueteDCNet> listaPaquetesDCNet;
         CompuDCNet* laQueMasEnvio;
+
+        Lista<Compu> caminoDeMentiraParaEvitarWarning;
 
 };
 

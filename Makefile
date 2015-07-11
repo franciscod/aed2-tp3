@@ -2,7 +2,7 @@
 CC=g++
 
 # flags de compilación
-CFLAGS=-g -Wall
+CFLAGS=-g -Wall -O2
 
 # flags de linkeo
 LDFLAGS=
@@ -11,10 +11,7 @@ LDFLAGS=
 INCDIR=. #../../../../../Modulos-CPP
 
 # Agregar acá los archivos .cpp a compilar
-# TODO: Descomentar el Driver.cpp cuando esté listo
-# TODO: Descomentar el test-catedra
-#
-SOURCES=test.cpp Red.cpp DCNet.cpp #Driver.cpp test-catedra.cpp
+SOURCES=test.cpp Red.cpp DCNet.cpp Driver.cpp
 
 # Objetos que serán generados (no tocar)
 OBJECTS=$(SOURCES:.cpp=.o)

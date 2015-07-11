@@ -210,18 +210,16 @@ Red DCNet::Red() const{
 
 const Lista<Compu>& DCNet::CaminoRecorrido(const ::Paquete& p) const{
     Nat i = 0;
+    const Lista<Compu>& res;
 
     while(i < vectorCompusDCNet.Longitud()){
         if(vectorCompusDCNet[i].diccPaquetesDCNet.Definido(p.id)) {
-            return vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(p.id).Siguiente().recorrido;
+            res = vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(p.id).Siguiente().recorrido;
         }
         i++;
     }
 
-    cout << "AAAAAAAAA EXPLOSIONNNNN MUERE TODOOOOO AAAAAAAA" << endl;
-    assert(false);
-
-    return Lista<Compu>();
+    return res;
 }
 
 Nat DCNet::CantidadEnviados(const Compu& c) const{

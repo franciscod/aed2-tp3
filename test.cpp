@@ -2156,7 +2156,7 @@ void check_dcnet_igualdad(){
 	DCNet dcnet2(r);
 
 	ASSERT(dcnet1 == dcnet2)
-	 ::Paquete p1;
+	::Paquete p1;
 	p1.id = 7;
 	p1.prioridad = 2;
 	p1.origen = c1;
@@ -2179,9 +2179,74 @@ void check_dcnet_igualdad(){
 	ASSERT(dcnet1 == dcnet2);
 }
 
+void check_dcnet_red_copia(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(1);
+
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	Compu c3;
+	c3.ip = "c3";
+	c3.interfaces.Agregar(2);
+	r.AgregarComputadora(c3);
+
+	r.Conectar(c1, c2, 1, 1);
+	r.Conectar(c2, c3, 2, 2);
+
+	DCNet dcnet(r);
+
+	DCNet dcnetCopia(dcnet);
+
+	ASSERT(dcnet.Red() == dcnetCopia.Red());
+
+	DCNet dcnetAsignada = DCNet(r);
+
+	ASSERT(dcnet.Red() == dcnetAsignada.Red());
+}
+
+void check_dcnet_crear_paquete_copia(){
+	Red r;
+
+	Compu c1;
+	c1.ip = "c1";
+	c1.interfaces.Agregar(1);
+	r.AgregarComputadora(c1);
+
+	Compu c2;
+	c2.ip = "c2";
+	c2.interfaces.Agregar(2);
+	r.AgregarComputadora(c2);
+
+	r.Conectar(c2, c1, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p;
+	p.id = 7;
+	p.prioridad = 2;
+	p.origen = c1;
+	p.destino = c2;
+
+	dcnet.CrearPaquete(p);
+
+	DCNet dcnetCopia(dcnet);
+
+	ASSERT(dcnet.PaqueteEnTransito(p) == dcnetCopia.PaqueteEnTransito(p));
+}
+
 // ---------------------------------------------------------------------
 
 int main(int argc, char **argv){
+	/*
 
 	// Trie
 	RUN_TEST(check_trie);
@@ -2295,6 +2360,9 @@ int main(int argc, char **argv){
 	RUN_TEST(check_dcnet_cantidad_enviados);
 	RUN_TEST(check_dcnet_la_que_mas_envio);
 	RUN_TEST(check_dcnet_igualdad);
+	*/
+	RUN_TEST(check_dcnet_red_copia);
+	RUN_TEST(check_dcnet_crear_paquete_copia);
 
 	return 0;
 }

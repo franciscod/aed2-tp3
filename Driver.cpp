@@ -2,19 +2,12 @@
 
 namespace aed2 {
 
-Driver::Driver() {
+Driver::Driver() {}
 
-}
+Driver::~Driver() {}
 
-Driver::~Driver() {
-    // TODO
-}
-
-// TAD RED
 Nat Driver::CantidadComputadoras() const {
-
     return topologia.Computadoras().Cardinal();
-
 }
 
 const Computadora& Driver::IesimaComputadora(const Nat i) const {
@@ -28,24 +21,15 @@ const Computadora& Driver::IesimaComputadora(const Nat i) const {
 }
 
 Nat Driver::CantidadInterfacesDe(const Computadora& c) const {
-    Conj<Compu>::const_Iterador it = topologia.Computadoras().CrearIt();
-     while(c != it.Siguiente().ip) {
-        it.Avanzar();
-    }
-    return it.Siguiente().interfaces.Cardinal();
+    return compuConIp(c).interfaces.Cardinal();
 
 }
 
 const Interfaz& Driver::IesimaInterfazDe(const Computadora& c, const Nat i) const{
-    Conj<Compu>::const_Iterador itCompus = topologia.Computadoras().CrearIt();
 
-    while(c != itCompus.Siguiente().ip) {
-        itCompus.Avanzar();
-    }
-
-    Conj<Interfaz> interfaces = itCompus.Siguiente().interfaces;
+    Conj<Interfaz> interfaces = compuConIp(c).interfaces;
     Conj<Interfaz>::const_Iterador itInterfs = interfaces.CrearIt();
-    cout << "Interfaces: " << interfaces <<endl;
+
     Nat j = 0;
     while(j < i){
         itInterfs.Avanzar();
@@ -56,27 +40,13 @@ const Interfaz& Driver::IesimaInterfazDe(const Computadora& c, const Nat i) cons
 }
 
 Interfaz Driver::IntefazUsada(const Computadora& c1, const Computadora& c2) const {
-    Conj<Compu>::const_Iterador it = topologia.Computadoras().CrearIt();
-     while(c1 != it.Siguiente().ip) {
-        it.Avanzar();
-    }
-    Compu compu1 = it.Siguiente();
-
-    it = topologia.Computadoras().CrearIt();
-     while(c2 != it.Siguiente().ip) {
-        it.Avanzar();
-    }
-    Compu compu2 = it.Siguiente();
-
-    return topologia.InterfazUsada(compu1, compu2);
+    return topologia.InterfazUsada(compuConIp(c1), compuConIp(c2));
 }
 
 bool Driver::conectadas(const Computadora& c1, const Computadora& c2) const {
-
-    return topologia.Conectadas(c1,c2);
+    return topologia.Conectadas(compuConIp(c1), compuConIp(c2));
 }
 
-// TAD DCNET
 void Driver::AgregarComputadora(const Computadora& ip, const Conj<Interfaz>& ci) {
     Compu c;
     c.ip = ip;
@@ -87,71 +57,33 @@ void Driver::AgregarComputadora(const Computadora& ip, const Conj<Interfaz>& ci)
 }
 
 void Driver::Conectar(const Computadora& c1, const Interfaz& i1, const Computadora& c2, const Interfaz& i2) {
-
-    Conj<Compu>::const_Iterador it = topologia.Computadoras().CrearIt();
-     while(c1 != it.Siguiente().ip) {
-        it.Avanzar();
-    }
-    Compu compu1 = it.Siguiente();
-
-    it = topologia.Computadoras().CrearIt();
-     while(c2 != it.Siguiente().ip) {
-        it.Avanzar();
-    }
-    Compu compu2 = it.Siguiente();
-
-    topologia.Conectar(compu1, compu2, i1, i2);
+    topologia.Conectar(compuConIp(c1), compuConIp(c2), i1, i2);
 
     dcNet = DCNet(topologia);
 }
 
 
 Nat Driver::CantidadNodosRecorridosPor(const Paquete& p) const {
-
-    Conj<Compu>::const_Iterador itCompus = topologia.Computadoras().CrearIt();
-    while(itCompus.HaySiguiente()){
-        Conj< ::Paquete>::const_Iterador itPaqs = dcNet.EnEspera(itCompus.Siguiente()).CrearIt();
-        while(itPaqs.HaySiguiente()){
-            if(p == itPaqs.Siguiente().id) {
-                return dcNet.CaminoRecorrido(itPaqs.Siguiente()).Longitud();
-            }
-            itPaqs.Avanzar();
-        }
-        itCompus.Avanzar();
-    }
-
+    const ::Paquete& paq = paqueteConId(p);
+    return dcNet.CaminoRecorrido(paq).Longitud();
 }
 
 const Computadora& Driver::IesimoNodoRecorridoPor(const Paquete& p, const Nat i) const {
-
-    Conj<Compu>::const_Iterador itCompus = topologia.Computadoras().CrearIt();
-    while(itCompus.HaySiguiente()){
-        Conj< ::Paquete>::const_Iterador itPaqs = dcNet.EnEspera(itCompus.Siguiente()).CrearIt();
-        while(itPaqs.HaySiguiente()){
-            if(p == itPaqs.Siguiente().id) {
-                const Camino& cam = dcNet.CaminoRecorrido(itPaqs.Siguiente());
-                return cam[i].ip;
-            }
-            itPaqs.Avanzar();
-        }
-        itCompus.Avanzar();
-    }
-    cout << "ESTO NO DEBERIA PASARR!!!" << endl;
-    assert(false);
+    const ::Paquete& paq = paqueteConId(p);
+    const Camino& cam = dcNet.CaminoRecorrido(paq);
+    return cam[i].ip;
 }
 
 Nat Driver::CantidadEnviadosPor(const Computadora& c) const {
-
-    return dcNet.CantidadEnviados(c);
+    return dcNet.CantidadEnviados(compuConIp(c));
 }
 
 Nat Driver::CantidadEnEsperaEn(const Computadora& c) const {
-
-    return dcNet.EnEspera(c).Cardinal();
+    return dcNet.EnEspera(compuConIp(c)).Cardinal();
 }
 
 const Paquete& Driver::IesimoEnEsperaEn(const Computadora& c, const Nat i) const {
-    Conj< ::Paquete>::const_Iterador it = dcNet.EnEspera(c).CrearIt();
+    Conj< ::Paquete>::const_Iterador it = dcNet.EnEspera(compuConIp(c)).CrearIt();
 
     Nat j = 0;
     while(j < i){
@@ -208,49 +140,46 @@ const Computadora& Driver::laQueMasEnvio() const {
 }
 
 const Computadora& Driver::origen(const Paquete& p) const {
-    Conj<Compu>::const_Iterador itCompus = topologia.Computadoras().CrearIt();
-    while(itCompus.HaySiguiente()){
-        Conj< ::Paquete>::const_Iterador itPaqs = dcNet.EnEspera(itCompus.Siguiente()).CrearIt();
-        while(itPaqs.HaySiguiente()){
-            if(p == itPaqs.Siguiente().id) {
-                return itPaqs.Siguiente().origen.ip;
-            }
-            itPaqs.Avanzar();
-        }
-        itCompus.Avanzar();
-    }
+    return paqueteConId(p).origen.ip;
 }
 
 const Computadora& Driver::destino(const Paquete& p) const {
+    return paqueteConId(p).destino.ip;
+}
+
+Nat Driver::prioridad(const Paquete& p) const {
+    return paqueteConId(p).prioridad;
+}
+
+
+const Compu& Driver::compuConIp(aed2::Computadora ip) const {
+    // PRE: la compu con esa ip está en el dcNet
+    Conj<Compu>::const_Iterador it = topologia.Computadoras().CrearIt();
+     while(ip != it.Siguiente().ip) {
+        it.Avanzar();
+    }
+    return it.Siguiente();
+}
+
+const ::Paquete& Driver::paqueteConId(aed2::Paquete id) const {
+    // PRE: el paquete con ese id está en el dcNet
+
     Conj<Compu>::const_Iterador itCompus = topologia.Computadoras().CrearIt();
-    while(itCompus.HaySiguiente()){
+
+    while(itCompus.HaySiguiente()) {
         Conj< ::Paquete>::const_Iterador itPaqs = dcNet.EnEspera(itCompus.Siguiente()).CrearIt();
-        while(itPaqs.HaySiguiente()){
-            if(p == itPaqs.Siguiente().id) {
-                return itPaqs.Siguiente().destino.ip;
+        while(itPaqs.HaySiguiente()) {
+            if(id == itPaqs.Siguiente().id) {
+                return itPaqs.Siguiente();
             }
             itPaqs.Avanzar();
         }
         itCompus.Avanzar();
     }
+
+    cout << "ESTO NO DEBERIA PASAR POR LA PRECONDICION!" << endl;
+    assert(false);
 }
 
-Nat Driver::prioridad(const Paquete& p) const {
-    Nat res;
-    Conj<Compu>::const_Iterador itCompus = topologia.Computadoras().CrearIt();
-
-
-    while(itCompus.HaySiguiente()){
-        Conj< ::Paquete>::const_Iterador itBuffer = dcNet.EnEspera(itCompus.Siguiente()).CrearIt();
-        while(itBuffer.HaySiguiente()){
-            if(p == itBuffer.Siguiente().id)
-                res = itBuffer.Siguiente().prioridad;
-            itBuffer.Avanzar();
-        }
-        itCompus.Avanzar();
-    }
-
-    return res;
-}
 
 } // namespace aed2

@@ -1870,12 +1870,12 @@ void check_dcnet_crear_paquete(){
 void check_dcnet_paquete_en_transito(){
 	Red r;
 
-	Compu c1; 
+	Compu c1;
 	c1.ip = "c1";
 	c1.interfaces.Agregar(1);
 	r.AgregarComputadora(c1);
 
-	Compu c2; 
+	Compu c2;
 	c2.ip = "c2";
 	c2.interfaces.Agregar(2);
 	r.AgregarComputadora(c2);
@@ -1989,8 +1989,6 @@ void check_dcnet_camino_recorrido(){
 	r.Conectar(c1, c2, 1, 1);
 	r.Conectar(c2, c3, 2, 2);
 
-	cout << endl << "caminimos: " << r.CaminosMinimos(c1, c3) << endl;
-
 	DCNet dcnet(r);
 
 	 ::Paquete p1;
@@ -1999,28 +1997,23 @@ void check_dcnet_camino_recorrido(){
 	p1.origen = c1;
 	p1.destino = c3;
 
-	Lista<Compu> recorridix;
+	Lista<Compu> crEsperado;
 
 	dcnet.CrearPaquete(p1);
-
-	ASSERT(!(dcnet.CaminoRecorrido(p1) == recorridix));
 	
-	recorridix.AgregarAtras(c1);
+	crEsperado.AgregarAtras(c1);
 
-	ASSERT(dcnet.CaminoRecorrido(p1) == recorridix);
+	ASSERT(dcnet.CaminoRecorrido(p1) == crEsperado);
 
 	dcnet.AvanzarSegundo();
 
-	ASSERT(!(dcnet.CaminoRecorrido(p1) == recorridix));
+	crEsperado.AgregarAtras(c2);
 
-	recorridix.AgregarAtras(c2);
-
-	ASSERT(dcnet.CaminoRecorrido(p1) == recorridix);
+	ASSERT(dcnet.CaminoRecorrido(p1) == crEsperado);
 
 	dcnet.AvanzarSegundo();
 
 	ASSERT(!(dcnet.PaqueteEnTransito(p1)));
-
 	ASSERT(dcnet.EnEspera(c1).EsVacio());
 }
 
@@ -2142,8 +2135,8 @@ void check_dcnet_la_que_mas_envio(){
 	dcnet.AvanzarSegundo();
 	dcnet.CrearPaquete(p2);
 	dcnet.AvanzarSegundo();
-	
-	ASSERT(dcnet.LaQueMasEnvio() == c2);		
+
+	ASSERT(dcnet.LaQueMasEnvio() == c2);
 }
 
 // ---------------------------------------------------------------------

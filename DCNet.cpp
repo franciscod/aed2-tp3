@@ -18,6 +18,10 @@ DCNet::DCNet(const class Red& r){
 
         diccCompusDCNet.definir(it.Siguiente().ip, &vectorCompusDCNet.Ultimo());
 
+        if (laQueMasEnvio == NULL) {
+            laQueMasEnvio = &vectorCompusDCNet.Ultimo();
+        }
+
         it.Avanzar();
     }
 }
@@ -47,7 +51,7 @@ void DCNet::CrearPaquete(const ::Paquete& p){
 }
 
 void DCNet::AvanzarSegundo(){
-    Nat maxEnviados = 0;
+
     Nat i = 0;
     while(i < vectorCompusDCNet.Longitud()){
         if(!vectorCompusDCNet[i].colaPaquetesDCNet.EsVacia()){
@@ -57,33 +61,48 @@ void DCNet::AvanzarSegundo(){
     }
 
     i = 0;
+
     while(i < vectorCompusDCNet.Longitud()){
-        if(vectorCompusDCNet[i].paqueteAEnviar.HaySiguiente()){
 
-            vectorCompusDCNet[i].enviados++;
-            if(vectorCompusDCNet[i].enviados > maxEnviados){
-                laQueMasEnvio = &vectorCompusDCNet[i];
+        if((vectorCompusDCNet[i].paqueteAEnviar.HaySiguiente())){
+
+            CompuDCNet& cDNorigen = vectorCompusDCNet[i];
+
+            cDNorigen.enviados++;
+            if(cDNorigen.enviados > laQueMasEnvio->enviados){
+                laQueMasEnvio = &cDNorigen;
             }
 
-            ::Paquete pAEnviar = vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.Siguiente();
-            Conj<Lista<Compu> >::const_Iterador iterCaminos = topologia.CaminosMinimos(vectorCompusDCNet[i].pc, pAEnviar.destino).CrearIt();
-            Compu siguienteCompu = iterCaminos.Siguiente()[1];
 
-            if(pAEnviar.destino != siguienteCompu){
+            Lista<PaqueteDCNet>::Iterador& itPaq = cDNorigen.paqueteAEnviar;
+            PaqueteDCNet& paqDN                  = itPaq.Siguiente();
+            ::Paquete p                          = paqDN.it.Siguiente();
 
-                CompuDCNet siguienteCompuDCNet = *(diccCompusDCNet.obtener(siguienteCompu.ip));
-                siguienteCompuDCNet.conjPaquetes.AgregarRapido(pAEnviar);
-                Lista<PaqueteDCNet>::Iterador itPaqAEnviar = vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(pAEnviar.id);
+            Compu siguienteCompu = topologia.CaminosMinimos(cDNorigen.pc, p.destino) // consigue el camino
+                .CrearIt().Siguiente() // falso dameUno
+                [1]; // primera compu del camino
 
-                itPaqAEnviar.Siguiente().recorrido.AgregarAtras(siguienteCompu);
-                siguienteCompuDCNet.colaPaquetesDCNet.Encolar(pAEnviar.prioridad, itPaqAEnviar);
-                siguienteCompuDCNet.diccPaquetesDCNet.Definir(pAEnviar.id, itPaqAEnviar);
+            cDNorigen.diccPaquetesDCNet.Borrar(p.id);
+
+            if(p.destino != siguienteCompu){ // todavia no esta en destino
+
+                CompuDCNet& cDNdestino = *diccCompusDCNet.obtener(siguienteCompu.ip);
+
+                paqDN.recorrido.AgregarAtras(siguienteCompu);
+
+                paqDN.it.EliminarSiguiente(); // borra el paquete del conjPaquetes de la compu original
+                paqDN.it = cDNdestino.conjPaquetes.AgregarRapido(p); // lo inserta en el nuevo y actualiza el iterador
+                cDNdestino.diccPaquetesDCNet.Definir(p.id, itPaq);   // lo inserta en el dicclog
+                cDNdestino.colaPaquetesDCNet.Encolar(p.prioridad, itPaq); // y lo encola para mandarlo
+
+            } else { // llego a destino
+
+                itPaq.EliminarSiguiente(); // destruye el elemento de la lista principal de paquetesdcnet
+
             }
 
-            vectorCompusDCNet[i].diccPaquetesDCNet.Borrar(vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.Siguiente().id);
-            vectorCompusDCNet[i].paqueteAEnviar.Siguiente().it.EliminarSiguiente();
-            vectorCompusDCNet[i].paqueteAEnviar.EliminarSiguiente();
-            vectorCompusDCNet[i].paqueteAEnviar = Lista<PaqueteDCNet>().CrearIt();
+            cDNorigen.paqueteAEnviar = Lista<PaqueteDCNet>().CrearIt(); // falso null a enviar
+
         }
         i++;
     }
@@ -95,16 +114,18 @@ Red DCNet::Red() const{
 
 Lista<Compu> DCNet::CaminoRecorrido(const ::Paquete& p) const{
     Nat i = 0;
-    Lista<Compu> res;
+
     while(i < vectorCompusDCNet.Longitud()){
         if(vectorCompusDCNet[i].diccPaquetesDCNet.Definido(p.id)) {
-            res = vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(p.id).Siguiente().recorrido;
-            break;
+            return vectorCompusDCNet[i].diccPaquetesDCNet.Obtener(p.id).Siguiente().recorrido;
         }
         i++;
     }
 
-    return res;
+    cout << "AAAAAAAAA EXPLOSIONNNNN MUERE TODOOOOO AAAAAAAA" << endl;
+    assert(false);
+
+    return Lista<Compu>();
 }
 
 Nat DCNet::CantidadEnviados(const Compu& c) const{

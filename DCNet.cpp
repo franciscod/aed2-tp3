@@ -12,8 +12,6 @@ DCNet::DCNet(const class Red& r){
     while(it.HaySiguiente()){
         CompuDCNet compudcnet(it.Siguiente());
 
-        //cout << compudcnet.pc.ip << endl;
-
         vectorCompusDCNet.AgregarAtras(compudcnet);
 
         diccCompusDCNet.definir(it.Siguiente().ip, &vectorCompusDCNet.Ultimo());
@@ -29,13 +27,6 @@ DCNet::DCNet(const class Red& r){
 void DCNet::CrearPaquete(const ::Paquete& p){
     CompuDCNet *compudcnet = diccCompusDCNet.obtener(p.origen.ip);
     Conj< ::Paquete>::Iterador itPaq = compudcnet->conjPaquetes.AgregarRapido(p);
-
-    /*
-    cout << "ESTAS ROTO?" << endl;
-    cout << compudcnet->pc.ip << endl;
-    cout << "ESTAS ROTO?" << endl;
-    return;
-    */
 
     Lista<Compu> recorr;
     recorr.AgregarAtras(p.origen);
@@ -157,6 +148,7 @@ bool DCNet::operator == (const DCNet& otra) const{
     bool boolVec = (vectorCompusDCNet == otra.vectorCompusDCNet);
     bool boolConj = (listaPaquetesDCNet == otra.listaPaquetesDCNet);
     bool boolMasEnvio = (*laQueMasEnvio == *(otra.laQueMasEnvio));
+    cout << "llega dcnet" << endl;
     return(boolTopo && boolVec && boolConj && boolMasEnvio);
 }
 
@@ -165,7 +157,7 @@ inline bool DCNet::CompuDCNet::operator == (const DCNet::CompuDCNet& otra) const
     bool boolConj = (conjPaquetes == otra.conjPaquetes);
     bool boolAVL = true;
     bool boolCola = true;
-    bool boolPaq = (paqueteAEnviar.Siguiente() == otra.paqueteAEnviar.Siguiente());
+    // cout << "llega compudcnet" << endl;
     bool boolEnviados = (enviados == otra.enviados);
 
     if(boolConj){
@@ -192,7 +184,7 @@ inline bool DCNet::CompuDCNet::operator == (const DCNet::CompuDCNet& otra) const
         }
     }
 
-    return boolPC && boolConj && boolAVL && boolCola && boolPaq && boolEnviados;
+    return boolPC && boolConj && boolAVL && boolCola && boolEnviados;
 }
 
 inline bool DCNet::CompuDCNet::operator != (const DCNet::CompuDCNet& otra) const{

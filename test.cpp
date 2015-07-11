@@ -2156,7 +2156,6 @@ void check_dcnet_igualdad(){
 	DCNet dcnet2(r);
 
 	ASSERT(dcnet1 == dcnet2)
-
 	 ::Paquete p1;
 	p1.id = 7;
 	p1.prioridad = 2;
@@ -2166,6 +2165,7 @@ void check_dcnet_igualdad(){
 	dcnet1.CrearPaquete(p1);
 
 	ASSERT(!(dcnet1 == dcnet2));
+	cout << "pasa" << endl;
 
 	dcnet2.CrearPaquete(p1);
 

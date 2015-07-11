@@ -105,11 +105,19 @@ DCNet& DCNet::operator = (const DCNet& otro){
 			while(itPaqDCN.Siguiente().it.Siguiente() != paq){
 				itPaqDCN.Avanzar();
 			}
-			// Ahora agregamos itPaqDCN al dicc y a la cola.
+			// Ahora agregamos itPaqDCN al dicc
 			compu.diccPaquetesDCNet.Definir(paq.id, itPaqDCN);
-			compu.colaPaquetesDCNet.Encolar(paq.prioridad, itPaqDCN);
-
 			itPaquetes.Avanzar();
+		}
+
+		// ahora la cola, en el mismo orden que la original
+		ColaPrioridad<Lista<PaqueteDCNet>::Iterador> copiaColaPrioridadOtro(otro.vectorCompusDCNet[i].colaPaquetesDCNet);
+		while(!copiaColaPrioridadOtro.EsVacia()){
+			Lista<PaqueteDCNet>::Iterador itPaqDCNOtro = copiaColaPrioridadOtro.Proximo();
+			::Paquete paq = itPaqDCNOtro.Siguiente().it.Siguiente();
+
+			compu.colaPaquetesDCNet.Encolar(paq.prioridad, compu.diccPaquetesDCNet.Obtener(paq.id));
+			copiaColaPrioridadOtro.Desencolar();
 		}
 	}
 
@@ -238,7 +246,7 @@ const Compu& DCNet::LaQueMasEnvio() const{
 
 
 bool DCNet::operator == (const DCNet& otra) const{
-	
+
     if (!(topologia == otra.topologia)) {
         return false;
     }

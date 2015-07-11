@@ -2255,7 +2255,6 @@ void check_dcnet_crear_paquete_copia(){
 
 	ASSERT(dcnet.PaqueteEnTransito(p) == dcnetCopia.PaqueteEnTransito(p));
 
-	cout << "igualando dcnet..." << endl;
 	ASSERT(dcnet == dcnetCopia);
 
 	// no hay paquetes pero esto no esta prohibido
@@ -2265,10 +2264,170 @@ void check_dcnet_crear_paquete_copia(){
 	ASSERT(dcnet == dcnetCopia);
 }
 
+void check_dcnet_muchos_paquetes(){
+	Red r;
+	Compu c1("Uno", 2);
+	Compu c2("Dos", 2);
+	r.AgregarComputadora(c1);
+	r.AgregarComputadora(c2);
+	r.Conectar(c1, c2, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 1;
+	p1.prioridad = 1;
+	p1.origen = c1;
+	p1.destino = c2;
+	dcnet.CrearPaquete(p1);
+
+	 ::Paquete p2;
+	p2.id = 2;
+	p2.prioridad = 1;
+	p2.origen = c1;
+	p2.destino = c2;
+	dcnet.CrearPaquete(p2);
+
+	 ::Paquete p3;
+	p3.id = 3;
+	p3.prioridad = 2;
+	p3.origen = c1;
+	p3.destino = c2;
+	dcnet.CrearPaquete(p3);
+
+	 ::Paquete p4;
+	p4.id = 4;
+	p4.prioridad = 2;
+	p4.origen = c1;
+	p4.destino = c2;
+	dcnet.CrearPaquete(p4);
+
+	 ::Paquete p5;
+	p5.id = 5;
+	p5.prioridad = 3;
+	p5.origen = c1;
+	p5.destino = c2;
+	dcnet.CrearPaquete(p5);
+
+	 ::Paquete p6;
+	p6.id = 6;
+	p6.prioridad = 3;
+	p6.origen = c1;
+	p6.destino = c2;
+	dcnet.CrearPaquete(p6);
+
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+	dcnet.AvanzarSegundo();
+
+}
+
+
+void check_dcnet_copia_cola_mantiene_orden(){
+	Red r;
+	Compu c1("Uno", 2);
+	Compu c2("Dos", 2);
+	r.AgregarComputadora(c1);
+	r.AgregarComputadora(c2);
+	r.Conectar(c1, c2, 1, 2);
+
+	DCNet dcnet(r);
+
+	 ::Paquete p1;
+	p1.id = 1;
+	p1.prioridad = 1;
+	p1.origen = c1;
+	p1.destino = c2;
+	dcnet.CrearPaquete(p1);
+
+	 ::Paquete p2;
+	p2.id = 2;
+	p2.prioridad = 1;
+	p2.origen = c1;
+	p2.destino = c2;
+	dcnet.CrearPaquete(p2);
+
+	 ::Paquete p3;
+	p3.id = 3;
+	p3.prioridad = 2;
+	p3.origen = c1;
+	p3.destino = c2;
+	dcnet.CrearPaquete(p3);
+
+	 ::Paquete p4;
+	p4.id = 4;
+	p4.prioridad = 2;
+	p4.origen = c1;
+	p4.destino = c2;
+	dcnet.CrearPaquete(p4);
+
+	 ::Paquete p5;
+	p5.id = 5;
+	p5.prioridad = 3;
+	p5.origen = c1;
+	p5.destino = c2;
+	dcnet.CrearPaquete(p5);
+
+	 ::Paquete p6;
+	p6.id = 6;
+	p6.prioridad = 3;
+	p6.origen = c1;
+	p6.destino = c2;
+	dcnet.CrearPaquete(p6);
+
+	DCNet dcnetCopia(dcnet);
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+	dcnet.AvanzarSegundo();
+	dcnetCopia.AvanzarSegundo();
+
+	ASSERT(dcnet == dcnetCopia);
+	ASSERT(dcnet.EnEspera(c1) == dcnetCopia.EnEspera(c1));
+
+}
+
+
+
 // ---------------------------------------------------------------------
 
 int main(int argc, char **argv){
-	/*
 
 	// Trie
 	RUN_TEST(check_trie);
@@ -2382,9 +2541,10 @@ int main(int argc, char **argv){
 	RUN_TEST(check_dcnet_cantidad_enviados);
 	RUN_TEST(check_dcnet_la_que_mas_envio);
 	RUN_TEST(check_dcnet_igualdad);
-	*/
 	RUN_TEST(check_dcnet_red_copia);
 	RUN_TEST(check_dcnet_crear_paquete_copia);
+	RUN_TEST(check_dcnet_muchos_paquetes);
+	RUN_TEST(check_dcnet_copia_cola_mantiene_orden);
 
 	return 0;
 }

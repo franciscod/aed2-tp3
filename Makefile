@@ -1,11 +1,11 @@
 # Compilador que será utilizado
-CC=g++
+CC=clang
 
 # flags de compilación
 CFLAGS=-g -Wall -O2
 
 # flags de linkeo
-LDFLAGS=
+LDFLAGS=-lstdc++
 
 # Agrear acá los directorios a incluir en la compilación
 INCDIR=. #../../../../../Modulos-CPP
